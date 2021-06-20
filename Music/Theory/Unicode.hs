@@ -10,9 +10,9 @@ import Numeric {- base -}
 
 import qualified Text.CSV.Lazy.String as C {- lazy-csv -}
 
-import qualified Music.Theory.IO as T {- hmt -}
-import qualified Music.Theory.List as T {- hmt -}
-import qualified Music.Theory.Read as T {- hmt -}
+import qualified Music.Theory.IO as T {- hmt-base -}
+import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Read as T {- hmt-base -}
 
 -- * Non-music
 

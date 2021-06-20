@@ -7,9 +7,9 @@ module Music.Theory.Graph.LGL where
 import Data.Bifunctor {- base -}
 import Data.List {- base -}
 
-import qualified Music.Theory.Graph.Type as T {- hmt -}
-import qualified Music.Theory.Show as T {- hmt -}
-import qualified Music.Theory.Tuple as T {- hmt -}
+import qualified Music.Theory.Graph.Type as T {- hmt-base -}
+import qualified Music.Theory.Show as T {- hmt-base -}
+import qualified Music.Theory.Tuple as T {- hmt-base -}
 
 -- * NCOL
 

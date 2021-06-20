@@ -4,7 +4,7 @@ module Music.Theory.Array where
 import Data.List {- base -}
 import qualified Data.Array as A {- array -}
 
-import qualified Music.Theory.List as T {- hmt -}
+import qualified Music.Theory.List as T {- hmt-base -}
 
 -- * Association List (List Array)
 

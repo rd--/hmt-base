@@ -10,8 +10,8 @@ import qualified Data.ByteString as B {- bytestring -}
 import qualified Data.List.Split as Split {- split -}
 import qualified Safe {- safe -}
 
-import qualified Music.Theory.Math.Convert as T {- hmt -}
-import qualified Music.Theory.Read as T {- hmt -}
+import qualified Music.Theory.Math.Convert as T {- hmt-base -}
+import qualified Music.Theory.Read as T {- hmt-base -}
 
 {-
 import Data.Int {- base -}

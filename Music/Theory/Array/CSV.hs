@@ -7,11 +7,11 @@ import qualified Data.Array as A {- array -}
 import qualified Safe {- safe -}
 import qualified Text.CSV.Lazy.String as C {- lazy-csv -}
 
-import qualified Music.Theory.Array as T {- hmt -}
-import qualified Music.Theory.Array.Cell_Ref as R {- hmt -}
-import qualified Music.Theory.IO as T {- hmt -}
-import qualified Music.Theory.List as T {- hmt -}
-import qualified Music.Theory.Tuple as T {- hmt -}
+import qualified Music.Theory.Array as T {- hmt-base -}
+import qualified Music.Theory.Array.Cell_Ref as R {- hmt-base -}
+import qualified Music.Theory.IO as T {- hmt-base -}
+import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Tuple as T {- hmt-base -}
 
 -- * FIELD / QUOTE
 

@@ -1,7 +1,7 @@
 -- | <http://www.tcs.hut.fi/Software/bliss/fileformat.shtml>
 module Music.Theory.Graph.Bliss where
 
-import qualified Music.Theory.Graph.Type as T {- hmt -}
+import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 
 -- | Problem is (n-vertices,n-edges)
 bliss_parse_problem :: String -> (Int,Int)

@@ -3,8 +3,8 @@ module Music.Theory.Combinations where
 
 import Data.List {- base -}
 
-import qualified Music.Theory.List as T {- hmt -}
-import qualified Music.Theory.Permutations as T {- hmt -}
+import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Permutations as T {- hmt-base -}
 
 -- | Number of /k/ element combinations of a set of /n/ elements.
 --

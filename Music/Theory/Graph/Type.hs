@@ -7,7 +7,7 @@ import Data.Maybe {- base -}
 
 import qualified Data.Graph as Graph {- containers -}
 
-import qualified Music.Theory.List as T {- hmt -}
+import qualified Music.Theory.List as T {- hmt-base -}
 
 -- * Vertices
 

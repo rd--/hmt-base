@@ -8,7 +8,7 @@ import System.Directory {- directory -}
 import System.FilePath {- filepath -}
 import System.Process {- process -}
 
-import qualified Music.Theory.Monad as T {- hmt -}
+import qualified Music.Theory.Monad as T {- hmt-base -}
 
 {- | 'takeDirectory' gives different answers depending on whether there is a trailing separator.
 

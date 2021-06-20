@@ -6,9 +6,9 @@ import Data.List {- base -}
 import Data.Ratio {- base -}
 import Numeric {- base -}
 
-import qualified Music.Theory.List as T {- hmt -}
-import qualified Music.Theory.Math as T {- hmt -}
-import qualified Music.Theory.Math.Convert as T {- hmt -}
+import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Math as T {- hmt-base -}
+import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
 -- * DIFF
 

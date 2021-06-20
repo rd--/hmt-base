@@ -8,8 +8,8 @@ import Text.Printf {- base -}
 import qualified Data.ByteString as B {- bytestring -}
 import qualified Data.List.Split as S {- split -}
 
-import qualified Music.Theory.Graph.G6 as G6 {- hmt -}
-import qualified Music.Theory.Graph.Type as T {- hmt -}
+import qualified Music.Theory.Graph.G6 as G6 {- hmt-base -}
+import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 
 -- | The 15-character header text indicating a PLANAR-CODE file.
 plc_header_txt :: String

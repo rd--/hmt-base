@@ -4,7 +4,7 @@ module Music.Theory.Permutations where
 import Data.List {- base -}
 import qualified Numeric {- base -}
 
-import qualified Music.Theory.List as L {- hmt -}
+import qualified Music.Theory.List as L {- hmt-base -}
 
 -- | Factorial function.
 --

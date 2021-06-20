@@ -10,7 +10,7 @@ module Music.Theory.Graph.LCF where
 import Data.Complex {- base -}
 import Data.List {- base -}
 
-import qualified Music.Theory.Graph.Type as T {- hmt -}
+import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 
 -- | LCF notation (/l/,/k/). ([3,-3],4) is the cubical graph.
 type LCF = ([Int],Int)

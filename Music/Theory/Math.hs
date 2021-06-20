@@ -5,7 +5,7 @@ import Data.List {- base -}
 import Data.Maybe {- base -}
 import Data.Ratio {- base -}
 
-import qualified Music.Theory.Math.Convert as T {- hmt -}
+import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
 -- | 'mod' 5.
 mod5 :: Integral i => i -> i

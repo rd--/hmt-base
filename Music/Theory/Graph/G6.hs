@@ -10,8 +10,8 @@ import Data.Bifunctor {- base -}
 import qualified Data.List.Split as Split {- split -}
 import qualified System.Process as Process {- process -}
 
-import qualified Music.Theory.Graph.Type as T {- hmt -}
-import qualified Music.Theory.List as T {- hmt -}
+import qualified Music.Theory.Graph.Type as T {- hmt-base -}
+import qualified Music.Theory.List as T {- hmt-base -}
 
 -- * G6 (graph6)
 

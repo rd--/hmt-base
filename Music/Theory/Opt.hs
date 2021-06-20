@@ -20,7 +20,7 @@ import System.Exit {- base -}
 
 import qualified Data.List.Split as Split {- split -}
 
-import qualified Music.Theory.Read as T {- hmt -}
+import qualified Music.Theory.Read as T {- hmt-base -}
 
 -- | (KEY,VALUE)
 --   Key does not include leading '--'.
