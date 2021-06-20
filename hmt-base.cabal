@@ -31,6 +31,8 @@ Library
   Default-Language:Haskell2010
   GHC-Options:     -Wall -fwarn-tabs
   Exposed-modules: Music.Theory.Array
+                   Music.Theory.Array.Cell_Ref
+                   Music.Theory.Array.CSV
                    Music.Theory.Bits
                    Music.Theory.Byte
                    Music.Theory.Combinations
