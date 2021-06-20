@@ -41,6 +41,12 @@ Library
                    Music.Theory.Either
                    Music.Theory.Enum
                    Music.Theory.Function
+                   Music.Theory.Graph.Bliss
+                   Music.Theory.Graph.G6
+                   Music.Theory.Graph.LCF
+                   Music.Theory.Graph.LGL
+                   Music.Theory.Graph.Planar
+                   Music.Theory.Graph.Type
                    Music.Theory.IO
                    Music.Theory.List
                    Music.Theory.Map
