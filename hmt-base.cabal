@@ -1,0 +1,59 @@
+cabal-version:     2.4
+Name:              hmt-base
+Version:           0.20
+Synopsis:          Haskell Music Theory Base
+Description:       Haskell music theory Base Library
+License:           GPL-3.0-only
+Category:          Music
+Copyright:         Rohan Drape, 2006-2021
+Author:            Rohan Drape
+Maintainer:        rd@rohandrape.net
+Stability:         Experimental
+Homepage:          http://rohandrape.net/t/hmt-base
+Tested-With:       GHC == 8.8.4
+Build-Type:        Simple
+Data-files:        README.md
+
+Library
+  Build-Depends:   array,
+                   base >= 4.9 && < 5,
+                   bytestring,
+                   containers,
+                   data-ordlist,
+                   directory,
+                   filepath,
+                   lazy-csv,
+                   process,
+                   random,
+                   safe,
+                   split,
+                   text
+  Default-Language:Haskell2010
+  GHC-Options:     -Wall -fwarn-tabs
+  Exposed-modules: Music.Theory.Array
+                   Music.Theory.Bits
+                   Music.Theory.Byte
+                   Music.Theory.Combinations
+                   Music.Theory.Directory
+                   Music.Theory.Either
+                   Music.Theory.Enum
+                   Music.Theory.Function
+                   Music.Theory.IO
+                   Music.Theory.List
+                   Music.Theory.Map
+                   Music.Theory.Math
+                   Music.Theory.Math.Convert
+                   Music.Theory.Maybe
+                   Music.Theory.Monad
+                   Music.Theory.Opt
+                   Music.Theory.Ord
+                   Music.Theory.Permutations
+                   Music.Theory.Read
+                   Music.Theory.Show
+                   Music.Theory.String
+                   Music.Theory.Tuple
+                   Music.Theory.Unicode
+
+Source-Repository  head
+  Type:            git
+  Location:        https://gitlab.com/rd--/hmt-base
