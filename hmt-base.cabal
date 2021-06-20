@@ -33,6 +33,7 @@ Library
   Exposed-modules: Music.Theory.Array
                    Music.Theory.Array.Cell_Ref
                    Music.Theory.Array.CSV
+                   Music.Theory.Array.Text
                    Music.Theory.Bits
                    Music.Theory.Byte
                    Music.Theory.Combinations
