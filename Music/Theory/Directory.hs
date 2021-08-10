@@ -4,6 +4,9 @@ module Music.Theory.Directory where
 import Control.Monad {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
+import System.Environment {- base -}
+
+import Data.List.Split {- split -}
 import System.Directory {- directory -}
 import System.FilePath {- filepath -}
 import System.Process {- process -}
@@ -18,6 +21,16 @@ import qualified Music.Theory.Monad as T {- hmt-base -}
 -}
 parent_dir :: FilePath -> FilePath
 parent_dir = takeDirectory . dropTrailingPathSeparator
+
+-- | Colon separated path list.
+path_split :: String -> [FilePath]
+path_split = splitOn ":"
+
+-- | Read environment variable and split path.
+--
+-- > path_from_env "PATH"
+path_from_env :: String -> IO [FilePath]
+path_from_env = fmap path_split . getEnv
 
 -- | Scan a list of directories until a file is located, or not.
 --   This does not traverse any sub-directory structure.
