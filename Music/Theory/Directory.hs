@@ -44,6 +44,19 @@ path_scan p fn =
                     f x = if x then return (Just nm) else path_scan p' fn
                 in doesFileExist nm >>= f
 
+-- | Search each directory on path recursively for file.
+--
+-- > path_scan_recursively ["/home/rohan/opt/src/som/are-we-fast-yet/benchmarks/SOM"] "Json.som"
+path_scan_recursively :: [FilePath] -> FilePath -> IO (Maybe FilePath)
+path_scan_recursively p fn =
+  case p of
+    [] -> return Nothing
+    dir:p' -> do
+      r <- dir_find fn dir
+      case r of
+        [] -> path_scan_recursively p' fn
+        x:_ -> return (Just x)
+
 -- | Erroring variant.
 path_scan_err :: [FilePath] -> FilePath -> IO FilePath
 path_scan_err p x =
