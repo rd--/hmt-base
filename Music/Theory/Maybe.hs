@@ -76,3 +76,16 @@ maybe_predicate f i =
 maybe_filter :: (a -> Bool) -> [Maybe a] -> [Maybe a]
 maybe_filter = map . maybe_predicate
 
+{- | Variant of 'catMaybes'.
+     If all elements of the list are @Just a@, then gives @Just [a]@ else gives 'Nothing'.
+
+> all_just (map Just [1..3]) == Just [1..3]
+> all_just [Just 1,Nothing,Just 3] == Nothing
+-}
+all_just :: [Maybe a] -> Maybe [a]
+all_just x =
+    case x of
+      [] -> Just []
+      Just i:x' -> fmap (i :) (all_just x')
+      Nothing:_ -> Nothing
+

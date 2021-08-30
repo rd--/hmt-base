@@ -152,10 +152,12 @@ genericRotate_right n = reverse . genericRotate_left n . reverse
 rotate_right :: Int -> [a] -> [a]
 rotate_right = genericRotate_right
 
--- | Rotate left by /n/ 'mod' /#p/ places.
---
--- > rotate 1 [1..3] == [2,3,1]
--- > rotate 8 [1..5] == [4,5,1,2,3]
+{- | Rotate left by /n/ 'mod' /#p/ places.  Therefore negative n rotate right.
+
+> rotate 1 [1..3] == [2,3,1]
+> rotate 8 [1..5] == [4,5,1,2,3]
+> (rotate (-1) "ABCD",rotate 1 "ABCD") == ("DABC","BCDA")
+-}
 rotate :: (Integral n) => n -> [a] -> [a]
 rotate n p =
     let m = n `mod` genericLength p

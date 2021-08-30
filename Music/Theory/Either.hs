@@ -28,3 +28,19 @@ from_right_err = fromMaybe (error "from_right_err") . from_right
 -- | Flip from right to left, ie. 'either' 'Right' 'Left'
 either_swap :: Either a b -> Either b a
 either_swap = either Right Left
+
+{- | Variant of 'Data.Either.rights' that preserves first 'Left'.
+
+> all_right (map Right [1..3]) == Right [1..3]
+> all_right [Right 1,Left 'a',Left 'b'] == Left 'a'
+-}
+all_right :: [Either a b] -> Either a [b]
+all_right x =
+    case x of
+      [] -> Right []
+      Right i:x' -> fmap (i :) (all_right x')
+      Left i:_ -> Left i
+
+-- | Lower 'Either' to 'Maybe' by discarding 'Left'.
+either_to_maybe :: Either a b -> Maybe b
+either_to_maybe = either (const Nothing) Just
