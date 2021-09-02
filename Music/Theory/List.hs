@@ -1329,10 +1329,10 @@ unlist1_err = fromMaybe (error "unlist1") . unlist1
 
 -- | Replace elements at 'Traversable' with result of joining with elements from list.
 --
--- > let t = Node 0 [Node 1 [Node 2 [],Node 3 []],Node 4 []]
--- > putStrLn $ drawTree (fmap show t)
+-- > let t = Tree.Node 0 [Tree.Node 1 [Tree.Node 2 [],Tree.Node 3 []],Tree.Node 4 []]
+-- > putStrLn $ Tree.drawTree (fmap show t)
 -- > let (_,u) = adopt_shape (\_ x -> x) "abcde" t
--- > putStrLn $ drawTree (fmap return u)
+-- > putStrLn $ Tree.drawTree (fmap return u)
 adopt_shape :: Traversable t => (a -> b -> c) -> [b] -> t a -> ([b],t c)
 adopt_shape jn l =
     let f (i:j) k = (j,jn k i)
