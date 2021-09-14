@@ -26,11 +26,16 @@ parent_dir = takeDirectory . dropTrailingPathSeparator
 path_split :: String -> [FilePath]
 path_split = splitOn ":"
 
--- | Read environment variable and split path.
---
--- > path_from_env "PATH"
+{- | Read environment variable and split path.
+     Error if enviroment variable not set.
+
+> path_from_env "PATH"
+> path_from_env "NONPATH" -- error
+-}
 path_from_env :: String -> IO [FilePath]
-path_from_env = fmap path_split . getEnv
+path_from_env k = do
+  p <- lookupEnv k
+  maybe (error ("Environment variable not set: " ++ k)) (return . path_split) p
 
 -- | Scan a list of directories until a file is located, or not.
 --   This does not traverse any sub-directory structure.
