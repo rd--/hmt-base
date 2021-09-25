@@ -27,7 +27,8 @@ Library
                    random,
                    safe,
                    split,
-                   text
+                   text,
+                   time
   Default-Language:Haskell2010
   GHC-Options:     -Wall -fwarn-tabs
   Exposed-modules: Music.Theory.Array
@@ -60,6 +61,8 @@ Library
                    Music.Theory.Read
                    Music.Theory.Show
                    Music.Theory.String
+                   Music.Theory.Time.Duration
+                   Music.Theory.Time.Notation
                    Music.Theory.Tuple
                    Music.Theory.Unicode
 
