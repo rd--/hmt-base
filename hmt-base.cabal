@@ -36,6 +36,7 @@ Library
                    Music.Theory.Array.CSV
                    Music.Theory.Array.Text
                    Music.Theory.Bits
+                   Music.Theory.Bool
                    Music.Theory.Byte
                    Music.Theory.Combinations
                    Music.Theory.Directory
