@@ -32,3 +32,9 @@ read_file_iso_8859_1 = fmap (T.unpack . T.decodeLatin1) . B.readFile
 -- | 'readFile' variant using 'T.Text' for local encoding.
 read_file_locale :: FilePath -> IO String
 read_file_locale = fmap T.unpack . T.readFile
+
+-- | Interact with files.
+interactWithFiles :: FilePath -> FilePath -> (String -> String) -> IO ()
+interactWithFiles inputFile outputFile process = do
+  input <- readFile inputFile
+  writeFile outputFile (process input)

@@ -1407,12 +1407,25 @@ group_tree (open_f,close_f) =
 
 -- * Indexing
 
--- | Remove element at index.
---
--- > map (remove_ix 5) ["remove","removed"] == ["remov","removd"]
--- > remove_ix 5 "short" == undefined
+{- | Remove element at index.
+
+> map (remove_ix 5) ["remove","removed"] == ["remov","removd"]
+> remove_ix 5 "short" -- error
+-}
 remove_ix :: Int -> [a] -> [a]
 remove_ix k l = let (p,q) = splitAt k l in p ++ tail q
+
+{- | Delete element at ix from list (c.f. remove_ix, this has a more specific error if index does not exist).
+
+> delete_at 3 "deleted" == "delted"
+> delete_at 8 "deleted" -- error
+-}
+delete_at :: (Eq t, Num t) => t -> [a] -> [a]
+delete_at ix l =
+  case (ix,l) of
+    (_,[]) -> error "delete_at: index does not exist"
+    (0,_:l') -> l'
+    (_,e:l') -> e : delete_at (ix - 1) l'
 
 -- | Select or remove elements at set of indices.
 operate_ixs :: Bool -> [Int] -> [a] -> [a]
