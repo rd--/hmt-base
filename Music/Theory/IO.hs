@@ -1,6 +1,10 @@
 -- | "System.IO" related functions.
 module Music.Theory.IO where
 
+import Control.Monad {- base -}
+import System.IO {- base -}
+
+import qualified Control.Monad.Loops as Loop {- monad-loops -}
 import qualified Data.ByteString as B {- bytestring -}
 import qualified Data.Text as T {- text -}
 import qualified Data.Text.Encoding as T {- text -}
@@ -33,8 +37,24 @@ read_file_iso_8859_1 = fmap (T.unpack . T.decodeLatin1) . B.readFile
 read_file_locale :: FilePath -> IO String
 read_file_locale = fmap T.unpack . T.readFile
 
--- | Interact with files.
+-- | Interact with files.  Like Prelude.interact, but with named files.
 interactWithFiles :: FilePath -> FilePath -> (String -> String) -> IO ()
 interactWithFiles inputFile outputFile process = do
   input <- readFile inputFile
   writeFile outputFile (process input)
+
+-- | Get line from stdin if there is any input, else Nothing.
+getLineFromStdinIfReady :: IO (Maybe String)
+getLineFromStdinIfReady = do
+  r <- hReady stdin
+  if r then fmap Just (hGetLine stdin) else return Nothing
+
+-- | Wait for input to be available, and then get lines while input remains available.
+getAvailableLinesFromStdin :: IO [String]
+getAvailableLinesFromStdin = do
+  _ <- hWaitForInput stdin (-1)
+  Loop.unfoldM getLineFromStdinIfReady
+
+-- | Interact with stdin and stdout.  Like Prelude.interact, but with pipes.
+interactWithStdio :: (String -> String) -> IO ()
+interactWithStdio strFunc = forever (getAvailableLinesFromStdin >>= \ln -> hPutStrLn stdout (strFunc (unlines ln)) >> hFlush stdout)

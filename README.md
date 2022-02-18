@@ -9,5 +9,5 @@ related:
 - [hmt-diagrams](http://rohandrape.net/?t=hmt-diagrams)
 - [hmt-texts](http://rohandrape.net/?t=hmt-texts)
 
-© [rohan drape](http://rohandrape.net/), 2006-2021, [gpl](http://gnu.org/copyleft/).
+© [rohan drape](http://rohandrape.net/), 2006-2022, [gpl](http://gnu.org/copyleft/).
 
