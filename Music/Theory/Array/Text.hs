@@ -41,18 +41,18 @@ Options are:
  column separator string,
  print table delimiters
 -}
-type Text_Table_OPT = (Bool,Bool,Bool,String,Bool)
+type Text_Table_Opt = (Bool,Bool,Bool,String,Bool)
 
 -- | Options for @plain@ layout.
-table_opt_plain :: Text_Table_OPT
+table_opt_plain :: Text_Table_Opt
 table_opt_plain = (False,True,False," ",False)
 
 -- | Options for @simple@ layout.
-table_opt_simple :: Text_Table_OPT
+table_opt_simple :: Text_Table_Opt
 table_opt_simple = (True,True,False," ",True)
 
 -- | Options for @pipe@ layout.
-table_opt_pipe :: Text_Table_OPT
+table_opt_pipe :: Text_Table_Opt
 table_opt_pipe = (True,True,False," | ",False)
 
 -- | Pretty-print table.  Table is in row order.
@@ -60,7 +60,7 @@ table_opt_pipe = (True,True,False," | ",False)
 -- > let tbl = [["1","2","3","4"],["a","bc","def"],["ghij","klm","no","p"]]
 -- > putStrLn$unlines$"": table_pp (True,True,True," ",True) tbl
 -- > putStrLn$unlines$"": table_pp (False,False,True," ",False) tbl
-table_pp :: Text_Table_OPT -> Text_Table -> [String]
+table_pp :: Text_Table_Opt -> Text_Table -> [String]
 table_pp (has_hdr,pad_left,eq_width,col_sep,print_eot) dat =
     let c = transpose (T.tbl_make_regular_nil "" dat)
         nc = length c
@@ -79,13 +79,13 @@ table_pp (has_hdr,pad_left,eq_width,col_sep,print_eot) dat =
 -- | Variant relying on 'Show' instances.
 --
 -- > table_pp_show table_opt_simple [[1..4],[5..8],[9..12]]
-table_pp_show :: Show t => Text_Table_OPT -> T.Table t -> [String]
+table_pp_show :: Show t => Text_Table_Opt -> T.Table t -> [String]
 table_pp_show opt = table_pp opt . map (map show)
 
 -- | Variant in column order (ie. 'transpose').
 --
 -- > table_pp_column_order table_opt_simple [["a","bc","def"],["ghij","klm","no"]]
-table_pp_column_order :: Text_Table_OPT -> Text_Table -> [String]
+table_pp_column_order :: Text_Table_Opt -> Text_Table -> [String]
 table_pp_column_order opt = table_pp opt . transpose
 
 {- | Matrix form, ie. header in both first row and first column, in
