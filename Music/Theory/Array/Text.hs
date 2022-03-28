@@ -67,7 +67,7 @@ table_pp (has_hdr,pad_left,eq_width,col_sep,print_eot) dat =
         n = let k = map (maximum . map length) c
             in if eq_width then replicate nc (maximum k) else k
         ext k s = if pad_left then T.pad_left ' ' k s else T.pad_right ' ' k s
-        jn = intercalate col_sep
+        jn = concat . intersperse col_sep
         m = jn (map (`replicate` '-') n)
         w = map jn (transpose (zipWith (map . ext) n c))
         d = map T.delete_trailing_whitespace w

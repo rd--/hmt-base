@@ -12,7 +12,7 @@ iterateM_ f st = do
   iterateM_ f st'
 
 -- | 'fmap' of 'concat' of 'mapM'
-concatMapM :: Monad m => (t -> m [u]) -> [t] -> m [u]
+concatMapM :: (Functor m, Monad m) => (t -> m [u]) -> [t] -> m [u]
 concatMapM f = fmap concat . mapM f
 
 -- | If i then j else k.

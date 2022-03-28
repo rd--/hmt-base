@@ -2,15 +2,17 @@
 module Music.Theory.List where
 
 import Data.Bifunctor {- base -}
-import Data.Either {- base -}
 import Data.Function {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
+import Data.Ord {- base -}
 
 import qualified Data.IntMap as Map {- containers -}
 import qualified Data.List.Ordered as O {- data-ordlist -}
 import qualified Data.List.Split as S {- split -}
 import qualified Data.Tree as Tree {- containers -}
+
+import qualified Music.Theory.Either as T {- hmt-base -}
 
 -- | 'Data.Vector.slice', ie. starting index (zero-indexed) and number of elements.
 --
@@ -278,9 +280,7 @@ adj4 n l =
 -- > interleave ".+-" "abc" == ".a+b-c"
 -- > interleave [1..3] [] == []
 interleave :: [a] -> [a] -> [a]
-interleave p q =
-    let u (i,j) = [i,j]
-    in concatMap u (zip p q)
+interleave p = concat . zipWith (\i j -> [i, j]) p -- concatMap (\(i, j) -> [i, j]) . zip p
 
 -- | Interleave list of lists.  Allows lists to be of non-equal lenghts.
 --
@@ -505,9 +505,17 @@ replace_at ns i x =
     let f j y = if i == j then x else y
     in zipWith f [0..] ns
 
+-- | Data.List.stripPrefix, which however hugs doesn't know of.
+strip_prefix :: Eq a => [a] -> [a] -> Maybe [a]
+strip_prefix lhs rhs =
+  case (lhs,rhs) of
+    ([], ys) -> Just ys
+    (_, []) -> Nothing
+    (x:xs, y:ys) -> if x == y then strip_prefix xs ys else Nothing
+
 -- | 'error' of 'stripPrefix'
 strip_prefix_err :: Eq t => [t] -> [t] -> [t]
-strip_prefix_err pfx = fromMaybe (error "strip_prefix") . stripPrefix pfx
+strip_prefix_err pfx = fromMaybe (error "strip_prefix") . strip_prefix pfx
 
 -- * Association lists
 
@@ -542,12 +550,16 @@ collate_on_adjacent = collate_by_on_adjacent (==)
 collate_adjacent :: Eq a => [(a,b)] -> [(a,[b])]
 collate_adjacent = collate_on_adjacent fst snd
 
+-- | Data.List.sortOn, which however hugs doesn't know of.
+sort_on :: Ord b => (a -> b) -> [a] -> [a]
+sort_on f = map snd . sortBy (comparing fst) . map (\x -> let y = f x in y `seq` (y, x))
+
 -- | 'sortOn' prior to 'collate_on_adjacent'.
 --
 -- > r = [('A',"a"),('B',"bd"),('C',"ce"),('D',"f")]
 -- > collate_on fst snd (zip "ABCBCD" "abcdef") == r
 collate_on :: Ord k => (a -> k) -> (a -> v) -> [a] -> [(k,[v])]
-collate_on f g = collate_on_adjacent f g . sortOn f
+collate_on f g = collate_on_adjacent f g . sort_on f
 
 -- | 'collate_on' of 'fst' and 'snd'.
 --
@@ -816,6 +828,10 @@ dropRight n = reverse . drop n . reverse
 dropWhileRight :: (a -> Bool) -> [a] -> [a]
 dropWhileRight p = reverse . dropWhile p . reverse
 
+-- | Data.List.dropWhileEnd, which however hugs doesn't know of.
+drop_while_end :: (a -> Bool) -> [a] -> [a]
+drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
+
 {- | 'foldr' form of 'dropWhileRight'.
 
 > drop_while_right Data.Char.isDigit "A440" == "A"
@@ -842,7 +858,7 @@ takeWhileRight p = reverse . takeWhile p . reverse
 take_while_right :: (a -> Bool) -> [a] -> [a]
 take_while_right p =
   snd .
-  foldr (\x xys -> (if p x && fst xys then second (x:) else first (const False)) xys) (True, [])
+  foldr (\x xys -> (if p x && fst xys then bimap id (x:) else bimap (const False) id) xys) (True, [])
 
 -- | Variant of 'take' that allows 'Nothing' to indicate the complete list.
 --
@@ -983,7 +999,7 @@ nub_on f = nubBy ((==) `on` f)
 -- > let r = [[('1','a'),('1','c')],[('2','d')],[('3','b'),('3','e')]]
 -- > in sort_group_on fst (zip "13123" "abcde") == r
 sort_group_on :: Ord b => (a -> b) -> [a] -> [[a]]
-sort_group_on f = group_on f . sortOn f
+sort_group_on f = group_on f . sort_on f
 
 -- | Maybe cons element onto list.
 --
@@ -1035,7 +1051,7 @@ n_stage_compare_on l = n_stage_compare (map (compare `on`) l)
 -- > sort_to "abc" [1,3,2] == "acb"
 -- > sort_to "adbce" [1,4,2,3,5] == "abcde"
 sort_to :: Ord i => [e] -> [i] -> [e]
-sort_to e = map fst . sortOn snd . zip e
+sort_to e = map fst . sort_on snd . zip e
 
 -- | 'flip' of 'sort_to'.
 --
@@ -1310,7 +1326,7 @@ embedding_err = either (error "embedding_err") id . embedding
 -- > is_embedding "embedding" "ming" == True
 -- > is_embedding "embedding" "mind" == False
 is_embedding :: Eq t => [t] -> [t] -> Bool
-is_embedding p q = isRight (embedding (p,q))
+is_embedding p q = T.is_right (embedding (p,q))
 
 -- * Un-list
 
@@ -1324,46 +1340,6 @@ unlist1 l =
 -- | Erroring variant.
 unlist1_err :: [t] -> t
 unlist1_err = fromMaybe (error "unlist1") . unlist1
-
--- * Traversable
-
--- | Replace elements at 'Traversable' with result of joining with elements from list.
---
--- > let t = Tree.Node 0 [Tree.Node 1 [Tree.Node 2 [],Tree.Node 3 []],Tree.Node 4 []]
--- > putStrLn $ Tree.drawTree (fmap show t)
--- > let (_,u) = adopt_shape (\_ x -> x) "abcde" t
--- > putStrLn $ Tree.drawTree (fmap return u)
-adopt_shape :: Traversable t => (a -> b -> c) -> [b] -> t a -> ([b],t c)
-adopt_shape jn l =
-    let f (i:j) k = (j,jn k i)
-        f [] _ = error "adopt_shape: rhs ends"
-    in mapAccumL f l
-
--- | Two-level variant of 'adopt_shape'.
---
--- > adopt_shape_2 (,) [0..4] (words "a bc d") == ([4],[[('a',0)],[('b',1),('c',2)],[('d',3)]])
-adopt_shape_2 :: (Traversable t,Traversable u) => (a -> b -> c) -> [b] -> t (u a) -> ([b],t (u c))
-adopt_shape_2 jn = mapAccumL (adopt_shape jn)
-
--- | Two-level variant of 'zip' [1..]
---
--- > list_number_2 ["number","list","2"]
-list_number_2 :: [[x]] -> [[(Int,x)]]
-list_number_2 = snd . adopt_shape_2 (flip (,)) [1..]
-
-{- | Variant of 'adopt_shape' that considers only 'Just' elements at 'Traversable'.
-
-> let s = "a(b(cd)ef)ghi"
-> let t = group_tree (begin_end_cmp_eq '(' ')') s
-> adopt_shape_m (,) [1..13] t
--}
-adopt_shape_m :: Traversable t => (a -> b-> c) -> [b] -> t (Maybe a) -> ([b],t (Maybe c))
-adopt_shape_m jn l =
-    let f (i:j) k = case k of
-                      Nothing -> (i:j,Nothing)
-                      Just k' -> (j,Just (jn k' i))
-        f [] _ = error "adopt_shape_m: rhs ends"
-    in mapAccumL f l
 
 -- * Tree
 
@@ -1499,4 +1475,3 @@ at_cyclic l n =
         k = Map.size m
         n' = n `mod` k
     in fromMaybe (error "cyc_at") (Map.lookup n' m)
-

@@ -4,14 +4,15 @@ module Music.Theory.IO where
 import Control.Monad {- base -}
 import System.IO {- base -}
 
-import qualified Control.Monad.Loops as Loop {- monad-loops -}
 import qualified Data.ByteString as B {- bytestring -}
+import qualified System.Directory as D {- directory -}
+
+import qualified Control.Monad.Loops as Loop {- monad-loops -}
 import qualified Data.Text as T {- text -}
 import qualified Data.Text.Encoding as T {- text -}
 import qualified Data.Text.IO as T {- text -}
-import qualified System.Directory as D {- directory -}
 
--- | 'T.decodeUtf8' of 'B.readFile'.
+-- | 'T.decodeUtf8' of 'B.readFile', implemented via "Data.Text".
 read_file_utf8_text :: FilePath -> IO T.Text
 read_file_utf8_text = fmap T.decodeUtf8 . B.readFile
 

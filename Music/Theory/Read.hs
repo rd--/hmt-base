@@ -165,11 +165,11 @@ read_bin_err = fromMaybe (error "read_bin") . read_bin
 -- | Error variant of 'readHex'.
 --
 -- > read_hex_err "F0B0" == 61616
-read_hex_err :: (Eq n,Num n) => String -> n
+read_hex_err :: (Eq n, Integral n) => String -> n
 read_hex_err = reads_to_read_precise_err "readHex" readHex
 
 -- | Read hex value from string of at most /k/ places.
-read_hex_sz :: (Eq n, Num n) => Int -> String -> n
+read_hex_sz :: (Eq n, Integral n) => Int -> String -> n
 read_hex_sz k str =
   if length str > k
   then error "read_hex_sz? = > K"
@@ -183,7 +183,7 @@ read_hex_sz k str =
 read_hex_word32 :: String -> Word32
 read_hex_word32 = read_hex_sz 8
 
--- * RATIONAL
+-- * Rational
 
 -- | Parser for 'rational_pp'.
 --
@@ -195,4 +195,3 @@ rational_parse s =
     ([],_) -> error "rational_parse"
     (n,[]) -> read n % 1
     (n,_:d) -> read n % read d
-

@@ -4,14 +4,17 @@ module Music.Theory.Array.Cell_Ref where
 import Data.Char {- base -}
 import Data.Function {- base -}
 import Data.Maybe {- base -}
-import Data.String {- base -}
 
 import qualified Data.Array as A {- array -}
 
 -- | @A@ indexed case-insensitive column references.  The column following @Z@ is @AA@.
 newtype Column_Ref = Column_Ref {column_ref_string :: String}
 
+{-
+--import Data.String {- base -}
 instance IsString Column_Ref where fromString = Column_Ref
+-}
+
 instance Read Column_Ref where readsPrec _ s = [(Column_Ref s,[])]
 instance Show Column_Ref where show = column_ref_string
 instance Eq Column_Ref where (==) = (==) `on` column_index

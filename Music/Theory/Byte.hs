@@ -8,7 +8,6 @@ import Numeric {- base -}
 
 import qualified Data.ByteString as B {- bytestring -}
 import qualified Data.List.Split as Split {- split -}
-import qualified Safe {- safe -}
 
 import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 import qualified Music.Theory.Read as T {- hmt-base -}
@@ -62,9 +61,9 @@ word8_to_digit = intToDigit . T.word8_to_int
 
 -- * Indexing
 
--- | 'Safe.at' of 'T.word8_to_int'
+-- | 'at' of 'T.word8_to_int'
 word8_at :: [t] -> Word8 -> t
-word8_at l = Safe.at l . T.word8_to_int
+word8_at l = (!!) l . T.word8_to_int
 
 -- * Text
 

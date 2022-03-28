@@ -7,6 +7,7 @@
 module Music.Theory.Tuple where
 
 import Data.List {- base -}
+import Data.Monoid {- base -}
 
 -- * P2 (2-product)
 
@@ -48,13 +49,13 @@ t2_infix f (i,j) = i `f` j
 -- | 't2_infix' 'mappend'.
 --
 -- > t2_join ([1,2],[3,4]) == [1,2,3,4]
-t2_join :: Monoid m => T2 m -> m
+t2_join :: Data.Monoid.Monoid m => T2 m -> m
 t2_join = t2_infix mappend
 
 -- | 't2_map' 'mconcat' of 'unzip'
 --
 -- > t2_concat [("ab","cd"),("ef","gh")] == ("abef","cdgh")
-t2_concat :: Monoid m => [T2 m] -> T2 m
+t2_concat :: Data.Monoid.Monoid m => [T2 m] -> T2 m
 t2_concat = t2_map mconcat . unzip
 
 -- | 'sort'

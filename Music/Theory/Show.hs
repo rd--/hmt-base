@@ -2,7 +2,6 @@
 module Music.Theory.Show where
 
 import Data.Char {- base -}
-import Data.List {- base -}
 import Data.Ratio {- base -}
 import Numeric {- base -}
 
@@ -98,7 +97,7 @@ real_pp_trunc :: Real t => Int -> t -> String
 real_pp_trunc k n =
   case break (== '.') (real_pp k n) of
     (i,[]) -> i
-    (i,j) -> case dropWhileEnd (== '0') j of
+    (i,j) -> case T.drop_while_end (== '0') j of
                "." -> if i == "-0" then "0" else i
                z -> i ++ z
 

@@ -12,7 +12,6 @@ To fetch options use 'opt_get' and 'opt_read'.
 module Music.Theory.Opt where
 
 import Control.Monad {- base -}
-import Data.Either {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
 import System.Environment {- base -}
@@ -20,6 +19,7 @@ import System.Exit {- base -}
 
 import qualified Data.List.Split as Split {- split -}
 
+import qualified Music.Theory.Either as T {- hmt-base -}
 import qualified Music.Theory.Read as T {- hmt-base -}
 
 -- | (KEY,VALUE)
@@ -85,7 +85,7 @@ opt_parse s =
 opt_set_parse :: [String] -> ([Opt],[String])
 opt_set_parse =
   let f s = maybe (Right s) Left (opt_parse s)
-  in partitionEithers . map f
+  in T.partition_eithers . map f
 
 -- | Left-biased Opt merge.
 opt_merge :: [Opt] -> [Opt] -> [Opt]
@@ -108,7 +108,7 @@ opt_help_pp usg def = unlines (usg ++ ["",opt_help def])
 
 -- | Print help and exit.
 opt_usage :: OptHelp -> [OptUsr] -> IO ()
-opt_usage usg def = putStrLn (opt_help_pp usg def)  >> exitSuccess
+opt_usage usg def = putStrLn (opt_help_pp usg def)  >> exitWith ExitSuccess
 
 -- | Print help and error.
 opt_error :: OptHelp -> [OptUsr] -> t

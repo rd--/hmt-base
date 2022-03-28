@@ -79,9 +79,9 @@ row_indices nc r = map (\c -> (r,c)) [0 .. nc - 1]
 
 -- | Given number of rows and column index, list column indices.
 --
--- > column_indices 3 1 == [(0,1),(1,1),(2,1)]
-column_indices :: (Enum t, Num t) => t -> t -> [Ix t]
-column_indices nr c = map (\r -> (r,c)) [0 .. nr - 1]
+-- > column_indices_at 3 1 == [(0,1),(1,1),(2,1)]
+column_indices_at :: (Enum t, Num t) => t -> t -> [Ix t]
+column_indices_at nr c = map (\r -> (r,c)) [0 .. nr - 1]
 
 -- | All zero-indexed matrix indices, in row order.  This is the order
 -- given by 'sort'.

@@ -96,7 +96,7 @@ rational_simplifies :: Integral a => (a,a) -> Bool
 rational_simplifies (n,d) = gcd n d /= 1
 
 -- | 'numerator' and 'denominator' of rational.
-rational_nd :: Ratio t -> (t,t)
+rational_nd :: Integral t => Ratio t -> (t,t)
 rational_nd r = (numerator r,denominator r)
 
 -- | Rational as a whole number, or 'Nothing'.
@@ -108,7 +108,7 @@ rational_whole_err :: Integral a => Ratio a -> a
 rational_whole_err = fromMaybe (error "rational_whole") . rational_whole
 
 -- | Sum of numerator & denominator.
-ratio_nd_sum :: Num a => Ratio a -> a
+ratio_nd_sum :: Integral t => Ratio t -> t
 ratio_nd_sum r = numerator r + denominator r
 
 -- | Is /n/ a whole (integral) value.

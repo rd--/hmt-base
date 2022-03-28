@@ -44,3 +44,18 @@ all_right x =
 -- | Lower 'Either' to 'Maybe' by discarding 'Left'.
 either_to_maybe :: Either a b -> Maybe b
 either_to_maybe = either (const Nothing) Just
+
+-- | Data.Either.isLeft, which however hugs doesn't know of.
+is_left :: Either a b -> Bool
+is_left e = case e of { Left  _ -> True; Right _ -> False }
+
+-- | Data.Either.isRight, which however hugs doesn't know of.
+is_right :: Either a b -> Bool
+is_right e = case e of { Left  _ -> False; Right _ -> True }
+
+-- | Data.Either.partitionEithers, which however hugs doesn't know of.
+partition_eithers :: [Either a b] -> ([a],[b])
+partition_eithers =
+  let left  a ~(l, r) = (a:l, r)
+      right a ~(l, r) = (l, a:r)
+  in foldr (either left right) ([],[])

@@ -65,6 +65,7 @@ Library
                    Music.Theory.String
                    Music.Theory.Time.Duration
                    Music.Theory.Time.Notation
+                   Music.Theory.Traversable
                    Music.Theory.Tuple
                    Music.Theory.Unicode
 
