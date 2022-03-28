@@ -91,26 +91,26 @@ byte_seq_hex_pp ws = (if ws then unwords else concat) . map byte_hex_pp_err
 -- | Read two character hexadecimal string.
 --
 -- > mapMaybe read_hex_byte (Split.chunksOf 2 "0FF0F") == [0x0F,0xF0]
-read_hex_byte :: (Eq t,Num t) => String -> Maybe t
+read_hex_byte :: (Eq t, Integral t) => String -> Maybe t
 read_hex_byte s =
     case s of
       [_,_] -> T.reads_to_read_precise readHex s
       _ -> Nothing
 
 -- | Erroring variant.
-read_hex_byte_err :: (Eq t,Num t) => String -> t
+read_hex_byte_err :: (Eq t, Integral t) => String -> t
 read_hex_byte_err = fromMaybe (error "read_hex_byte") . read_hex_byte
 
 -- | Sequence of 'read_hex_byte_err'
 --
 -- > read_hex_byte_seq "000FF0FF" == [0x00,0x0F,0xF0,0xFF]
-read_hex_byte_seq :: (Eq t,Num t) => String -> [t]
+read_hex_byte_seq :: (Eq t, Integral t) => String -> [t]
 read_hex_byte_seq = map read_hex_byte_err . Split.chunksOf 2
 
 -- | Variant that filters white space.
 --
 -- > read_hex_byte_seq_ws "00 0F F0 FF" == [0x00,0x0F,0xF0,0xFF]
-read_hex_byte_seq_ws :: (Eq t,Num t) => String -> [t]
+read_hex_byte_seq_ws :: (Eq t, Integral t) => String -> [t]
 read_hex_byte_seq_ws = read_hex_byte_seq . filter (not . isSpace)
 
 -- * IO

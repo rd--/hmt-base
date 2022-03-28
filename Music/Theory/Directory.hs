@@ -9,7 +9,7 @@ import System.Environment {- base -}
 import Data.List.Split {- split -}
 import System.Directory {- directory -}
 import System.FilePath {- filepath -}
-import System.Process {- process -}
+import qualified System.Process {- process -}
 
 import qualified Music.Theory.Monad as T {- hmt-base -}
 
@@ -88,7 +88,7 @@ dir_list_ext_path dir ext = fmap (map (dir </>)) (dir_list_ext dir ext)
 --
 -- > dir_find "DX7-ROM1A.syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
 dir_find :: FilePath -> FilePath -> IO [FilePath]
-dir_find fn dir = fmap lines (readProcess "find" [dir,"-name",fn] "")
+dir_find fn dir = fmap lines (System.Process.readProcess "find" [dir,"-name",fn] "")
 
 -- | Require that exactly one file is located, else error.
 --
@@ -105,7 +105,7 @@ dir_find_1 fn dir = do
 --
 -- > dir_find_ext ".syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
 dir_find_ext :: String -> FilePath -> IO [FilePath]
-dir_find_ext ext dir = fmap lines (readProcess "find" [dir,"-iname",'*' : ext] "")
+dir_find_ext ext dir = fmap lines (System.Process.readProcess "find" [dir,"-iname",'*' : ext] "")
 
 -- | Post-process 'dir_find_ext' to delete starting directory.
 --
