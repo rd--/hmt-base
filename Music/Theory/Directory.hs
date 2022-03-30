@@ -124,7 +124,7 @@ dir_subset_rel ext dir = do
   c <- getDirectoryContents dir
   return (sort (filter f c))
 
--- | Variant where results have dir/ prefix.
+-- | Variant of dir_subset_rel where results have dir/ prefix.
 --
 -- > dir_subset [".hs"] "/home/rohan/sw/hmt/cmd"
 dir_subset :: [String] -> FilePath -> IO [FilePath]

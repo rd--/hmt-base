@@ -38,3 +38,15 @@ unwords_nil = unwords . filter (not . null)
 -- | Variant of 'unlines' that does not write empty lines for NIL elements.
 unlines_nil :: [String] -> String
 unlines_nil = unlines . filter (not . null)
+
+-- | Capitalise firs character of word.
+--
+-- > capitalise "freq" == "Freq"
+capitalise :: String -> String
+capitalise x = toUpper (head x) : tail x
+
+-- | Apply function at each line of string.
+--
+-- > on_lines reverse "ab\ncde\nfg" == "ba\nedc\ngf\n"
+on_lines :: (String -> String) -> String -> String
+on_lines f = unlines . map f . lines
