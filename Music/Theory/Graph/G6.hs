@@ -30,7 +30,7 @@ g6_dsc_load fn = do
   return r
 
 -- | Call nauty-listg to transform a sequence of G6. (debian = nauty)
-g6_to_edg :: [String] -> IO [T.EDG]
+g6_to_edg :: [String] -> IO [T.Edg]
 g6_to_edg g6 = do
   r <- Process.readProcess "nauty-listg" ["-q","-l0","-e"] (unlines g6)
   return (map T.edg_parse (Split.chunksOf 2 (lines r)))
@@ -40,7 +40,7 @@ g6_to_g :: [String] -> IO [T.G]
 g6_to_g = fmap (map T.edg_to_g) . g6_to_edg
 
 -- | 'g6_to_edg' of 'g6_dsc_load'.
-g6_dsc_load_edg :: FilePath -> IO [(String,T.EDG)]
+g6_dsc_load_edg :: FilePath -> IO [(String,T.Edg)]
 g6_dsc_load_edg fn = do
   dat <- g6_dsc_load fn
   let (dsc,g6) = unzip dat
@@ -58,16 +58,16 @@ g6_dsc_load_gr = fmap (map (second T.edg_to_g)) . g6_dsc_load_edg
 > putStrLn (adj_mtx_to_am m)
 
 -}
-adj_mtx_to_am :: T.ADJ_MTX Int -> String
+adj_mtx_to_am :: T.Adj_Mtx Int -> String
 adj_mtx_to_am (nv,mtx) =
   unlines ["n=" ++ show nv
           ,"m"
           ,unlines (map (unwords . map show) mtx)]
 
--- | Call nauty-amtog to transform a sequence of ADJ_MTX to G6.
+-- | Call nauty-amtog to transform a sequence of Adj_Mtx to G6.
 --
 -- > adj_mtx_to_g6 [m,m]
-adj_mtx_to_g6 :: [T.ADJ_MTX Int] -> IO [String]
+adj_mtx_to_g6 :: [T.Adj_Mtx Int] -> IO [String]
 adj_mtx_to_g6 adj = do
   r <- Process.readProcess "nauty-amtog" ["-q"] (unlines (map adj_mtx_to_am adj))
   return (lines r)

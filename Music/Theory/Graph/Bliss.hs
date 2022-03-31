@@ -25,11 +25,11 @@ bliss_parse_edge txt =
     _ -> error "bliss_parse_edge"
 
 -- | (problem,vertex-colours,edges)
---   BLISS data is one-indexed.
-type BLISS = ((Int,Int), [(Int,Int)], [(Int,Int)])
+--   Bliss data is one-indexed.
+type Bliss = ((Int,Int), [(Int,Int)], [(Int,Int)])
 
--- | Parse 'BLISS'
-bliss_parse :: String -> BLISS
+-- | Parse 'Bliss'
+bliss_parse :: String -> Bliss
 bliss_parse txt =
   let c0_is x = (== x) . head
       ln = dropWhile (c0_is 'c') (lines txt) -- c = comment
@@ -39,9 +39,9 @@ bliss_parse txt =
   in (bliss_parse_problem p,map bliss_parse_vertex_colour n,map bliss_parse_edge e)
 
 -- | 'bliss_parse' of 'readFile'
-bliss_load :: FilePath -> IO BLISS
+bliss_load :: FilePath -> IO Bliss
 bliss_load = fmap bliss_parse . readFile
 
--- | 'BLISS' (one-indexed) to 'T.G' (zero-indexed)
-bliss_to_g :: BLISS -> T.G
+-- | 'Bliss' (one-indexed) to 'T.G' (zero-indexed)
+bliss_to_g :: Bliss -> T.G
 bliss_to_g ((k,_),_,e) = ([0 .. k - 1],map (\(i,j) -> (i - 1,j - 1)) e)

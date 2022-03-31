@@ -46,8 +46,8 @@ Library
                    Music.Theory.Function
                    Music.Theory.Graph.Bliss
                    Music.Theory.Graph.G6
-                   Music.Theory.Graph.LCF
-                   Music.Theory.Graph.LGL
+                   Music.Theory.Graph.Lcf
+                   Music.Theory.Graph.Lgl
                    Music.Theory.Graph.Planar
                    Music.Theory.Graph.Type
                    Music.Theory.IO
