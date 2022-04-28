@@ -34,6 +34,20 @@ double_to_float = realToFrac
 float_to_double :: Float -> Double
 float_to_double = realToFrac
 
+{- | Type-specialise /f/, ie. round, ceiling, truncate
+
+> map (double_to_int round) [0, 0.25 .. 1] == [0, 0, 0, 1, 1]
+> map (double_to_int ceiling) [0, 0.25 .. 1] == [0, 1, 1, 1, 1]
+> map (double_to_int floor) [0, 0.25 .. 1] == [0, 0, 0, 0, 1]
+> map (double_to_int truncate) [0, 0.25 .. 1] == [0, 0, 0, 0, 1]
+-}
+double_to_int :: (Double -> Int) -> Double -> Int
+double_to_int = id
+
+-- | Type specialised 'fromIntegral'
+int_to_rational :: Int -> Rational
+int_to_rational = fromIntegral
+
 -- AUTOGEN (see mk/mk-convert.hs)
 
 -- | Type specialised 'fromIntegral'
@@ -63,6 +77,7 @@ word8_to_int32 = fromIntegral
 -- | Type specialised 'fromIntegral'
 word8_to_int64 :: Word8 -> Int64
 word8_to_int64 = fromIntegral
+
 
 -- | Type specialised 'fromIntegral'
 word8_to_int :: Word8 -> Int
