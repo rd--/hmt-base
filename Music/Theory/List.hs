@@ -484,6 +484,13 @@ filter_halt sel end = filter sel . takeWhile end
 filter_maybe :: (a -> Bool) -> [a] -> [Maybe a]
 filter_maybe f = map (\e -> if f e then Just e else Nothing)
 
+{- | Select only the elements from the list that lie in the indicated range, which is (inclusive, exclusive).
+
+> filterInRange (3, 5) [1, 1.5 .. 9] == [3.0,3.5,4.0,4.5]
+-}
+filterInRange :: Ord a => (a, a) -> [a] -> [a]
+filterInRange (lhs, rhs) = filter (\n -> n >= lhs && n < rhs)
+
 -- | Replace all /p/ with /q/ in /s/.
 --
 -- > replace "_x_" "-X-" "an _x_ string" == "an -X- string"

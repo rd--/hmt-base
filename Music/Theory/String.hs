@@ -39,11 +39,19 @@ unwords_nil = unwords . filter (not . null)
 unlines_nil :: [String] -> String
 unlines_nil = unlines . filter (not . null)
 
--- | Capitalise firs character of word.
---
--- > capitalise "freq" == "Freq"
+{- | Capitalise first character of word.
+
+> capitalise "freqShift" == "FreqShift"
+-}
 capitalise :: String -> String
 capitalise x = toUpper (head x) : tail x
+
+{- | Downcase first character of word.
+
+> unCapitalise "FreqShift" == "freqShift"
+-}
+unCapitalise :: String -> String
+unCapitalise x = toLower (head x) : tail x
 
 -- | Apply function at each line of string.
 --

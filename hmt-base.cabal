@@ -54,7 +54,9 @@ Library
                    Music.Theory.List
                    Music.Theory.Map
                    Music.Theory.Math
+                   Music.Theory.Math.Constant
                    Music.Theory.Math.Convert
+                   Music.Theory.Math.Histogram
                    Music.Theory.Maybe
                    Music.Theory.Monad
                    Music.Theory.Opt
