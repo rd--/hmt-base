@@ -1,6 +1,7 @@
 -- | "Data.Function" related functions.
 module Music.Theory.Function where
 
+import Data.Bifunctor {- base -}
 import Data.Function {- base -}
 
 -- | Unary operator.
@@ -79,6 +80,10 @@ infixr 8 .:, .::, .:::, .::::, .:::::
 
 -- * Bimap
 
--- | Apply /f/ to both elements of a two-tuple, ie. 'Data.Bifunctor.bimap' /f/ /f/.
+-- | Apply f to both sides of p, , ie. 'Data.Bifunctor.bimap' /f/ /f/.  This is the generic version of bimap1.
+bimap1f :: Bifunctor p => (a -> b) -> p a a -> p b b
+bimap1f f = bimap f f
+
+-- | Apply /f/ to both elements of a two-tuple.  Type-specialised bimap1f.
 bimap1 :: (t -> u) -> (t,t) -> (u,u)
-bimap1 f (p,q) = (f p,f q)
+bimap1 = bimap1f
