@@ -55,28 +55,48 @@ eq_on f = (==) `on` f
 
 -- * Function composition.
 
+-- | 'fmap' '.' 'fmap', ie. @(t -> c) -> (a -> b -> t) -> a -> b -> c@.
+fmap2 :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+fmap2 = fmap . fmap
+
+-- | fmap of fmap2, ie. @(t -> d) -> (a -> b -> c -> t) -> a -> b -> c -> d@.
+fmap3 :: (Functor f, Functor g, Functor h) => (a -> b) -> f (g (h a)) -> f (g (h b))
+fmap3 = fmap . fmap2
+
+-- | fmap of fmap3.
+fmap4 :: (Functor f, Functor g, Functor h, Functor i) => (a -> b) -> f (g (h (i a))) -> f (g (h (i b)))
+fmap4 = fmap . fmap3
+
+-- | fmap of fmap4
+fmap5 :: (Functor f, Functor g, Functor h, Functor i, Functor j) => (a -> b) -> f (g (h (i (j a)))) -> f (g (h (i (j b))))
+fmap5 = fmap . fmap4
+
+-- | fmap of fmap5
+fmap6 :: (Functor f, Functor g, Functor h, Functor i, Functor j, Functor k) => (a -> b) -> f (g (h (i (j (k a))))) -> f (g (h (i (j (k b)))))
+fmap6 = fmap . fmap5
+
 -- . is infixr 9, this allows f . g .: h
 infixr 8 .:, .::, .:::, .::::, .:::::
 
--- | 'fmap' '.' 'fmap', ie. @(t -> c) -> (a -> b -> t) -> a -> b -> c@.
+-- | Operator name for fmap2.
 (.:) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
-(.:) = fmap . fmap
+(.:) = fmap2
 
--- | 'fmap' '.' '.:', ie. @(t -> d) -> (a -> b -> c -> t) -> a -> b -> c -> d@.
+-- | Operator name for fmap3.
 (.::) :: (Functor f, Functor g, Functor h) => (a -> b) -> f (g (h a)) -> f (g (h b))
-(.::) = fmap . (.:)
+(.::) = fmap3
 
--- | 'fmap' '.' '.::'.
+-- | Operator name for fmap4.
 (.:::) :: (Functor f, Functor g, Functor h,Functor i) => (a -> b) -> f (g (h (i a))) -> f (g (h (i b)))
-(.:::) = fmap . (.::)
+(.:::) = fmap4
 
--- | 'fmap' '.' '.:::'.
+-- | Operator name for fmap5.
 (.::::) :: (Functor f, Functor g, Functor h,Functor i,Functor j) => (a -> b) -> f (g (h (i (j a)))) -> f (g (h (i (j b))))
-(.::::) = fmap . (.:::)
+(.::::) = fmap5
 
--- | 'fmap' '.' '.::::'.
+-- | Operator name for fmap6.
 (.:::::) :: (Functor f, Functor g, Functor h,Functor i,Functor j,Functor k) => (a -> b) -> f (g (h (i (j (k a))))) -> f (g (h (i (j (k b)))))
-(.:::::) = fmap . (.::::)
+(.:::::) = fmap6
 
 -- * Bimap
 
