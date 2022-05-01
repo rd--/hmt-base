@@ -21,11 +21,18 @@ adopt_shape jn l =
 adopt_shape_2 :: (Traversable t,Traversable u) => (a -> b -> c) -> [b] -> t (u a) -> ([b],t (u c))
 adopt_shape_2 jn = mapAccumL (adopt_shape jn)
 
+{- | Adopt stream to shape of traversable and zip elements.
+
+> adopt_shape_2_zip_stream [1..] ["a", "list", "of", "strings"]
+-}
+adopt_shape_2_zip_stream :: (Traversable t, Traversable u) => [c] -> t (u a) -> t (u (c, a))
+adopt_shape_2_zip_stream s l = snd (adopt_shape_2 (flip (,)) s l)
+
 -- | Two-level variant of 'zip' [1..]
 --
--- > list_number_2 ["number","list","2"]
+-- > list_number_2 ["number","list","two"] == [[(1,'n'),(2,'u'),(3,'m'),(4,'b'),(5,'e'),(6,'r')],[(7,'l'),(8,'i'),(9,'s'),(10,'t')],[(11,'t'),(12,'w'),(13,'o')]]
 list_number_2 :: [[x]] -> [[(Int,x)]]
-list_number_2 = snd . adopt_shape_2 (flip (,)) [1..]
+list_number_2 = adopt_shape_2_zip_stream [1..]
 
 {- | Variant of 'adopt_shape' that considers only 'Just' elements at 'Traversable'.
 

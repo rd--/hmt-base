@@ -1124,7 +1124,6 @@ merge_set = merge_set_by compare
 >    merge_by_resolve right cmp p q == right_r
 
 > merge_by_resolve (\x _ -> x) (compare `on` fst) [(0,'A'),(1,'B'),(4,'E')] (zip [1..] "bcd")
-
 -}
 merge_by_resolve :: (a -> a -> a) -> Compare_F a -> [a] -> [a] -> [a]
 merge_by_resolve jn cmp =
@@ -1239,6 +1238,21 @@ zip_with_perhaps_rhs f g lhs rhs =
       (p:lhs',q:rhs') -> case f p q of
                            Left r -> r : zip_with_perhaps_rhs f g lhs' rhs
                            Right r -> r : zip_with_perhaps_rhs f g lhs' rhs'
+
+{- | Zip a list with a list of lists.
+Ordinarily the list has at least as many elements as there are elements at the list of lists.
+There is also a Traversable form of this called 'adopt_shape_2_zip_stream'.
+
+> zip_list_with_list_of_list [1 ..] ["a", "list", "of", "strings"]
+> zip_list_with_list_of_list [1 .. 9] ["a", "list", "of", "strings"]
+-}
+zip_list_with_list_of_list :: [p] -> [[q]] -> [[(p, q)]]
+zip_list_with_list_of_list s l =
+  case l of
+    [] -> []
+    e:l' ->
+      let n = length e
+      in zip (take n s) e : zip_list_with_list_of_list (drop n s) l'
 
 -- | Fill gaps in a sorted association list, range is inclusive at both ends.
 --
