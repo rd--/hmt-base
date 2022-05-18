@@ -34,6 +34,9 @@ double_to_float = realToFrac
 float_to_double :: Float -> Double
 float_to_double = realToFrac
 
+double_to_word8 :: (Double -> Word8) -> Double -> Word8
+double_to_word8 = id
+
 {- | Type-specialise /f/, ie. round, ceiling, truncate
 
 > map (double_to_int round) [0, 0.25 .. 1] == [0, 0, 0, 1, 1]
