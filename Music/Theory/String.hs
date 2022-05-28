@@ -2,6 +2,7 @@
 module Music.Theory.String where
 
 import Data.Char {- base -}
+import Data.List {- base -}
 
 -- | Case-insensitive '=='.
 --
@@ -16,6 +17,7 @@ filter_cr = filter (not . (==) '\r')
 -- | Delete trailing 'Char' where 'isSpace' holds.
 --
 -- > delete_trailing_whitespace "   str   " == "   str"
+-- > delete_trailing_whitespace "\t\n        \t\n" == ""
 delete_trailing_whitespace :: String -> String
 delete_trailing_whitespace = reverse . dropWhile isSpace . reverse
 
@@ -38,6 +40,14 @@ unwords_nil = unwords . filter (not . null)
 -- | Variant of 'unlines' that does not write empty lines for NIL elements.
 unlines_nil :: [String] -> String
 unlines_nil = unlines . filter (not . null)
+
+{- | unlines without a trailing newline.
+
+> unlines (words "a b c") == "a\nb\nc\n"
+> unlinesNoTrailingNewline (words "a b c") == "a\nb\nc"
+-}
+unlinesNoTrailingNewline :: [String] -> String
+unlinesNoTrailingNewline = intercalate "\n"
 
 {- | Capitalise first character of word.
 

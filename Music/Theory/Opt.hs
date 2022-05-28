@@ -1,4 +1,4 @@
-{- | Very simple CLI option parser.
+{- | Very simple command line interface option parser.
 
 Only allows options of the form --key=value, with the form --key equal to --key=True.
 
@@ -22,11 +22,13 @@ import qualified Data.List.Split as Split {- split -}
 import qualified Music.Theory.Either as T {- hmt-base -}
 import qualified Music.Theory.Read as T {- hmt-base -}
 
--- | (KEY,VALUE)
---   Key does not include leading '--'.
+{- | (Key,Value)
+
+Key does not include leading '--'.
+-}
 type Opt = (String,String)
 
--- | (KEY,DEFAULT-VALUE,TYPE,NOTE)
+-- | (Key,Default-Value,Type,Note)
 type OptUsr = (String,String,String,String)
 
 -- | Re-write default values at OptUsr.
@@ -43,13 +45,13 @@ opt_plain (k,v,_,_) = (k,v)
 
 -- | OptUsr to help string, indent is two spaces.
 opt_usr_help :: OptUsr -> String
-opt_usr_help (k,v,t,n) = concat ["  ",k,":",t," -- ",n,"; default=",if null v then "NIL" else v]
+opt_usr_help (k,v,t,n) = concat ["  ",k,":",t," -- ",n,"; default=",if null v then "Nil" else v]
 
 -- | 'unlines' of 'opt_usr_help'
 opt_help :: [OptUsr] -> String
 opt_help = unlines . map opt_usr_help
 
--- | Lookup KEY in Opt, error if non-existing.
+-- | Lookup Key in Opt, error if non-existing.
 opt_get :: [Opt] -> String -> String
 opt_get o k = fromMaybe (error ("opt_get: " ++ k)) (lookup k o)
 
@@ -120,7 +122,7 @@ opt_verify usg def =
   let k_set = map (fst . opt_plain) def
       f (k,_) = if k `elem` k_set
                 then return ()
-                else putStrLn ("UNKNOWN KEY: " ++ k ++ "\n") >> opt_usage usg def
+                else putStrLn ("Unknown Key: " ++ k ++ "\n") >> opt_usage usg def
   in mapM_ f
 
 -- | 'opt_set_parse' and maybe 'opt_verify' and 'opt_merge' of 'getArgs'.
