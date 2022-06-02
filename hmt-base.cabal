@@ -40,6 +40,7 @@ Library
                    Music.Theory.Bool
                    Music.Theory.Byte
                    Music.Theory.Combinations
+                   Music.Theory.Concurrent
                    Music.Theory.Directory
                    Music.Theory.Either
                    Music.Theory.Enum
