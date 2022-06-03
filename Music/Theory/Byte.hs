@@ -1,10 +1,14 @@
 -- | Byte functions.
 module Music.Theory.Byte where
 
+import Control.Monad.ST {- base -}
 import Data.Char {- base -}
 import Data.Maybe {- base -}
 import Data.Word {- base -}
 import Numeric {- base -}
+
+import Data.Array.ST {- array -}
+import Data.Array.Unsafe {- array -}
 
 import qualified Data.ByteString as B {- bytestring -}
 import qualified Data.List.Split as Split {- split -}
@@ -142,3 +146,21 @@ let r = B.unpack (Base64.decodeLenient (B.pack e))
 map word8_to_char e
 
 -}
+
+-- * Cast
+
+-- > castFloatToWord32 3.141 == 1078527525
+castFloatToWord32 :: Float -> Word32
+castFloatToWord32 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word32)
+
+-- > castWord32ToFloat 1078527525 == 3.141
+castWord32ToFloat :: Word32 -> Float
+castWord32ToFloat d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Float)
+
+-- > castDoubleToWord64 3.141 == 4614255322014802772
+castDoubleToWord64 :: Double -> Word64
+castDoubleToWord64 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word64)
+
+-- > castWord64ToDouble 4614255322014802772 == 3.141
+castWord64ToDouble :: Word64 -> Double
+castWord64ToDouble d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Double)
