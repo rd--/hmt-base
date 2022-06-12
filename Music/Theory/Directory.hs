@@ -40,12 +40,12 @@ path_from_env k = do
 
 > p = ["/home/rohan/sw/hmt-base/Music", "/home/rohan/sw/hmt/Music"]
 > r <- path_recursive p
-> length r == 41
+> length r == 44
 -}
 path_recursive :: [FilePath] -> IO [FilePath]
 path_recursive p = do
   p' <- mapM dir_subdirs_recursively p
-  return (concat p')
+  return (p ++ concat p')
 
 {- | Scan a list of directories until a file is located, or not.
 Stop once a file is located, do not traverse any sub-directory structure.
