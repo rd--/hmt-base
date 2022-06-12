@@ -4,14 +4,13 @@ module Music.Theory.Directory where
 import Control.Monad {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
-import System.Environment {- base -}
+import qualified System.Environment {- base -}
 
-import Data.List.Split {- split -}
+import qualified Data.List.Split {- split -}
 import System.Directory {- directory -}
 import System.FilePath {- filepath -}
-import qualified System.Process {- process -}
 
-import qualified Music.Theory.Monad as T {- hmt-base -}
+import qualified Music.Theory.Monad {- hmt-base -}
 
 {- | 'takeDirectory' gives different answers depending on whether there is a trailing separator.
 
@@ -24,7 +23,7 @@ parent_dir = takeDirectory . dropTrailingPathSeparator
 
 -- | Colon separated path list.
 path_split :: String -> [FilePath]
-path_split = splitOn ":"
+path_split = Data.List.Split.splitOn ":"
 
 {- | Read environment variable and split path.
      Error if enviroment variable not set.
@@ -34,13 +33,25 @@ path_split = splitOn ":"
 -}
 path_from_env :: String -> IO [FilePath]
 path_from_env k = do
-  p <- lookupEnv k
+  p <- System.Environment.lookupEnv k
   maybe (error ("Environment variable not set: " ++ k)) (return . path_split) p
 
--- | Scan a list of directories until a file is located, or not.
---   This does not traverse any sub-directory structure.
---
--- > mapM (path_scan ["/sbin","/usr/bin"]) ["fsck","ghc"]
+{- | Expand a path to include all subdirectories recursively.
+
+> p = ["/home/rohan/sw/hmt-base/Music", "/home/rohan/sw/hmt/Music"]
+> r <- path_recursive p
+> length r == 41
+-}
+path_recursive :: [FilePath] -> IO [FilePath]
+path_recursive p = do
+  p' <- mapM dir_subdirs_recursively p
+  return (concat p')
+
+{- | Scan a list of directories until a file is located, or not.
+Stop once a file is located, do not traverse any sub-directory structure.
+
+> mapM (path_scan ["/sbin","/usr/bin"]) ["fsck","ghc"]
+-}
 path_scan :: [FilePath] -> FilePath -> IO (Maybe FilePath)
 path_scan p fn =
     case p of
@@ -49,24 +60,25 @@ path_scan p fn =
                     f x = if x then return (Just nm) else path_scan p' fn
                 in doesFileExist nm >>= f
 
--- | Search each directory on path recursively for file.
---
--- > path_scan_recursively ["/home/rohan/opt/src/som/are-we-fast-yet/benchmarks/SOM"] "Json.som"
-path_scan_recursively :: [FilePath] -> FilePath -> IO (Maybe FilePath)
-path_scan_recursively p fn =
-  case p of
-    [] -> return Nothing
-    dir:p' -> do
-      r <- dir_find fn dir
-      case r of
-        [] -> path_scan_recursively p' fn
-        x:_ -> return (Just x)
-
 -- | Erroring variant.
 path_scan_err :: [FilePath] -> FilePath -> IO FilePath
 path_scan_err p x =
     let err = error (concat ["path_scan: ",show p,": ",x])
     in fmap (fromMaybe err) (path_scan p x)
+
+{- | Scan a list of directories and return all located files.
+Do not traverse any sub-directory structure.
+Since 1.2.1.0 there is also findFiles.
+
+> let path = ["/home/rohan/sw/hmt-base","/home/rohan/sw/hmt"]
+> path_search path "README.md"
+> findFiles path "README.md"
+-}
+path_search :: [FilePath] -> FilePath -> IO [FilePath]
+path_search p fn = do
+  let fq = map (\dir -> dir </> fn) p
+      chk q = doesFileExist q >>= \x -> return (if x then Just q else Nothing)
+  fmap catMaybes (mapM chk fq)
 
 -- | Get sorted list of files at /dir/ with /ext/, ie. ls dir/*.ext
 --
@@ -82,38 +94,6 @@ dir_list_ext dir ext = do
 -- > dir_list_ext_path "/home/rohan/rd/j/" ".hs"
 dir_list_ext_path :: FilePath -> String -> IO [FilePath]
 dir_list_ext_path dir ext = fmap (map (dir </>)) (dir_list_ext dir ext)
-
--- | Find files having indicated filename.
---   This runs the system utility /find/, so is UNIX only.
---
--- > dir_find "DX7-ROM1A.syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
-dir_find :: FilePath -> FilePath -> IO [FilePath]
-dir_find fn dir = fmap lines (System.Process.readProcess "find" [dir,"-name",fn] "")
-
--- | Require that exactly one file is located, else error.
---
--- > dir_find_1 "DX7-ROM1A.syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
-dir_find_1 :: FilePath -> FilePath -> IO FilePath
-dir_find_1 fn dir = do
-  r <- dir_find fn dir
-  case r of
-    [x] -> return x
-    _ -> error "dir_find_1?"
-
--- | Recursively find files having case-insensitive filename extension.
---   This runs the system utility /find/, so is UNIX only.
---
--- > dir_find_ext ".syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
-dir_find_ext :: String -> FilePath -> IO [FilePath]
-dir_find_ext ext dir = fmap lines (System.Process.readProcess "find" [dir,"-iname",'*' : ext] "")
-
--- | Post-process 'dir_find_ext' to delete starting directory.
---
--- > dir_find_ext_rel ".syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
-dir_find_ext_rel :: String -> FilePath -> IO [FilePath]
-dir_find_ext_rel ext dir =
-  let f = fromMaybe (error "dir_find_ext_rel?") . stripPrefix dir
-  in fmap (map f) (dir_find_ext ext dir)
 
 -- | Subset of files in /dir/ with an extension in /ext/.
 --   Extensions include the leading dot and are case-sensitive.
@@ -140,6 +120,19 @@ dir_subdirs_rel dir =
 dir_subdirs :: FilePath -> IO [FilePath]
 dir_subdirs dir = fmap (map (dir </>)) (dir_subdirs_rel dir)
 
+{- | Recursive form of 'dir_subdirs'.
+
+> dir_subdirs_recursively "/home/rohan/sw/hmt-base/Music"
+-}
+dir_subdirs_recursively :: FilePath -> IO [FilePath]
+dir_subdirs_recursively dir = do
+  subdirs <- dir_subdirs dir
+  case subdirs of
+    [] -> return []
+    _ -> do
+      subdirs' <- mapM dir_subdirs_recursively subdirs
+      return (subdirs ++ concat subdirs')
+
 -- | If path is not absolute, prepend current working directory.
 --
 -- > to_absolute_cwd "x"
@@ -151,7 +144,7 @@ to_absolute_cwd x =
 
 -- | If /i/ is an existing file then /j/ else /k/.
 if_file_exists :: (FilePath,IO t,IO t) -> IO t
-if_file_exists (i,j,k) = T.m_if (doesFileExist i,j,k)
+if_file_exists (i,j,k) = Music.Theory.Monad.m_if (doesFileExist i,j,k)
 
 -- | 'createDirectoryIfMissing' (including parents) and then 'writeFile'
 writeFile_mkdir :: FilePath -> String -> IO ()

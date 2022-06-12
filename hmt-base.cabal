@@ -42,6 +42,7 @@ Library
                    Music.Theory.Combinations
                    Music.Theory.Concurrent
                    Music.Theory.Directory
+                   Music.Theory.Directory.Find
                    Music.Theory.Either
                    Music.Theory.Enum
                    Music.Theory.Function
