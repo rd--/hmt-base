@@ -1496,3 +1496,14 @@ at_cyclic l n =
         k = Map.size m
         n' = n `mod` k
     in fromMaybe (error "cyc_at") (Map.lookup n' m)
+
+{- | Index list from the end, assuming the list is longer than n + 1.
+
+atFromEnd [1 .. 30] 0 == 30
+atFromEnd [1..100] 15 == 85
+-}
+atFromEnd :: [t] -> Int -> t
+atFromEnd lst n =
+  let loop xs ys = last (zipWith const xs ys)
+  in loop lst (drop n lst)
+
