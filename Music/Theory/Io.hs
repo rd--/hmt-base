@@ -1,5 +1,5 @@
 -- | "System.IO" related functions.
-module Music.Theory.IO where
+module Music.Theory.Io where
 
 import Control.Monad {- base -}
 import System.IO {- base -}
@@ -8,6 +8,7 @@ import qualified Data.ByteString as B {- bytestring -}
 import qualified System.Directory as D {- directory -}
 
 import qualified Control.Monad.Loops as Loop {- monad-loops -}
+
 import qualified Data.Text as T {- text -}
 import qualified Data.Text.Encoding as T {- text -}
 import qualified Data.Text.IO as T {- text -}

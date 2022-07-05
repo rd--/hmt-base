@@ -34,7 +34,7 @@ Library
   GHC-Options:     -Wall -fwarn-tabs
   Exposed-modules: Music.Theory.Array
                    Music.Theory.Array.Cell_Ref
-                   Music.Theory.Array.CSV
+                   Music.Theory.Array.Csv
                    Music.Theory.Array.Text
                    Music.Theory.Bits
                    Music.Theory.Bool
@@ -52,7 +52,7 @@ Library
                    Music.Theory.Graph.Lgl
                    Music.Theory.Graph.Planar
                    Music.Theory.Graph.Type
-                   Music.Theory.IO
+                   Music.Theory.Io
                    Music.Theory.List
                    Music.Theory.Map
                    Music.Theory.Math
