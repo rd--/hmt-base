@@ -952,6 +952,10 @@ compare_adjacent = compare_adjacent_by compare
 headTail :: [a] -> (a, [a])
 headTail l = (head l, tail l)
 
+-- | First and second elements of list. Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list has less than two elements.
+firstSecond :: [t] -> (t, t)
+firstSecond l = (l !! 0, l !! 1)
+
 -- | 'Data.List.groupBy' does not make adjacent comparisons, it
 -- compares each new element to the start of the group.  This function
 -- is the adjacent variant.
