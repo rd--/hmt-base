@@ -948,6 +948,10 @@ compare_adjacent_by = zip_with_adj
 compare_adjacent :: Ord a => [a] -> [Ordering]
 compare_adjacent = compare_adjacent_by compare
 
+-- | Head and tail of list.  Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list is empty.
+headTail :: [a] -> (a, [a])
+headTail l = (head l, tail l)
+
 -- | 'Data.List.groupBy' does not make adjacent comparisons, it
 -- compares each new element to the start of the group.  This function
 -- is the adjacent variant.
@@ -960,7 +964,7 @@ adjacent_groupBy f p =
       [] -> []
       [x] -> [[x]]
       x:y:p' -> let r = adjacent_groupBy f (y:p')
-                    r0:r' = r
+                    (r0, r') = headTail r
                 in if f x y
                    then (x:r0) : r'
                    else [x] : r
@@ -1448,8 +1452,9 @@ remove_ixs = operate_ixs False
 -- > replace_ix negate 1 [1..3] == [1,-2,3]
 replace_ix :: (a -> a) -> Int -> [a] -> [a]
 replace_ix f i p =
-    let (q,r:s) = splitAt i p
-    in q ++ (f r : s)
+    let (q,r) = splitAt i p
+        (s,t) = headTail r
+    in q ++ (f s : t)
 
 -- | List equality, ignoring indicated indices.
 --
