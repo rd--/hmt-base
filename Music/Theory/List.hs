@@ -129,6 +129,20 @@ split1 c l =
 split1_err :: (Eq a, Show a) => a -> [a] -> ([a], [a])
 split1_err e s = fromMaybe (error (show ("split1",e,s))) (split1 e s)
 
+{- | If length is not even the second "half" is longer.
+
+> split_into_halves [] == ([],[])
+> split_into_halves [1] == ([],[1])
+> split_into_halves [1 .. 2] == ([1],[2])
+> split_into_halves [1 .. 8] == ([1,2,3,4],[5,6,7,8])
+> split_into_halves [1 .. 9] == ([1,2,3,4],[5,6,7,8,9])
+-}
+split_into_halves :: [t] -> ([t], [t])
+split_into_halves l =
+  let n = length l `div` 2
+      m = if n == 1 then 1 else n + (n `mod` 2) -- the two element list is a special case
+  in (take m l, drop m l)
+
 -- * Rotate
 
 -- | Generic form of 'rotate_left'.
@@ -274,7 +288,7 @@ adj4 n l =
       p:q:r:s:_ -> (p,q,r,s) : adj4 n (drop n l)
       _ -> []
 
--- | Interleave elements of /p/ and /q/.
+-- | Interleave elements of /p/ and /q/.  If not of equal length elements are discarded.
 --
 -- > interleave [1..3] [4..6] == [1,4,2,5,3,6]
 -- > interleave ".+-" "abc" == ".a+b-c"
