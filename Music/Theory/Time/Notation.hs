@@ -10,6 +10,7 @@ import qualified Data.List.Split as Split {- split -}
 import qualified Data.Time as Time {- time -}
 
 import qualified Music.Theory.Function as Function {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- * Integral types
 
@@ -77,7 +78,7 @@ parse_time_str = Time.parseTimeOrError True Time.defaultTimeLocale
 format_time_str :: Time.FormatTime t => String -> t -> String
 format_time_str = Time.formatTime Time.defaultTimeLocale
 
--- * ISO-8601
+-- * Iso-8601
 
 -- | Parse date in ISO-8601 extended (@YYYY-MM-DD@) or basic (@YYYYMMDD@) form.
 --
@@ -371,7 +372,7 @@ minsec_parse :: (Num n,Read n) => String -> GMinSec n
 minsec_parse x =
     case Split.splitOn ":" x of
       [m,s] -> (read m,read s)
-      _ -> error "parse_minsec"
+      _ -> error ("parse_minsec: " ++ x)
 
 -- * MinCsec
 
@@ -447,7 +448,7 @@ dhms_to_sec (d,h,m,s) = sum [d * 24 * 60 * 60,h * 60 * 60,m * 60,s]
 parse_dhms_generic :: (Integral n,Read n) => String -> (n,n,n,n)
 parse_dhms_generic =
     let sep_elem = Split.split . Split.keepDelimsR . Split.oneOf
-        sep_last x = let e:x' = reverse x in (reverse x',e)
+        sep_last x = let (e, x') = List.headTail (reverse x) in (reverse x',e)
         p x = case sep_last x of
                 (n,'d') -> read n * 24 * 60 * 60
                 (n,'h') -> read n * 60 * 60
@@ -465,7 +466,7 @@ parse_dhms_generic =
 parse_dhms :: String -> Dhms
 parse_dhms = parse_dhms_generic
 
--- * WEEK
+-- * Week
 
 -- | Week that /t/ lies in.
 --
@@ -473,7 +474,7 @@ parse_dhms = parse_dhms_generic
 time_to_week :: Time.UTCTime -> Week
 time_to_week = read . format_time_str "%V"
 
--- * UTIL
+-- * Util
 
 -- | Given printer, pretty print time span.
 span_pp :: (t -> String) -> (t,t) -> String
