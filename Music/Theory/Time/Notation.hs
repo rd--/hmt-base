@@ -372,7 +372,7 @@ minsec_parse :: (Num n,Read n) => String -> GMinSec n
 minsec_parse x =
     case Split.splitOn ":" x of
       [m,s] -> (read m,read s)
-      _ -> error ("parse_minsec: " ++ x)
+      _ -> error ("minsec_parse: " ++ x)
 
 -- * MinCsec
 
