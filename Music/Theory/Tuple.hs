@@ -278,6 +278,9 @@ t6_sum (a,b,c,d,e,f) = a + b + c + d + e + f
 
 type T7 a = (a,a,a,a,a,a,a)
 
+t7_from_list :: [t] -> T7 t
+t7_from_list l = case l of {[p,q,r,s,t,u,v] -> (p,q,r,s,t,u,v);_ -> error "t7_from_list"}
+
 t7_to_list :: T7 t -> [t]
 t7_to_list (p,q,r,s,t,u,v) = [p,q,r,s,t,u,v]
 
@@ -287,6 +290,9 @@ t7_map f (p,q,r,s,t,u,v) = (f p,f q,f r,f s,f t,f u,f v)
 -- * T8 (8-tuple, regular)
 
 type T8 a = (a,a,a,a,a,a,a,a)
+
+t8_from_list :: [t] -> T8 t
+t8_from_list l = case l of {[p,q,r,s,t,u,v,w] -> (p,q,r,s,t,u,v,w);_ -> error "t8_from_list"}
 
 t8_to_list :: T8 t -> [t]
 t8_to_list (p,q,r,s,t,u,v,w) = [p,q,r,s,t,u,v,w]
