@@ -288,3 +288,15 @@ stern_brocot_tree_f_r = map (map (uncurry (%))) . stern_brocot_tree_f . map rati
 -}
 outer_product :: (a -> b -> c) -> [a] -> [b] -> [[c]]
 outer_product f xs ys = map (flip map ys . f) xs
+
+{-
+
+{-# Language FlexibleInstances #-}
+
+{- | Class for division operator that answers a Rational. -}
+class DivideRational n where divideRational :: n -> n -> Rational
+instance DivideRational Int where divideRational i j = (fromIntegral i % fromIntegral j)
+instance DivideRational Integer where divideRational = (%)
+instance DivideRational (Ratio Integer) where divideRational = (/)
+
+-}
