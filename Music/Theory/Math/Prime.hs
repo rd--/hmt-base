@@ -12,16 +12,22 @@ import qualified Music.Theory.List as List {- hmt -}
 import qualified Music.Theory.Math as Math {- hmt -}
 import qualified Music.Theory.Unicode as Unicode {- hmt -}
 
--- | Alias for 'Primes.primes'.
---
--- > take 12 primes_list == [2,3,5,7,11,13,17,19,23,29,31,37]
+{- | Alias for 'Primes.primes'.
+
+> take 12 primes_list == [2,3,5,7,11,13,17,19,23,29,31,37]
+-}
 primes_list :: Integral i => [i]
 primes_list = Primes.primes
 
--- | Give zero-index of prime, or Nothing if value is not prime.
---
--- > map prime_k [2,3,5,7,11,13,17,19,23,29,31,37] == map Just [0 .. 11]
--- > map prime_k [1,4,6,8,9,10,12,14,15,16,18,20,21,22] == replicate 14 Nothing
+{- | Give zero-index of prime, or Nothing if value is not prime.
+
+> map prime_k [2,3,5,7,11,13,17,19,23,29,31,37] == map Just [0 .. 11]
+> map prime_k [1,4,6,8,9,10,12,14,15,16,18,20,21,22] == replicate 14 Nothing
+> filter Primes.isPrime [1 .. 99] == [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
+> length (filter Primes.isPrime [1 .. 999]) == 168
+> length (filter Primes.isPrime [1 .. 9999]) == 1229
+> length (filter Primes.isPrime [1 .. 99999]) == 9592
+-}
 prime_k :: Integral a => a -> Maybe Int
 prime_k i = if Primes.isPrime i then Just (List.findIndex_err (== i) primes_list) else Nothing
 
