@@ -667,11 +667,19 @@ d_dx = d_dx_by (-)
 difference :: Eq a => [a] -> [a] -> [a]
 difference p q = filter (`notElem` q) p
 
--- | Is /p/ a subset of /q/, ie. is 'intersect' of /p/ and /q/ '==' /p/.
---
--- > map (is_subset [1,2]) [[1],[1,2],[1,2,3]] == [False,True,True]
+{- | Is /p/ a subset of /q/, ie. is 'intersect' of /p/ and /q/ '==' /p/.
+
+> map (is_subset [1,2]) [[1],[1,2],[1,2,3]] == [False,True,True]
+-}
 is_subset :: Eq a => [a] -> [a] -> Bool
 is_subset p q = p `intersect` q == p
+
+{- | Is /p/ a subset of /q/, ie. are all elements of /p/ elements of /q/.
+
+> map (isSubsetOf [1,2]) [[1],[1,2],[1,2,3]] == [False,True,True]
+-}
+isSubsetOf :: Eq t => [t] -> [t] -> Bool
+isSubsetOf p q = all (\e -> e `elem` q) p
 
 -- | Is /p/ a proper subset of /q/, 'is_subset' and 'not' equal.
 --
