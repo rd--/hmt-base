@@ -487,6 +487,22 @@ Upper Wythoff sequence (a Beatty sequence): a(n) = floor(n*phi^2), where phi = (
 a001950 :: Integral n => [n]
 a001950 = zipWith (+) a000201 [1..]
 
+{- | <https://oeis.org/A002145>
+
+Primes of the form 4*k + 3.
+
+> [3,7,11,19,23,31,43,47,59,67,71,79,83,103,107,127,131,139,151,163,167,179,191,199,211,223,227,239,251] `isPrefixOf` a002145
+
+-}
+a002145 :: [Integer]
+a002145 = filter ((== 1) . a010051_n) [3, 7 ..]
+
+a002145_n :: Integer -> Integer
+a002145_n n = a002145 `genericIndex` (n - 1)
+
+
+-- Reinhard Zumkeller, Aug 02 2015, Sep 23 2011
+
 -- | <http://oeis.org/A002267>
 --
 -- The 15 supersingular primes.
@@ -892,6 +908,28 @@ a(n) = a(n-3) + a(n-4), with a(0)=1, a(1)=a(2)=0, a(3)=1
 a017817 :: Num n => [n]
 a017817 = 1 : 0 : 0 : 1 : zipWith (+) a017817 (tail a017817)
 
+{- | <http://oeis.org/A020639>
+
+Lpf(n): least prime dividing n (when n > 1); a(1) = 1. Or, smallest prime factor of n, or smallest prime divisor of n.		883
+
+> [1,2,3,2,5,2,7,2,3,2,11,2,13,2,3,2,17,2,19,2,3,2,23,2,5,2,3,2,29,2,31,2,3,2,5,2,37,2,3,2,41,2,43] `isPrefixOf` a020639
+-}
+a020639 :: [Integer]
+a020639 = map a020639_n [1..]
+
+a020639_n :: Integral n => n -> n
+a020639_n n =
+  let spf l =
+        case l of
+          p:ps ->
+            if n < p ^ 2
+            then n
+            else if mod n p == 0
+                 then p
+                 else spf ps
+          _ -> error "a020639_n"
+  in spf a000040
+
 {- | <http://oeis.org/A020695>
 
 Pisot sequence E(2,3).
@@ -930,6 +968,30 @@ Fibonacci sequence beginning 1, 6.
 -}
 a022096 :: Num n => [n]
 a022096 = 1 : 6 : zipWith (+) a022096 (tail a022096)
+
+{- | <http://oeis.org/A027748>
+
+Irregular triangle in which first row is 1, n-th row (n > 1) lists distinct prime factors of n.
+
+> [1,2,3,2,5,2,3,7,2,3,2,5,11,2,3,13,2,7,3,5,2,17,2,3,19,2,5,3,7,2,11,23,2,3,5,2,13,3,2,7,29] `isPrefixOf` a027748
+-}
+a027748 :: [Integer]
+a027748 = concat a027748_table
+
+a027748_nk :: Int -> Int -> Integer
+a027748_nk n k = a027748_table !! (n - 1) !! (k - 1)
+
+a027748_table :: [[Integer]]
+a027748_table = map a027748_row [1..]
+
+a027748_row :: Integral n => n -> [n]
+a027748_row n =
+  if n == 1
+  then [1]
+  else let fact 1 = Nothing
+           fact x = let p = a020639_n x  -- smallest prime factor of x
+                    in Just (p, until ((> 0) . (`mod` p)) (`div` p) x)
+       in unfoldr fact n
 
 {- | <https://oeis.org/A027750>
 
@@ -1088,6 +1150,21 @@ Triangle read by rows, denominator of fractions of a variant of the Farey series
 a049456 :: Integral n => [n]
 a049456 = map snd (concat Math.stern_brocot_tree_lhs)
 
+{- | <https://oeis.org/A050252>
+
+Number of digits in the prime factorization of n (counting terms of the form p^1 as p).
+
+[1,1,1,2,1,2,1,2,2,2,2,3,2,2,2,2,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,2,3,3,2,4,2,3,3,3,2,3,2,4,3,3,2,3,2,3,3,4,2] `isPrefixOf` a050252
+-}
+a050252 :: [Integer]
+a050252 = map a050252_n [1..]
+
+a050252_n :: Integer -> Integer
+a050252_n n =
+  if n == 1
+  then 1
+  else sum (map a055642_n (a027748_row n ++ filter (> 1) (a124010_row n)))
+
 {- | <https://oeis.org/A051037>
 
 5-smooth numbers, i.e., numbers whose prime divisors are all <= 5.
@@ -1109,6 +1186,18 @@ a053121 = concat a053121_tbl
 
 a053121_tbl :: Num n => [[n]]
 a053121_tbl = iterate (\row -> zipWith (+) (0 : row) (tail row ++ [0, 0])) [1]
+
+{- | <https://oeis.org/A055642>
+
+Number of digits in the decimal expansion of n.		431
+
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] `isPrefixOf` a055642
+-}
+a055642 :: [Integer]
+a055642 = map (genericLength . show) [1 ..]
+
+a055642_n :: Integer -> Integer
+a055642_n = genericLength . show
 
 {- | <http://oeis.org/A058265>
 
@@ -1296,6 +1385,24 @@ a098550 =
               else g xs
         in g ws
   in 1 : 2 : 3 : f 2 3 [4 ..]
+
+{- | <https://oeis.org/A010051>
+
+Characteristic function of primes: 1 if n is prime, else 0.		1132
+
+[0,1,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1] `isPrefixOf` a010051
+
+-}
+a010051_n :: Integer -> Integer
+a010051_n n = a010051 `genericIndex` (n - 1)
+
+a010051 :: [Integer]
+a010051 =
+  let ch z =
+        case z of
+          (i, ps'@(p:ps)) -> Just (if i == p then 1 else 0, (i + 1, if i == p then ps else ps'))
+          _ -> error "a010051"
+  in unfoldr ch (1, a000040)
 
 {- | <http://oeis.org/A105809>
 

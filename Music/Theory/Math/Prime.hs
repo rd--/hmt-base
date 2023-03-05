@@ -123,13 +123,17 @@ rat_prime_factors_sgn r = let (n,d) = rat_prime_factors r in sortOn abs (n ++ ma
 rational_prime_factors_sgn :: Integral i => Ratio i -> [i]
 rational_prime_factors_sgn = rat_prime_factors_sgn . Math.rational_nd
 
--- | The largest prime factor of n/d.
+{- | The largest prime factor of n/d.
+
+> rat_prime_limit (243, 125) == 5
+-}
 rat_prime_limit :: Integral i => (i,i) -> i
 rat_prime_limit = uncurry max . Function.bimap1 prime_limit
 
--- | The largest prime factor of /n/.
---
--- > rational_prime_limit (243/125) == 5
+{- | The largest prime factor of /n/.
+
+> rational_prime_limit (243/125) == 5
+-}
 rational_prime_limit :: Integral i => Ratio i -> i
 rational_prime_limit = rat_prime_limit . Math.rational_nd
 
