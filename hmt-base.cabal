@@ -49,6 +49,7 @@ Library
                    Music.Theory.Enum
                    Music.Theory.Function
                    Music.Theory.Graph.Bliss
+                   Music.Theory.Graph.Dot
                    Music.Theory.Graph.G6
                    Music.Theory.Graph.Lcf
                    Music.Theory.Graph.Lgl

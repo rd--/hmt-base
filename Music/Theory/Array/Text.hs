@@ -32,7 +32,7 @@ table_concat sq = map concat (transpose sq)
 table_number_rows :: Int -> Text_Table -> Text_Table
 table_number_rows k = zipWith (\i r -> show i : r) [k ..]
 
-{- | (HEADER,PAD-LEFT,EQ-WIDTH,COL-SEP,TBL-DELIM).
+{- | (Header,Pad-Left,Equal-Width,Column-Separator,Table-Delimiters).
 
 Options are:
  has header

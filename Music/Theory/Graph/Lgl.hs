@@ -1,4 +1,4 @@
-{- | LGL = Large Graph Layout (NCOL, LGL)
+{- | Lgl = Large Graph Layout (Ncol, Lgl)
 
 <http://lgl.sourceforge.net/#FileFormat>
 -}
