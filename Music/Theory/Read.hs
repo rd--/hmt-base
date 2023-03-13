@@ -80,22 +80,29 @@ read_integral_allow_commas_err s =
     let err = error ("read_integral_allow_commas: misplaced commas: " ++ s)
     in fromMaybe err (read_integral_allow_commas_maybe s)
 
+read_integral_err :: (Integral i,Read i) => Bool -> String -> i
+read_integral_err allowCommas s =
+  if allowCommas
+  then read_integral_allow_commas_err s
+  else reads_exact_err "read_integral" s
+
 -- | Type specialised.
 --
 -- > map read_int_allow_commas ["123456","123,456","123,456,789"] == [123456,123456,123456789]
 read_int_allow_commas :: String -> Int
 read_int_allow_commas = read_integral_allow_commas_err
 
--- | Read a ratio where the division is given by @/@ instead of @%@
--- and the integers allow commas.
---
--- > map read_ratio_with_div_err ["123,456/7","123,456,789"] == [123456/7,123456789]
-read_ratio_with_div_err :: (Integral i, Read i) => String -> Ratio i
-read_ratio_with_div_err s =
-    let f = read_integral_allow_commas_err
+{- | Read a ratio where the division is given by @/@ instead of @%@.
+Optionally allow commas at integral parts.
+
+> map (read_ratio_with_div_err True) ["123,456/7","123,456,789"] == [123456/7,123456789]
+-}
+read_ratio_with_div_err :: (Integral i, Read i) => Bool -> String -> Ratio i
+read_ratio_with_div_err allowCommas s =
+    let f = read_integral_err allowCommas
     in case break (== '/') s of
          (n,'/':d) -> f n % f d
-         _ -> read_integral_allow_commas_err s % 1
+         _ -> read_integral_err allowCommas s % 1
 
 -- | Read 'Ratio', allow commas for thousand separators.
 --
