@@ -296,12 +296,26 @@ adj4 n l =
 interleave :: [a] -> [a] -> [a]
 interleave p = concat . zipWith (\i j -> [i, j]) p -- concatMap (\(i, j) -> [i, j]) . zip p
 
--- | Interleave list of lists.  Allows lists to be of non-equal lenghts.
---
--- > interleave_set ["abcd","efgh","ijkl"] == "aeibfjcgkdhl"
--- > interleave_set ["abc","defg","hijkl"] == "adhbeicfjgkl"
+{- | Interleave list of lists.  Allows lists to be of non-equal lengths, or infinite.
+
+> interleave_set ["abcd","efgh","ijkl"] == "aeibfjcgkdhl"
+> interleave_set ["abc","defg","hijkl"] == "adhbeicfjgkl"
+-}
 interleave_set :: [[a]] -> [a]
 interleave_set = concat . transpose
+
+{- | Interleave list of lists.  Allows lists to be of non-equal lenghts.
+
+> interleave_set_folding ["abcd","efgh","ijkl"] == "aebicfdjgkhl" -- aeibfjcgkdhl
+> interleave_set_folding ["abc","defg","hijkl"] == "adbhceifjgkl" -- adhbeicfjgkl"
+-}
+interleave_set_folding :: [[a]] -> [a]
+interleave_set_folding p =
+  let f xs ys =
+        case xs of
+          [] -> ys
+          x:xs' -> x : f ys xs'
+  in foldr f [] p
 
 {-
 import Safe {- safe -}
@@ -1538,3 +1552,28 @@ atFromEnd lst n =
   let loop xs ys = last (zipWith const xs ys)
   in loop lst (drop n lst)
 
+{- | Merge taking first element from left, allows inifite lists and lists that terminate.
+
+> take 17 (merge_left_first [0..] [-1, -2 ..]) == [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6,-7,7,-8,8]
+> take 13 (merge_left_first [1, 3 ..] [2, 4 .. 10]) == [1,2,3,4,5,6,7,8,9,10,11,13,15]
+> take 13 (merge_left_first [1, 3 .. 11] [2, 4 ..]) == [1,2,3,4,5,6,7,8,9,10,11,12,14]
+-}
+merge_left_first :: [a] -> [a] -> [a]
+merge_left_first p q =
+  case (p, q) of
+    ([], _) -> q
+    (x:xs, _) -> x : merge_left_first q xs
+
+{- | All pairs of p and q, allows inifite lists and lists that terminate.  (Norman Ramsey)
+
+> take 11 (all_pairs [1..] [1..]) == [(1,1),(1,2),(2,2),(2,1),(2,3),(1,3),(3,3),(3,1),(3,2),(1,4),(3,4)]
+-}
+all_pairs :: [a] -> [b] -> [(a, b)]
+all_pairs p q =
+  case (p, q) of
+    (_, []) -> []
+    ([], _) -> []
+    (a:as, b:bs) ->
+      (a, b) : (([(a, b') | b' <- bs] `merge_left_first`
+                 [(a', b) | a' <- as]) `merge_left_first`
+                 all_pairs as bs)

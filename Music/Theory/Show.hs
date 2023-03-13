@@ -9,7 +9,7 @@ import qualified Music.Theory.List as T {- hmt-base -}
 import qualified Music.Theory.Math as T {- hmt-base -}
 import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
--- * DIFF
+-- * Difference
 
 -- | Show positive and negative values always with sign, maybe show zero, maybe right justify.
 --
@@ -29,7 +29,7 @@ num_diff_str_opt (wr_0,k) n =
 num_diff_str :: (Num a, Ord a, Show a) => a -> String
 num_diff_str = num_diff_str_opt (False,0)
 
--- * RATIONAL
+-- * Rational
 
 -- | Pretty printer for 'Rational' using @/@ and eliding denominators of @1@.
 --
@@ -68,7 +68,7 @@ ratio_pp = ratio_pp_opt False
 show_rational_decimal :: Int -> Rational -> String
 show_rational_decimal n = double_pp n . fromRational
 
--- * REAL
+-- * Real
 
 -- | Show /r/ as float to /k/ places.
 --
@@ -119,7 +119,7 @@ float_pp = realfloat_pp
 double_pp :: Int -> Double -> String
 double_pp = realfloat_pp
 
--- * BIN
+-- * Binary
 
 -- | Read binary integer.
 --

@@ -118,6 +118,15 @@ a(n) = 2^n + 1
 a000051 :: Num n => [n]
 a000051 = iterate (subtract 1 . (* 2)) 2
 
+{- | <http://oeis.org/A000058>
+
+Sylvester's sequence: a(n+1) = a(n)^2 - a(n) + 1, with a(0) = 2.
+
+> [2, 3, 7, 43, 1807, 3263443, 10650056950807, 113423713055421844361000443, 12864938683278671740537145998360961546653259485195807] `isPrefixOf` a000058
+-}
+a000058 :: [Integer]
+a000058 = iterate a002061_n 2
+
 {- | <http://oeis.org/A000071>
 
 a(n) = Fibonacci(n) - 1.
@@ -226,6 +235,18 @@ Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) with a(0)=a(1)=a(2)=1.
 -}
 a000213 :: Num n => [n]
 a000213 = 1 : 1 : 1 : zipWith (+) a000213 (tail (zipWith (+) a000213 (tail a000213)))
+
+{- | <https://oeis.org/A000215>
+
+Fermat numbers: a(n) = 2^(2^n) + 1.
+
+> [3, 5, 17, 257, 65537, 4294967297, 18446744073709551617, 340282366920938463463374607431768211457] `isPrefixOf` a000215
+-}
+a000215 :: [Integer]
+a000215 = map a000215_n [0 ..]
+
+a000215_n :: Integer -> Integer
+a000215_n = (+ 1) . (2 ^) . (2 ^)
 
 {- | <https://oeis.org/A000217>
 
@@ -486,6 +507,18 @@ Upper Wythoff sequence (a Beatty sequence): a(n) = floor(n*phi^2), where phi = (
 -}
 a001950 :: Integral n => [n]
 a001950 = zipWith (+) a000201 [1..]
+
+{- | <https://oeis.org/A001950>
+
+Central polygonal numbers: a(n) = n^2 - n + 1.
+
+> [1, 1, 3, 7, 13, 21, 31, 43, 57, 73, 91, 111, 133, 157, 183, 211, 241, 273, 307, 343, 381, 421, 463, 507, 553, 601] `isPrefixOf` a002061
+-}
+a002061 :: [Integer]
+a002061 = map a002061_n [0 ..]
+
+a002061_n :: Integral a => a -> a
+a002061_n n = n * (n - 1) + 1
 
 {- | <https://oeis.org/A002145>
 
