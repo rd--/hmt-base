@@ -533,9 +533,6 @@ a002145 = filter ((== 1) . a010051_n) [3, 7 ..]
 a002145_n :: Integer -> Integer
 a002145_n n = a002145 `genericIndex` (n - 1)
 
-
--- Reinhard Zumkeller, Aug 02 2015, Sep 23 2011
-
 -- | <http://oeis.org/A002267>
 --
 -- The 15 supersingular primes.
@@ -794,8 +791,6 @@ a006368 =
           | otherwise = 3 * v + (v' + 1) `div` 2
         where (u, u') = divMod n 2; (v, v') = divMod n 4
   in map f [0..]
-
--- Reinhard Zumkeller, Apr 18 2012
 
 {- | <http://oeis.org/A006842>
 

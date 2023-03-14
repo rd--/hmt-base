@@ -31,20 +31,27 @@ num_diff_str = num_diff_str_opt (False,0)
 
 -- * Rational
 
--- | Pretty printer for 'Rational' using @/@ and eliding denominators of @1@.
---
--- > map rational_pp [1,3/2,5/4,2] == ["1","3/2","5/4","2"]
-rational_pp :: (Show a,Integral a) => Ratio a -> String
-rational_pp r =
+{- | Pretty printer for 'Rational' using @/@.
+If /conciseInteger/ is True eliding denominators of @1@.
+
+> map (rational_pp True) [1,3/2,5/4,2] == ["1","3/2","5/4","2"]
+-}
+rational_pp_opt :: (Show a,Integral a) => Bool -> Ratio a -> String
+rational_pp_opt conciseInteger r =
     let n = numerator r
         d = denominator r
-    in if d == 1
+    in if d == 1 && conciseInteger
        then show n
        else concat [show n,"/",show d]
 
--- | Pretty print ratio as @:@ separated integers, if /nil/ is True elide unit denominator.
---
--- > map (ratio_pp_opt True) [1,3/2,2] == ["1","3:2","2"]
+rational_pp :: (Show a,Integral a) => Ratio a -> String
+rational_pp = rational_pp_opt False
+
+{- | Pretty print ratio as @:@ separated integers.
+If /conciseInteger/ is True elide unit denominator.
+
+> map (ratio_pp_opt True) [1,3/2,2] == ["1","3:2","2"]
+-}
 ratio_pp_opt :: Bool -> Rational -> String
 ratio_pp_opt nil r =
   let f :: (Integer,Integer) -> String
@@ -53,9 +60,10 @@ ratio_pp_opt nil r =
        (n,1) -> if nil then show n else f (n,1)
        x -> f x
 
--- | Pretty print ratio as @:@ separated integers.
---
--- > map ratio_pp [1,3/2,2] == ["1:1","3:2","2:1"]
+{- | Pretty print ratio as @:@ separated integers.
+
+> map ratio_pp [1,3/2,2] == ["1:1","3:2","2:1"]
+-}
 ratio_pp :: Rational -> String
 ratio_pp = ratio_pp_opt False
 
