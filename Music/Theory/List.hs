@@ -1565,15 +1565,26 @@ merge_left_first p q =
     (x:xs, _) -> x : merge_left_first q xs
 
 {- | All pairs of p and q, allows inifite lists and lists that terminate.  (Norman Ramsey)
+ml = merge-left
 
-> take 11 (all_pairs [1..] [1..]) == [(1,1),(1,2),(2,2),(2,1),(2,3),(1,3),(3,3),(3,1),(3,2),(1,4),(3,4)]
+> take 11 (all_pairs_ml [1..] [1..]) == [(1,1),(1,2),(2,2),(2,1),(2,3),(1,3),(3,3),(3,1),(3,2),(1,4),(3,4)]
+> all_pairs_ml "ab" "cde" == [('a','c'),('a','d'),('b','d'),('b','c'),('b','e'),('a','e')]
 -}
-all_pairs :: [a] -> [b] -> [(a, b)]
-all_pairs p q =
+all_pairs_ml :: [a] -> [b] -> [(a, b)]
+all_pairs_ml p q =
   case (p, q) of
     (_, []) -> []
     ([], _) -> []
     (a:as, b:bs) ->
       (a, b) : (([(a, b') | b' <- bs] `merge_left_first`
                  [(a', b) | a' <- as]) `merge_left_first`
-                 all_pairs as bs)
+                 all_pairs_ml as bs)
+
+{- | All possible pairs of elements (/x/,/y/) where /x/ is from /p/ and /y/ from /q/.
+Enumerated in the ordinary sequence.
+lc = list-comprehension
+
+> all_pairs_lc "ab" "cde" == [('a','c'),('a','d'),('a','e'),('b','c'),('b','d'),('b','e')]
+-}
+all_pairs_lc :: [t] -> [u] -> [(t,u)]
+all_pairs_lc p q = [(x,y) | x <- p, y <- q]
