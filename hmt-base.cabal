@@ -48,6 +48,11 @@ Library
                    Music.Theory.Either
                    Music.Theory.Enum
                    Music.Theory.Function
+                   Music.Theory.Geometry.Bivector
+                   Music.Theory.Geometry.Functions
+                   Music.Theory.Geometry.Matrix
+                   Music.Theory.Geometry.Quaternion
+                   Music.Theory.Geometry.Vector
                    Music.Theory.Graph.Bliss
                    Music.Theory.Graph.Dot
                    Music.Theory.Graph.G6

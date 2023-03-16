@@ -7,6 +7,32 @@ import Data.Ratio {- base -}
 
 import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
+-- | Epsilon for ~=.
+epsilon :: Floating n => n
+epsilon = 0.000001
+
+-- | Is absolute difference less than 'epsilon'.
+(~=) :: (Floating a, Ord a) => a -> a -> Bool
+p ~= q = abs (p - q) < epsilon
+
+{- | Square, inverse of 'sqrt'.
+
+> sqrt (sqr 3) == 3
+-}
+sqr :: Num a => a -> a
+sqr n = n * n
+
+{- | Modulo within range.
+
+> map (constrain (3,5)) [2.75,5.25] == [4.75,3.25]
+-}
+constrain :: (Ord r,Num r) => (r,r) -> r -> r
+constrain (l,r) =
+    let down n i x = if x > i then down n i (x - n) else x
+        up n i x = if x < i then up n i (x + n) else x
+        both n i j x = up n i (down n j x)
+    in both (r - l) l r
+
 -- | 'mod' 5.
 mod5 :: Integral i => i -> i
 mod5 n = n `mod` 5
