@@ -50,7 +50,10 @@ Library
                    Music.Theory.Function
                    Music.Theory.Geometry.Bivector
                    Music.Theory.Geometry.Functions
+                   Music.Theory.Geometry.Hex
                    Music.Theory.Geometry.Matrix
+                   Music.Theory.Geometry.Off
+                   Music.Theory.Geometry.Polyhedron
                    Music.Theory.Geometry.Quaternion
                    Music.Theory.Geometry.Vector
                    Music.Theory.Graph.Bliss
