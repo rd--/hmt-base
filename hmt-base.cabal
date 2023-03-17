@@ -48,6 +48,8 @@ Library
                    Music.Theory.Either
                    Music.Theory.Enum
                    Music.Theory.Function
+                   Music.Theory.Geometry.Bezier
+                   Music.Theory.Geometry.Bezier.Spencer
                    Music.Theory.Geometry.Bivector
                    Music.Theory.Geometry.Functions
                    Music.Theory.Geometry.Hex
@@ -55,6 +57,8 @@ Library
                    Music.Theory.Geometry.Off
                    Music.Theory.Geometry.Polygon
                    Music.Theory.Geometry.Polyhedron
+                   Music.Theory.Geometry.Projection
+                   Music.Theory.Geometry.Projection.Gl
                    Music.Theory.Geometry.Quaternion
                    Music.Theory.Geometry.Vector
                    Music.Theory.Graph.Bliss
