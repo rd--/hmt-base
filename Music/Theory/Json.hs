@@ -16,6 +16,9 @@ string = Json.String . Text.pack
 int :: Int -> Value
 int = Json.Number . fromIntegral
 
+integer :: Integer -> Value
+integer = Json.Number . fromIntegral
+
 double :: Double -> Value
 double = Json.Number
 
