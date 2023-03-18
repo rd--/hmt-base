@@ -24,6 +24,7 @@ Library
                    directory,
                    filepath,
                    lazy-csv,
+                   microaeson,
                    monad-loops,
                    primes,
                    process,
@@ -71,6 +72,7 @@ Library
                    Music.Theory.Graph.Planar
                    Music.Theory.Graph.Type
                    Music.Theory.Io
+                   Music.Theory.Json
                    Music.Theory.List
                    Music.Theory.Map
                    Music.Theory.Math
