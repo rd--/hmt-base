@@ -1,5 +1,7 @@
 module Music.Theory.Json where
 
+import Data.Maybe {- base -}
+
 import qualified Data.ByteString.Lazy as ByteString {- bytestring -}
 import qualified Data.Text as Text {- text -}
 
@@ -13,11 +15,30 @@ boolean = Json.Bool
 string :: String -> Value
 string = Json.String . Text.pack
 
+-- > isSafeIntegral (maxBound :: Int) == False
+isSafeIntegral :: Integral i => i -> Bool
+isSafeIntegral i = i >= -9007199254740991 && i <= 9007199254740991
+
+safeIntegral :: Integral i => i -> Maybe Value
+safeIntegral i =
+  if isSafeIntegral i
+  then Just (Json.Number (fromIntegral i))
+  else Nothing
+
+unsafeIntegral :: Integral i => i -> Value
+unsafeIntegral = fromMaybe (error "Json.unsafeIntegral") . safeIntegral
+
+safeInt :: Int -> Maybe Value
+safeInt = safeIntegral
+
 int :: Int -> Value
-int = Json.Number . fromIntegral
+int = unsafeIntegral
+
+safeInteger :: Integer -> Maybe Value
+safeInteger = safeIntegral
 
 integer :: Integer -> Value
-integer = Json.Number . fromIntegral
+integer = unsafeIntegral
 
 double :: Double -> Value
 double = Json.Number
