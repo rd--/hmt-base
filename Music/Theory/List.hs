@@ -14,6 +14,10 @@ import qualified Data.Tree as Tree {- containers -}
 
 import qualified Music.Theory.Either as T {- hmt-base -}
 
+-- | Error checking 'take' variant.
+take_err :: Int -> [a] -> [a]
+take_err n e = let r = take n e in if length r /= n then error "take_err?" else r
+
 -- | 'Data.Vector.slice', ie. starting index (zero-indexed) and number of elements.
 --
 -- > slice 4 5 [1..] == [5,6,7,8,9]

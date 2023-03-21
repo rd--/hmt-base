@@ -109,11 +109,14 @@ real_pp_trunc k n =
                "." -> if i == "-0" then "0" else i
                z -> i ++ z
 
--- | Variant of 'showFFloat'.  The 'Show' instance for floats resorts
--- to exponential notation very readily.
---
--- > [show 0.01,realfloat_pp 2 0.01] == ["1.0e-2","0.01"]
--- > map (realfloat_pp 4) [1,1.1,1.12,1.123,1.1234,1/0,sqrt (-1)]
+{- | Variant of 'showFFloat'.
+The 'Show' instance for floats resorts to exponential notation very readily.
+k is the precision given as number of decimal places.
+
+> [show 0.01,realfloat_pp 2 0.01] == ["1.0e-2","0.01"]
+> map (realfloat_pp 4) [1,1.1,1.12,1.123,1.1234,1/0,sqrt (-1)]
+> realfloat_pp 3 pi == "3.141"
+-}
 realfloat_pp :: RealFloat a => Int -> a -> String
 realfloat_pp k n = showFFloat (Just k) n ""
 

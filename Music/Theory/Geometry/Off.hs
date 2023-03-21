@@ -19,24 +19,19 @@ module Music.Theory.Geometry.Off where
 import Data.Bifunctor {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
-import Numeric {- base -}
 import System.IO {- base -}
+import Text.Printf {- base -}
 
 import Music.Theory.Geometry.Vector {- hmt-base -}
-
-{- | Show floating point number.  k is the precision given as number of decimal places.
-
-> show_float 3 pi == "3.141"
--}
-show_float :: (RealFloat t,Show t) => Int -> t -> String
-show_float k n = showFFloat (Just k) n ""
+import Music.Theory.List {- hmt-base -}
+import Music.Theory.Show {- hmt-base -}
 
 -- * Off-Cnt
 
 -- | (n-vertex,n-face)
 type Off_Cnt = (Int,Int)
 
--- | Parse the COUNT line.  The N-EDGES field is ignored.
+-- | Parse the Count line.  The N-Edges field is ignored.
 off_parse_cnt :: String -> Off_Cnt
 off_parse_cnt x =
   case map read (words x) of
@@ -52,10 +47,6 @@ type Off_Face = (Int,[Int])
 off_face_from_indices :: [Int] -> Off_Face
 off_face_from_indices i = (length i,i)
 
--- | Error checking 'take' variant.
-take_err :: Int -> [a] -> [a]
-take_err n e = let r = take n e in if length r /= n then error "take_err?" else r
-
 -- | Parse 'Off_Face' entry.
 off_parse_face :: String -> Off_Face
 off_parse_face x =
@@ -65,7 +56,7 @@ off_parse_face x =
 
 -- | Edge list of face.
 off_face_edges :: Off_Face -> [V2 Int]
-off_face_edges = let adj l = zip l (tail (cycle l)) in adj . snd
+off_face_edges = let adjp l = zip l (tail (cycle l)) in adjp . snd
 
 -- | 'v2_sort' of 'off_face_edges'
 off_face_edges_undir :: Off_Face -> [V2 Int]
@@ -92,13 +83,13 @@ off_face_neighbours f x =
       n = map (flip off_sel_edge_faces f) e
       sel r =
         case r of
-          [i] -> if i == x then Nothing else error "off_face_neighbours: NIL/NOT-EQ"
+          [i] -> if i == x then Nothing else error "off_face_neighbours: nil/not-eq"
           [i,j] -> if i == x
                    then Just j
                    else if j == x
                         then Just i
-                        else error "off_face_neighbours: SINGULAR/NOT-EQ"
-          _ -> error (show ("off_face_neighbours: NOT-SINGULAR",x,r))
+                        else error "off_face_neighbours: singular/not-eq"
+          _ -> error (show ("off_face_neighbours: not-singular",x,r))
       y = mapMaybe sel n
   in if length y == fst x then Just y else Nothing
 
@@ -141,9 +132,7 @@ off_parse_dat f (nv,nf) = bimap (map f) (map off_parse_face) . off_split_dat (nv
 --   Vertices are zero-indexed.
 off_dat_from_face_vertex_dat :: Ord t => [[t]] -> Off_Dat t
 off_dat_from_face_vertex_dat t =
-  let reverse_lookup k = fmap fst . find ((== k) . snd)
-      reverse_lookup_err k = fromMaybe (error "reverse_lookup") . reverse_lookup k
-      p = nub (sort (concat t))
+  let p = nub (sort (concat t))
       v = zip [0..] p
       f = map (map (flip reverse_lookup_err v)) t
       length_prefix x = (length x,x)
@@ -196,9 +185,9 @@ off_parse ty f ln =
   case ln of
     hdr:cnt:dat -> let c = off_parse_cnt cnt
                    in if hdr /= ty
-                      then error "off_parse: HEADER?"
+                      then error (printf "off_parse: header: %s /= %s" hdr ty)
                       else (c,off_parse_dat f c dat)
-    _ -> error "off_parse: STRUCTURE?"
+    _ -> error "off_parse: structure?"
 
 -- | Apply /f/ at vertices of /o/.
 off_map_vertices :: (t -> u) -> Off t -> Off u
@@ -233,7 +222,7 @@ off_load_txt = fmap (filter (not . off_nil_line) . lines) . readFile
 -- | Given /type/ and a /vertex to list/ function, format Off file. k=precision
 off_fmt :: (RealFloat u,Show u) => Int -> String -> (t -> [u]) -> Off t -> [String]
 off_fmt k ty v_to_list ((nv,nf),(v,f)) =
-  let v_pp = unwords . map (show_float k) . v_to_list
+  let v_pp = unwords . map (realfloat_pp k) . v_to_list
       pp_int = unwords . map show
       f_pp (n,i) = pp_int (n : i)
   in concat [[ty,pp_int [nv,nf,0]],map v_pp v,map f_pp f]
@@ -242,7 +231,7 @@ off_fmt k ty v_to_list ((nv,nf),(v,f)) =
 off_store :: (RealFloat u,Show u) => Int -> String -> (t -> [u]) -> FilePath -> Off t -> IO ()
 off_store k ty v fn = writeFile fn . unlines . off_fmt k ty v
 
--- * Off-2 (NON-STANDARD)
+-- * Off-2 (non-standard)
 
 -- | 'Off' of 'V2'
 type Off2 t = Off (V2 t)
@@ -255,13 +244,13 @@ off_parse_v2 :: (Read t,Fractional t) => String -> V2 t
 off_parse_v2 s = case words s of {[x,y] -> (read x,read y);_ -> error "off_parse_v2"}
 
 off2_load :: (Read t,Fractional t) => FilePath -> IO (Off2 t)
-off2_load = fmap (off_parse "2Off" off_parse_v2) . off_load_txt
+off2_load = fmap (off_parse "2OFF" off_parse_v2) . off_load_txt
 
 off2_fmt :: (RealFloat t,Show t) => Int -> Off2 t -> [String]
-off2_fmt k = off_fmt k "2Off" (\(x,y) -> [x,y])
+off2_fmt k = off_fmt k "2OFF" (\(x,y) -> [x,y])
 
 off2_store :: (RealFloat t,Show t) => Int -> FilePath -> Off2 t -> IO ()
-off2_store k = off_store k "2Off" (\(x,y) -> [x,y])
+off2_store k = off_store k "2OFF" (\(x,y) -> [x,y])
 
 -- | 'off_dual' of 'v2_centroid'.
 off2_dual :: Fractional n => Off2 n -> Off2 n
@@ -287,14 +276,14 @@ off_parse_v3 :: (Read t,Fractional t) => String -> V3 t
 off_parse_v3 s = case words s of {[x,y,z] -> (read x,read y,read z);_ -> error "off_parse_v3"}
 
 off3_load :: (Read t,Fractional t) => FilePath -> IO (Off3 t)
-off3_load = fmap (off_parse "Off" off_parse_v3) . off_load_txt
+off3_load = fmap (off_parse "OFF" off_parse_v3) . off_load_txt
 
 off3_fmt :: (RealFloat t,Show t) => Int -> Off3 t -> [String]
-off3_fmt k = off_fmt k "Off" (\(x,y,z) -> [x,y,z])
+off3_fmt k = off_fmt k "OFF" (\(x,y,z) -> [x,y,z])
 
 -- | 'off_store' of three-tuple
 off3_store :: (RealFloat t,Show t) => Int -> FilePath -> Off3 t -> IO ()
-off3_store k = off_store k "Off" (\(x,y,z) -> [x,y,z])
+off3_store k = off_store k "OFF" (\(x,y,z) -> [x,y,z])
 
 -- | 'off3_store' . 'off_from_vx_fc'
 off3_store_vx_fc :: (RealFloat t,Show t) => Int -> FilePath -> ([V3 t],[[Int]]) -> IO ()
@@ -307,6 +296,10 @@ off3_dual = off_dual v3_centroid
 -- | 'off_dual_graph' of 'v3_centroid'
 off3_dual_graph :: Fractional n => Off3 n -> Off_Gr (V3 n)
 off3_dual_graph = off_dat_dual_graph v3_centroid . snd
+
+-- | Lower Off3 to Off2 by discarding /z/.
+off3_to_off2 :: Off3 t -> Off2 t
+off3_to_off2 (cnt,(vtx,fc)) = (cnt,(map (\(x,y,_z) -> (x,y)) vtx,fc))
 
 -- * Off-4
 
@@ -322,13 +315,13 @@ off_parse_v4 txt =
     _ -> error "off_parse_v4?"
 
 off4_load :: (Read t,Fractional t) => FilePath -> IO (Off4 t)
-off4_load = fmap (off_parse "4Off" off_parse_v4) . off_load_txt
+off4_load = fmap (off_parse "4OFF" off_parse_v4) . off_load_txt
 
 off4_fmt :: (RealFloat t,Show t) => Int -> Off4 t -> [String]
-off4_fmt k = off_fmt k "4Off" (\(x,y,z,w) -> [x,y,z,w])
+off4_fmt k = off_fmt k "4OFF" (\(x,y,z,w) -> [x,y,z,w])
 
 off4_store :: (RealFloat t,Show t) => Int -> FilePath -> Off4 t -> IO ()
-off4_store k = off_store k "4Off" (\(x,y,z,w) -> [x,y,z,w])
+off4_store k = off_store k "4OFF" (\(x,y,z,w) -> [x,y,z,w])
 
 -- * Off
 
@@ -341,9 +334,9 @@ off_load :: (Read t,Fractional t) => FilePath -> IO (Either (Off3 t) (Off4 t))
 off_load fn = do
   ty <- off_load_type fn
   case ty of
-    "Off" -> fmap Left (off3_load fn)
-    "4Off" -> fmap Right (off4_load fn)
-    _ -> error "off_load: TYPE?"
+    "OFF" -> fmap Left (off3_load fn)
+    "4OFF" -> fmap Right (off4_load fn)
+    _ -> error "off_load: type?"
 
 off_load_either :: (Read t,Fractional t) => (V3 t -> u,V4 t -> u) -> FilePath -> IO (Off u)
 off_load_either (v3_f,v4_f) = fmap (either (off_map_vertices v3_f) (off_map_vertices v4_f)) . off_load
@@ -426,13 +419,13 @@ off_stat o =
       hpp (i,j) = concat [show i,"⋅",show j]
   in mapMaybe
      jn
-     [("N-VERTICES",show nv)
-     ,("N-FACES",show nf)
-     ,("FACE-DEGREES",unwords (map hpp (off_hist (map fst f))))
-     ,("N-EDGES",show (sum (map fst f)))
-     ,("N-EDGES-UNIQ",show (length (off_edge_set f)))
-     ,("V-NOT-IN-F",unwords (map show (off_v_not_in_f o)))
-     ,("V-UNIQ-IN-F",unwords (map show (off_v_uniq_in_f o)))]
+     [("N-Vertices",show nv)
+     ,("N-Faces",show nf)
+     ,("Face-Degrees",unwords (map hpp (off_hist (map fst f))))
+     ,("N-Edges",show (sum (map fst f)))
+     ,("N-Edges-Uniq",show (length (off_edge_set f)))
+     ,("V-Not-In-F",unwords (map show (off_v_not_in_f o)))
+     ,("V-Uniq-In-F",unwords (map show (off_v_uniq_in_f o)))]
 
 off_stat_wr :: Off t -> IO ()
 off_stat_wr = putStr . unlines . off_stat
@@ -466,33 +459,33 @@ off_load_f64 = off_load
 
 -- * Colour Face Set
 
+type Rgb i = V3 i
+
 -- | Rewrite a set of faces as (vertices,[[v-indices]]).
 --   Indices are zero-indexed.
-off_clr_face_set_dat :: Ord n => [([(n,n,n)],(i,i,i))] -> ([(Int,(n,n,n))],[([Int],(i,i,i))])
+off_clr_face_set_dat :: (Ord n, Eq i) => [([V3 n],Rgb i)] -> ([(Int,V3 n)],[([Int],Rgb i)])
 off_clr_face_set_dat t =
-  let reverse_lookup k = fmap fst . find ((== k) . snd)
-      reverse_lookup_err k = fromMaybe (error "reverse_lookup") . reverse_lookup k
-      p = nub (sort (concat (map fst t)))
+  let p = nub (sort (concat (map fst t)))
       c = map snd t
       v = zip [0..] p
       f = map (map (flip reverse_lookup_err v)) (map fst t)
-  in (v,zip f c)
+  in (v,nub (zip f c))
 
 off_header :: (Int,Int,Int) -> [String]
-off_header (v,f,e) = ["Off",unwords (map show [v,f,e])]
+off_header (v,f,e) = ["OFF",unwords (map show [v,f,e])]
 
 -- | Format a set of coloured faces as an Off file.
 --   (Ccw triples of (x,y,z) coordinates, (r,g,b) colour)
 --   Off files are one-indexed.
-off_clr_face_set_fmt :: (RealFloat n,Show n,Ord n,Show i) => Int -> [([V3 n],V3 i)] -> [String]
+off_clr_face_set_fmt :: (RealFloat n,Show n,Ord n,Show i, Eq i) => Int -> [([V3 n],Rgb i)] -> [String]
 off_clr_face_set_fmt k t =
-  let v_f (_,(x,y,z)) = unwords (map (show_float k) [x,y,z])
+  let v_f (_,(x,y,z)) = unwords (map (realfloat_pp k) [x,y,z])
       f_f (ix,(r,g,b)) = unwords (map show (length ix : ix) ++ map show [r,g,b])
       (v,f) = off_clr_face_set_dat t
   in concat [off_header (length v,length f,0), map v_f v, map f_f f]
 
 -- | 'writeFile' of 'off_clr_face_set_fmt'
-off_clr_face_set_store :: (RealFloat n,Show n,Ord n,Show i) => Int -> FilePath -> [([V3 n],V3 i)] -> IO ()
+off_clr_face_set_store :: (RealFloat n,Show n,Ord n,Show i, Eq i) => Int -> FilePath -> [([V3 n],Rgb i)] -> IO ()
 off_clr_face_set_store k fn = writeFile fn . unlines . off_clr_face_set_fmt k
 
 -- * Cli
