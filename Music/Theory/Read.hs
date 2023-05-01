@@ -167,7 +167,7 @@ read_bin = fmap fst . listToMaybe . readInt 2 (`elem` "01") digitToInt
 read_bin_err :: Integral a => String -> a
 read_bin_err = fromMaybe (error "read_bin") . read_bin
 
--- * HEX
+-- * Hex
 
 -- | Error variant of 'readHex'.
 --

@@ -1,7 +1,6 @@
 module Music.Theory.Geometry.Picture.Svg where
 
-import Text.Printf {- base -}
-
+import Music.Theory.Colour {- hmt-base -}
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Picture {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
@@ -10,13 +9,8 @@ type R = Double
 
 type SvgAttr = (String, String)
 
-clr_to_rgb8 :: Clr -> V3 Int
-clr_to_rgb8 (r, g, b, _) = (round (r * 255),round (g * 255),round (b * 255))
-
 clr_to_hex_string :: Clr -> String
-clr_to_hex_string clr =
-  let (r, g, b) = clr_to_rgb8 clr
-  in printf "#%02x%02x%02x" r g b
+clr_to_hex_string = rgb8_to_hex_str . (rgb_to_rgb8 :: Rgb R -> Rgb Int) . rgba_to_rgb
 
 clr_to_opacity :: Clr -> Double
 clr_to_opacity (_, _, _, a) = a

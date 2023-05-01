@@ -4,6 +4,7 @@ module Music.Theory.Geometry.Picture where
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
+import Music.Theory.Colour {- hmt-base -}
 import Music.Theory.Math {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
@@ -17,8 +18,6 @@ type Dash r = ([r],r)
 no_dash :: Num r => Dash r
 no_dash = ([],0)
 
-type Rgb t = V3 t
-type Rgba t = V4 t
 type Clr = Rgba Double -- (0, 1)
 
 -- | (line-width,colour,dash-pattern)
