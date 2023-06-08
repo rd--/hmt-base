@@ -7,13 +7,13 @@ import Data.Ratio {- base -}
 
 import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
--- | Real, alias for 'Double'
+-- | Alias for 'Double'.  (R = Real, not Rational)
 type R = Double
 
--- | Integer, alias for 'Int'
-type I = Int
+-- | Alias for 'Integer'.
+type I = Integer
 
--- | Fraction, alias for 'Rational'
+-- | Alias for 'Rational'.  (F = Fraction, not Float)
 type F = Rational
 
 -- | Epsilon for ~=.
