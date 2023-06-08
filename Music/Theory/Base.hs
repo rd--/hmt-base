@@ -50,6 +50,7 @@ import Music.Theory.Math as M
 import Music.Theory.Math.Constant as M
 import Music.Theory.Math.Convert as M
 import Music.Theory.Math.Histogram as M
+import Music.Theory.Math.Nichomachus as M
 import Music.Theory.Math.Oeis as M
 import Music.Theory.Math.Prime as M
 import Music.Theory.Math.Prime.List as M
@@ -59,6 +60,8 @@ import Music.Theory.Opt as M
 import Music.Theory.Ord as M
 import Music.Theory.Permutations as M
 import Music.Theory.Read as M
+import Music.Theory.Set.List as M
+import Music.Theory.Set.Set as M
 import Music.Theory.Show as M
 import Music.Theory.String as M
 import Music.Theory.Time.Duration as M

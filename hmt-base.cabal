@@ -26,6 +26,7 @@ Library
                    lazy-csv,
                    microaeson,
                    monad-loops,
+                   multiset-comb,
                    primes,
                    process,
                    random,
@@ -85,6 +86,7 @@ Library
                    Music.Theory.Math.Constant
                    Music.Theory.Math.Convert
                    Music.Theory.Math.Histogram
+                   Music.Theory.Math.Nichomachus
                    Music.Theory.Math.Oeis
                    Music.Theory.Math.Prime
                    Music.Theory.Math.Prime.List
@@ -94,6 +96,8 @@ Library
                    Music.Theory.Ord
                    Music.Theory.Permutations
                    Music.Theory.Read
+                   Music.Theory.Set.List
+                   Music.Theory.Set.Set
                    Music.Theory.Show
                    Music.Theory.String
                    Music.Theory.Time.Duration

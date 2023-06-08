@@ -226,15 +226,15 @@ nth_root n x =
 
 -- | Arithmetic mean (average) of a list.
 --
--- > map arithmetic_mean [[-3..3],[0..5],[1..5],[3,5,7],[7,7],[3,9,10,11,12]] == [0,2.5,3,5,7,9]
-arithmetic_mean :: Fractional a => [a] -> a
-arithmetic_mean x = sum x / fromIntegral (length x)
+-- > map arithmetic_mean_of_list [[-3..3],[0..5],[1..5],[3,5,7],[7,7],[3,9,10,11,12]] == [0,2.5,3,5,7,9]
+arithmetic_mean_of_list :: Fractional a => [a] -> a
+arithmetic_mean_of_list x = sum x / fromIntegral (length x)
 
 -- | Numerically stable mean
 --
--- > map ns_mean [[-3..3],[0..5],[1..5],[3,5,7],[7,7],[3,9,10,11,12]] == [0,2.5,3,5,7,9]
-ns_mean :: Floating a => [a] -> a
-ns_mean =
+-- > map ns_mean_of_list [[-3..3],[0..5],[1..5],[3,5,7],[7,7],[3,9,10,11,12]] == [0,2.5,3,5,7,9]
+ns_mean_of_list :: Floating a => [a] -> a
+ns_mean_of_list =
     let f (m,n) x = (m + (x - m) / (n + 1),n + 1)
     in fst . foldl' f (0,0)
 
