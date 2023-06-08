@@ -13,6 +13,9 @@ type R = Double
 -- | Integer, alias for 'Int'
 type I = Int
 
+-- | Fraction, alias for 'Rational'
+type F = Rational
+
 -- | Epsilon for ~=.
 epsilon :: Floating n => n
 epsilon = 0.000001
