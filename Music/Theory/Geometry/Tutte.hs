@@ -4,6 +4,7 @@ module Music.Theory.Geometry.Tutte where
 
 import Data.Bifunctor {- base -}
 
+import Music.Theory.Math {- hmt-base -}
 import Music.Theory.Geometry.Functions {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
@@ -13,13 +14,10 @@ import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 import qualified Music.Theory.Image.Svg as Svg {- hmt-base -}
 import qualified Music.Theory.List as T {- hmt-base -}
 
+{- | /k/ points on unit circle
 
--- | R = real
-type R = Double
-
--- | /k/ points on unit circle
---
--- > v_on_unit_circle 4
+> v_on_unit_circle 4 -- [(1,0),(0,1),(-1,0),(0,-1)]
+-}
 v_on_unit_circle :: Int -> [V2 R]
 v_on_unit_circle k =
   let i = two_pi / fromIntegral k

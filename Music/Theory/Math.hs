@@ -7,6 +7,12 @@ import Data.Ratio {- base -}
 
 import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
+-- | Real, alias for 'Double'
+type R = Double
+
+-- | Integer, alias for 'Int'
+type I = Int
+
 -- | Epsilon for ~=.
 epsilon :: Floating n => n
 epsilon = 0.000001

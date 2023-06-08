@@ -10,6 +10,7 @@ import Data.Either {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
+import Music.Theory.Math {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
 import qualified Music.Theory.Graph.Type as T {- hmt-base -}
@@ -26,9 +27,6 @@ type Obj_ t = ([t],[(Char,[Int])])
 -- | Apply f at vertices of Obj.
 obj_vertex_map :: (t -> u) -> Obj_ t -> Obj_ u
 obj_vertex_map f (v,c) = (map f v,c)
-
--- | R = Real
-type R = Double
 
 {- | ([Vertex],[(Cmd,[Vertex-Index])])
 

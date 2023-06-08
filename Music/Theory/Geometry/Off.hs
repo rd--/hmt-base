@@ -22,6 +22,7 @@ import Data.Maybe {- base -}
 import System.IO {- base -}
 import Text.Printf {- base -}
 
+import Music.Theory.Colour {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import Music.Theory.List {- hmt-base -}
 import Music.Theory.Show {- hmt-base -}
@@ -458,8 +459,6 @@ off_load_f64 :: FilePath -> IO (Either (Off3 Double) (Off4 Double))
 off_load_f64 = off_load
 
 -- * Colour Face Set
-
-type Rgb i = V3 i
 
 -- | Rewrite a set of faces as (vertices,[[v-indices]]).
 --   Indices are zero-indexed.

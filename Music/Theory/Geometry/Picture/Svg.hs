@@ -1,21 +1,20 @@
 module Music.Theory.Geometry.Picture.Svg where
 
 import Music.Theory.Colour {- hmt-base -}
+import Music.Theory.Math {- hmt-base -}
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Picture {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
-type R = Double
-
 type SvgAttr = (String, String)
 
-clr_to_hex_string :: Clr -> String
+clr_to_hex_string :: Rgba R -> String
 clr_to_hex_string = rgb8_to_hex_str . (rgb_to_rgb8 :: Rgb R -> Rgb Int) . rgba_to_rgb
 
-clr_to_opacity :: Clr -> Double
+clr_to_opacity :: Rgba R -> Double
 clr_to_opacity (_, _, _, a) = a
 
-fill :: Clr -> [SvgAttr]
+fill :: Rgba R -> [SvgAttr]
 fill clr =
   [("fill", clr_to_hex_string clr)
   ,("fill-opacity", show (clr_to_opacity clr))]
@@ -31,7 +30,7 @@ stroke (Pen lw clr dash) =
    else [("stroke-dasharray", unwords (map show (fst dash)))
         ,("stroke-dashoffset", show (snd dash))]]
 
-mark :: Either (Pen R) Clr -> [SvgAttr]
+mark :: Either (Pen R) (Rgba R) -> [SvgAttr]
 mark = either stroke fill
 
 type SvgNode = String

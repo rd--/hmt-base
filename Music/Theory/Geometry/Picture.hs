@@ -18,19 +18,17 @@ type Dash r = ([r],r)
 no_dash :: Num r => Dash r
 no_dash = ([],0)
 
-type Clr = Rgba Double -- (0, 1)
-
 -- | (line-width,colour,dash-pattern)
-data Pen r = Pen (Line_Width r) Clr (Dash r) deriving (Eq,Show)
+data Pen r = Pen (Line_Width r) (Rgba R) (Dash r) deriving (Eq,Show)
 
 -- | (centre,radius)
 type Centre_Radius t = (V2 t,t)
 
 data Mark r =
   Line (Pen r) (V2 (V2 r))
-  | Polygon (Either (Pen r) Clr) [V2 r]
-  | Circle (Either (Pen r) Clr) (Centre_Radius r)
-  | Dot Clr (Centre_Radius r)
+  | Polygon (Either (Pen r) (Rgba R)) [V2 r]
+  | Circle (Either (Pen r) (Rgba R)) (Centre_Radius r)
+  | Dot (Rgba R) (Centre_Radius r)
   deriving (Eq,Show)
 
 type Picture r = [Mark r]
@@ -45,13 +43,13 @@ line_seq pen =
 polygon_l :: Pen r -> [V2 r] -> Mark r
 polygon_l pen = Polygon (Left pen)
 
-polygon_f :: Clr -> [V2 r] -> Mark r
+polygon_f :: Rgba R -> [V2 r] -> Mark r
 polygon_f clr = Polygon (Right clr)
 
 circle_l :: Pen r -> Centre_Radius r -> Mark r
 circle_l pen = Circle (Left pen)
 
-circle_f :: Clr -> Centre_Radius r -> Mark r
+circle_f :: Rgba R -> Centre_Radius r -> Mark r
 circle_f clr = Circle (Right clr)
 
 -- * Analysis
@@ -112,7 +110,7 @@ picture_wn = foldl1 v2_bounds_join . map mark_wn
 {- | Extract coloured vertex-sequences from a picture.
      Dots and circles generate 1-element sequences, lines 2-element sequences, n-polygons generate n+1-element sequences.
 -}
-picture_ln :: Picture t -> [(Clr,[V2 t])]
+picture_ln :: Picture t -> [(Rgba R,[V2 t])]
 picture_ln mk =
   let get_c x = case x of
                   Left (Pen _ c _) -> c
@@ -139,7 +137,7 @@ picture_ln_gr eq_f ln =
   in (zip [0..] v,e)
 
 -- | 'picture_ln_gr' of 'picture_ln' of '~='
-picture_gr :: (Floating n,Ord n) => Picture n -> ([(Int,V2 n)],[(V2 Int, Clr)])
+picture_gr :: (Floating n,Ord n) => Picture n -> ([(Int,V2 n)],[(V2 Int, Rgba R)])
 picture_gr =
   let eq (i,j) (p,q) = i ~= p && j ~= q
   in picture_ln_gr eq . picture_ln

@@ -10,13 +10,11 @@ module Music.Theory.Graph.Lcf where
 import Data.Complex {- base -}
 import Data.List {- base -}
 
+import Music.Theory.Math {- hmt-base -}
 import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 
 -- | Lcf notation (/l/,/k/). ([3,-3],4) is the cubical graph.
 type Lcf = ([Int],Int)
-
--- | Real, alias for 'Double'
-type R = Double
 
 -- | Sequence, ie. /l/ /k/ times.
 lcf_seq :: Lcf -> [Int]

@@ -39,6 +39,7 @@ Library
                    Music.Theory.Array.Cell_Ref
                    Music.Theory.Array.Csv
                    Music.Theory.Array.Text
+                   Music.Theory.Base
                    Music.Theory.Bits
                    Music.Theory.Bool
                    Music.Theory.Byte
