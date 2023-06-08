@@ -4,9 +4,11 @@ module Music.Theory.Base (module M) where
 import Music.Theory.Array as M
 import Music.Theory.Array.Cell_Ref as M
 import Music.Theory.Array.Csv as M
+import Music.Theory.Array.Square as M
 import Music.Theory.Array.Text as M
 import Music.Theory.Bits as M
 import Music.Theory.Bool as M
+import Music.Theory.Braille as M
 import Music.Theory.Byte as M
 import Music.Theory.Combinations as M
 import Music.Theory.Colour as M
@@ -59,6 +61,7 @@ import Music.Theory.Monad as M
 import Music.Theory.Opt as M
 import Music.Theory.Ord as M
 import Music.Theory.Permutations as M
+import Music.Theory.Permutations.List as M
 import Music.Theory.Read as M
 import Music.Theory.Set.List as M
 import Music.Theory.Set.Set as M

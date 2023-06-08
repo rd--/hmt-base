@@ -65,7 +65,7 @@ v2_add = v2_zip (+)
 v2_translate :: Num n => n -> n -> V2 n -> V2 n
 v2_translate i j (x, y) = (x + i, y + j)
 
--- | 'foldl' of 'v2_add'.
+-- | 'foldl' of 'v2_add', sum of empty list is (0,0)
 v2_sum :: Num n => [V2 n] -> V2 n
 v2_sum = foldl v2_add (0,0)
 
