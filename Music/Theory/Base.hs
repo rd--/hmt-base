@@ -1,4 +1,4 @@
--- | Composite module.
+-- | Base (composite module)
 module Music.Theory.Base (module M) where
 
 import Music.Theory.Array as M
@@ -18,31 +18,8 @@ import Music.Theory.Directory.Find as M
 import Music.Theory.Either as M
 import Music.Theory.Enum as M
 import Music.Theory.Function as M
-import Music.Theory.Geometry.Bezier as M
-import Music.Theory.Geometry.Bezier.Spencer as M
-import Music.Theory.Geometry.Bivector as M
-import Music.Theory.Geometry.Functions as M
-import Music.Theory.Geometry.Hex as M
-import Music.Theory.Geometry.Matrix as M
-import Music.Theory.Geometry.Obj as M
-import Music.Theory.Geometry.Off as M
-import Music.Theory.Geometry.Picture as M
-import Music.Theory.Geometry.Picture.Svg as M
-import Music.Theory.Geometry.Ply as M
-import Music.Theory.Geometry.Polygon as M
-import Music.Theory.Geometry.Polyhedron as M
-import Music.Theory.Geometry.Projection as M
-import Music.Theory.Geometry.Projection.Gl as M
-import Music.Theory.Geometry.Quaternion as M
-import Music.Theory.Geometry.Tutte as M
-import Music.Theory.Geometry.Vector as M
-import Music.Theory.Graph.Bliss as M
-import Music.Theory.Graph.Dot as M
-import Music.Theory.Graph.G6 as M
-import Music.Theory.Graph.Lcf as M
-import Music.Theory.Graph.Lgl as M
-import Music.Theory.Graph.Planar as M
-import Music.Theory.Graph.Type as M
+import Music.Theory.Geometry as M -- composite
+import Music.Theory.Graph as M -- composite
 import Music.Theory.Image.Svg as M
 import Music.Theory.Io as M
 import Music.Theory.Json as M

@@ -54,6 +54,7 @@ Library
                    Music.Theory.Either
                    Music.Theory.Enum
                    Music.Theory.Function
+                   Music.Theory.Geometry
                    Music.Theory.Geometry.Bezier
                    Music.Theory.Geometry.Bezier.Spencer
                    Music.Theory.Geometry.Bivector
@@ -72,6 +73,7 @@ Library
                    Music.Theory.Geometry.Quaternion
                    Music.Theory.Geometry.Tutte
                    Music.Theory.Geometry.Vector
+                   Music.Theory.Graph
                    Music.Theory.Graph.Bliss
                    Music.Theory.Graph.Dot
                    Music.Theory.Graph.G6

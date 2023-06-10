@@ -170,20 +170,34 @@ unit_square = [(0, 0), (1, 0), (1, 1), (0, 1)]
 
 -- * Pentagon
 
--- > pentagon_circumradius_a 1 == 0.85065080835204
--- > regular_polygon_circumradius_a 5 1 == 0.8506508083520399
+{- | Regular pentagon circumradius (R), c.f. <https://mathworld.wolfram.com/Circumradius.html>
+
+> pentagon_circumradius_a 1 == 0.85065080835204
+> regular_polygon_circumradius_a 5 1 == 0.8506508083520399
+-}
 pentagon_circumradius_a :: Floating a => a -> a
 pentagon_circumradius_a a = (1/10) * sqrt (50 + 10 * sqrt 5) * a
 
--- > pentagon_inradius_a 1 == regular_polygon_inradius_a 5 1
+{- | Regular pentagon inradius (r), c.f. <https://mathworld.wolfram.com/Inradius.html>
+
+> pentagon_inradius_a 1 == regular_polygon_inradius_a 5 1
+-}
 pentagon_inradius_a :: Floating a => a -> a
 pentagon_inradius_a a = (1/10) * sqrt (25 + 10 * sqrt 5) * a
 
--- > pentagon_sagitta_a 1 == 0.16245984811645314
+{- | Regular pentagon sagitta, c.f. <https://mathworld.wolfram.com/Sagitta.html>
+
+> pentagon_sagitta_a 1 == 0.16245984811645314
+> regular_polygon_sagitta_cr 5 (pentagon_circumradius_a 1) == pentagon_sagitta_a 1
+-}
 pentagon_sagitta_a :: Floating a => a -> a
 pentagon_sagitta_a a = (1/10) * sqrt (25 - 10 * sqrt 5) * a
 
--- > pentagon_area_a 1 == regular_polygon_area_a 5 1
+{- | Regular pentagon area, c.f. <https://mathworld.wolfram.com/Area.html>
+
+> pentagon_area_a 1 == 1.720477400588967
+> pentagon_area_a 1 == regular_polygon_area_a 5 1
+-}
 pentagon_area_a :: Floating a => a -> a
 pentagon_area_a a = (1/4) * sqrt (25 + 10 * sqrt 5) * a * a
 
@@ -212,6 +226,7 @@ hexagon_circumradius_a = id
    <https://mathworld.wolfram.com/Sagitta.html>
 
 > hexagon_sagitta_a 1 == 0.1339745962155614
+> regular_polygon_sagitta_cr 6 (hexagon_circumradius_a 1) == 0.13397459621556132
 -}
 hexagon_sagitta_a :: Floating a => a -> a
 hexagon_sagitta_a a = 0.5 * (2 - sqrt 3) * a
