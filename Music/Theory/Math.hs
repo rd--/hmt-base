@@ -1,6 +1,7 @@
 -- | Math functions.
 module Music.Theory.Math where
 
+import qualified Data.Fixed {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
 import Data.Ratio {- base -}
@@ -9,6 +10,9 @@ import qualified Music.Theory.Math.Convert as T {- hmt-base -}
 
 -- | Alias for 'Double'.  (R = Real, not Rational)
 type R = Double
+
+rmod :: R -> R -> R
+rmod = Data.Fixed.mod'
 
 -- | Alias for 'Integer'.
 type I = Integer
