@@ -225,13 +225,20 @@ rat_prime_factors_c fc r =
 rational_prime_factors_c :: (Integral i,Show i) => [i] -> Ratio i -> [Int]
 rational_prime_factors_c fc = rat_prime_factors_c fc . Math.rational_nd
 
--- | Pretty printer for prime factors.  sup=superscript ol=overline
+{- | Pretty printer for prime factors.
+
+> prime_factors_pp [3, 5, 7, 11] == "3·5·7·11"
+> prime_factors_pp [3, 5, -7, -11] == "3·5·-7·-11"
+> prime_factors_pp [3, 3, 3, 3, 5] == "3·3·3·3·5"
+-}
 prime_factors_pp :: [Integer] -> String
 prime_factors_pp = intercalate [Unicode.middle_dot] . map show
 
 {- | Pretty printer for prime factors.  sup=superscript ol=overline
 
 > prime_factors_pp_sup_ol True [2,2,-3,5] == "2²·3̅·5"
+> prime_factors_pp_sup_ol True [2,2,2,3,3,3,3,5] == "2³·3⁴·5"
+> prime_factors_pp_sup_ol True [2,2,2,-3,-3,-3,-3,5] == "2³·3̅⁴·5"
 > prime_factors_pp_sup_ol False [-2,-2,-2,3,3,5,5,5,5] == "-2³·3²·5⁴"
 -}
 prime_factors_pp_sup_ol :: Bool -> [Integer] -> String

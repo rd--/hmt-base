@@ -4,7 +4,7 @@ module Music.Theory.Geometry.Vector where
 import Data.Bifunctor {- base -}
 import Data.List {- base -}
 
-import Music.Theory.Math {- hmt-base -}
+import qualified Music.Theory.Math as Math {- hmt-base -}
 
 -- * 2-Vector (V2)
 
@@ -18,7 +18,7 @@ v2_y = snd
 
 -- | (~=) at x & y.
 v2_approx_eq :: (Floating n,Ord n) => V2 n -> V2 n -> Bool
-v2_approx_eq (x1,y1) (x2,y2) = x1 ~= x2 && y1 ~= y2
+v2_approx_eq (x1,y1) (x2,y2) = (x1 Math.~= x2) && (y1 Math.~= y2)
 
 -- | (f x,f y)
 v2_map :: (t -> u) -> V2 t -> V2 u
@@ -28,48 +28,56 @@ v2_map f (a,b) = (f a,f b)
 v2_zip :: (a -> b -> c) -> V2 a -> V2 b -> V2 c
 v2_zip f (i,j) (p,q) = (f i p,f j q)
 
--- | Dot product (x1·x2 + y1·y2)
+-- | Dot product (x1·x2 + y1·y2), c.f. <https://mathworld.wolfram.com/DotProduct.html>
 v2_dot :: Num t => V2 t -> V2 t -> t
-v2_dot (x1,y1) (x2,y2) = x1 * x2 + y1 * y2
+v2_dot (x1,y1) (x2,y2) = (x1 * x2) + (y1 * y2)
 
--- | Determinant
+-- | Determinant, c.f. <https://mathworld.wolfram.com/Determinant.html>
 v2_det :: Num t => V2 t -> V2 t -> t
-v2_det (x1,y1) (x2,y2) = x1*y2 - x2*y1
+v2_det (x1,y1) (x2,y2) = (x1 * y2) - (x2 * y1)
 
--- | Rotate V2. Rotation is counter-clockwise.
---
--- > v2_rotate (pi/2) (1,0) `v2_approx_eq` (0,1)
+{- | Rotate V2. Rotation is counter-clockwise.
+
+> v2_rotate (pi/2) (1,0) `v2_approx_eq` (0,1)
+-}
 v2_rotate :: Floating n => n -> V2 n -> V2 n
 v2_rotate theta (x,y) =
     let c = cos theta
         s = sin theta
-    in (x * c - y * s,y * c + x * s)
+    in ((x * c) - (y * s)
+       ,(y * c) + (x * s))
 
--- | Rotate point p1 r radians about p0.
---
--- > v2_rotate_about (pi/2) (1,0) (2,0) == (1,1)
+{- | Rotate point p1 r radians about p0.
+
+> v2_rotate_about (pi/2) (1,0) (2,0) == (1,1)
+-}
 v2_rotate_about :: Floating a => a -> V2 a -> V2 a -> V2 a
 v2_rotate_about r p0 p1 = v2_rotate r (p1 `v2_sub` p0) `v2_add` p0
 
--- | n (x,y) -> (n*x,n*y)
---
--- > map (flip v2_scale (20,0)) [0,1,-1] == [(0,0),(20,0),(-20,-0)]
+{- | n (x,y) -> (n*x,n*y), c.f  <https://mathworld.wolfram.com/ScalarMultiplication.html>
+
+> map (flip v2_scale (20,0)) [0,1,-1] == [(0,0),(20,0),(-20,-0)]
+-}
 v2_scale :: Num n => n -> V2 n -> V2 n
 v2_scale n = v2_map (* n)
 
--- | Pointwise '+'.
+-- | Pointwise '+', c.f. <https://mathworld.wolfram.com/VectorAddition.html>
 v2_add :: Num n => V2 n -> V2 n -> V2 n
 v2_add = v2_zip (+)
 
--- | Translate by i along x-axis and j along y-axis.
+{- | Translate by i along x-axis and j along y-axis.
+
+> v2_translate 3 2 (1, 0) == (4, 2)
+> v2_translate 3 2 (1, 0) == v2_add (3, 2) (1, 0)
+-}
 v2_translate :: Num n => n -> n -> V2 n -> V2 n
 v2_translate i j (x, y) = (x + i, y + j)
 
--- | 'foldl' of 'v2_add', sum of empty list is (0,0)
+-- | 'foldl' of 'v2_add', sum of empty list is (0,0), c.f. <https://mathworld.wolfram.com/VectorSum.html>
 v2_sum :: Num n => [V2 n] -> V2 n
 v2_sum = foldl v2_add (0,0)
 
--- | Pointwise '-'.
+-- | Pointwise '-', c.f. <https://mathworld.wolfram.com/VectorSubtraction.html>
 v2_sub :: Num n => V2 n -> V2 n -> V2 n
 v2_sub = v2_zip (-)
 
@@ -77,7 +85,7 @@ v2_sub = v2_zip (-)
 v2_negate :: Num t => V2 t -> V2 t
 v2_negate = v2_map negate
 
--- | Pointwise '*'.
+-- | Pointwise '*', c.f. <https://mathworld.wolfram.com/VectorMultiplication.html>
 v2_mul :: Num n => V2 n -> V2 n -> V2 n
 v2_mul = v2_zip (*)
 
@@ -95,26 +103,28 @@ v2_round = v2_map round
 
 -- | Sum of squares (x·x + y·y)
 v2_mag_sq :: Num t => V2 t -> t
-v2_mag_sq (x,y) = sqr x + sqr y
+v2_mag_sq (x,y) = Math.sqr x + Math.sqr y
 
 -- | V2 length, ie. 'sqrt' of 'v2_mag_sq' (Frobenius norm)
 v2_mag :: Floating t => V2 t -> t
 v2_mag = sqrt . v2_mag_sq
 
--- | Euclidean distance function at V2
---
--- > v2_distance (0,0) (0,1) == 1
--- > v2_distance (0,0) (1,1) == sqrt 2
+{- | Euclidean distance function at V2, c.f. <https://mathworld.wolfram.com/EuclideanMetric.html>
+
+> v2_distance (0,0) (0,1) == 1
+> v2_distance (0,0) (1,1) == sqrt 2
+-}
 v2_distance :: Floating t => V2 t -> V2 t -> t
 v2_distance p = v2_mag . v2_sub p
 
--- | p + q / 2
---
--- > v2_midpoint (0,0) (2,6) == (1,3)
+{- | p + q / 2, c.f. <https://mathworld.wolfram.com/Midpoint.html>
+
+> v2_midpoint (0,0) (2,6) == (1,3)
+-}
 v2_midpoint :: Fractional t => V2 t -> V2 t -> V2 t
 v2_midpoint v = v2_scale (1/2) . v2_add v
 
-{- | sum x / length x
+{- | sum x / length x, c.f. <https://mathworld.wolfram.com/GeometricCentroid.html>
 
 > v2_centroid [] == undefined
 > v2_centroid [(1,1)] == (1,1)
@@ -252,7 +262,7 @@ v2_normalize x = let m = v2_mag x in if m == 0 then x else v2_scale (1 / v2_mag 
 -}
 v2_unit_vec_tol :: (Ord t, Floating t) => V2 t -> V2 t
 v2_unit_vec_tol (x,y) =
-  if abs (v2_mag_sq (x,y) - 1) < epsilon
+  if abs (v2_mag_sq (x,y) - 1) < Math.epsilon
   then (x,y)
   else if v2_mag_sq (x,y) == 0
        then (x,y)
@@ -281,9 +291,9 @@ v2_angle_vec :: RealFloat r => V2 r -> V2 r -> r
 v2_angle_vec (x1,y1) (x2,y2) =
     let t1 = atan2 y1 x1
         t2 = atan2 y2 x2
-    in constrain (-pi,pi) (t2 - t1)
+    in Math.constrain (-pi,pi) (t2 - t1)
 
-{- | Signed area, c.f. bv2_outer_product (x1 * y2 - y1 * x2)
+{- | Signed area, c.f. v2_outer_product (x1 * y2 - y1 * x2)
 
 > v2_signed_area (0, 2) (1, 0) == -2
 > v2_signed_area (3, 0) (0, 2) == 6
@@ -314,12 +324,14 @@ v3_zip f (i,j,k) (p,q,r) = (f i p,f j q,f k r)
 v3_dot :: Num t => V3 t -> V3 t -> t
 v3_dot (x1,y1,z1) (x2,y2,z2) = x1 * x2 + y1 * y2 + z1 * z2
 
--- | The cross product is a vector that is perpendicular to both inputs, and normal to the plane containing them.
+{- | The cross product is a vector that is perpendicular to both inputs, and normal to the plane containing them,
+c.f. <https://mathworld.wolfram.com/CrossProduct.html>
+-}
 v3_cross_product :: Num t => V3 t -> V3 t -> V3 t
 v3_cross_product (x1,y1,z1) (x2,y2,z2) =
-  (y1 * z2 - y2 * z1
-  ,x1 * z2 - x2 * z1
-  ,x1 * y2 - x2 * y1)
+  ((y1 * z2) - (y2 * z1)
+  ,(x1 * z2) - (x2 * z1)
+  ,(x1 * y2) - (x2 * y1))
 
 -- | Scale V3.
 v3_scale :: Num n => n -> V3 n -> V3 n
@@ -341,7 +353,7 @@ v3_div :: Fractional n => V3 n -> V3 n -> V3 n
 v3_div = v3_zip (/)
 
 v3_mag_sq :: Floating t => V3 t -> t
-v3_mag_sq (x,y,z) = sqr x + sqr y + sqr z
+v3_mag_sq (x,y,z) = Math.sqr x + Math.sqr y + Math.sqr z
 
 -- | Magnitude or length of vector, 'sqrt' of 'v3_mag_sq' (Frobenius norm)
 v3_mag :: Floating t => V3 t -> t
@@ -531,7 +543,7 @@ v4_foldl f (i,j,k,l) = f (f (f i j) k) l
 
 -- | 'sqrt' of sum of squares
 v4_mag :: Floating t => V4 t -> t
-v4_mag (x,y,z,w) = sqrt (sqr x + sqr y + sqr z + sqr w)
+v4_mag (x,y,z,w) = sqrt (Math.sqr x + Math.sqr y + Math.sqr z + Math.sqr w)
 
 -- | Euclidean distance function at V4
 --
