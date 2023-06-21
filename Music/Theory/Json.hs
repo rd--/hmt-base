@@ -15,7 +15,11 @@ boolean = Json.Bool
 string :: String -> Value
 string = Json.String . Text.pack
 
--- > isSafeIntegral (maxBound :: Int) == False
+{- | Is 53-bit integral
+
+>>> isSafeIntegral (maxBound :: Int)
+False
+-}
 isSafeIntegral :: Integral i => i -> Bool
 isSafeIntegral i = i >= -9007199254740991 && i <= 9007199254740991
 

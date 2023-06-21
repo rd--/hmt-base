@@ -19,8 +19,8 @@ import System.Exit {- base -}
 
 import qualified Data.List.Split as Split {- split -}
 
-import qualified Music.Theory.Either as T {- hmt-base -}
-import qualified Music.Theory.Read as T {- hmt-base -}
+import qualified Music.Theory.Either as Either {- hmt-base -}
+import qualified Music.Theory.Read as Read{- hmt-base -}
 
 {- | (Key,Value)
 
@@ -61,7 +61,7 @@ opt_get_nil o k = let r = opt_get o k in if null r then Nothing else Just r
 
 -- | 'read' of 'get_opt'
 opt_read :: Read t => [Opt] -> String -> t
-opt_read o = T.read_err . opt_get o
+opt_read o = Read.read_err . opt_get o
 
 -- | Parse k or k=v string, else error.
 opt_param_parse :: String -> Opt
@@ -71,23 +71,29 @@ opt_param_parse p =
     [lhs,rhs] -> (lhs,rhs)
     _ -> error ("opt_param_parse: " ++ p)
 
--- | Parse option string of form "--opt" or "--key=value".
---
--- > opt_parse "--opt" == Just ("opt","True")
--- > opt_parse "--key=value" == Just ("key","value")
+{- | Parse option string of form "--opt" or "--key=value".
+
+>>> opt_parse "--opt"
+Just ("opt","True")
+
+>>> opt_parse "--key=value"
+Just ("key","value")
+-}
 opt_parse :: String -> Maybe Opt
 opt_parse s =
   case s of
     '-':'-':p -> Just (opt_param_parse p)
     _ -> Nothing
 
--- | Parse option sequence, collating options and non-options.
---
--- > opt_set_parse (words "--a --b=c d") == ([("a","True"),("b","c")],["d"])
+{- | Parse option sequence, collating options and non-options.
+
+>>> opt_set_parse (words "--a --b=c d")
+([("a","True"),("b","c")],["d"])
+-}
 opt_set_parse :: [String] -> ([Opt],[String])
 opt_set_parse =
   let f s = maybe (Right s) Left (opt_parse s)
-  in T.partition_eithers . map f
+  in Either.partition_eithers . map f
 
 -- | Left-biased Opt merge.
 opt_merge :: [Opt] -> [Opt] -> [Opt]
@@ -110,7 +116,7 @@ opt_help_pp usg def = unlines (usg ++ ["",opt_help def])
 
 -- | Print help and exit.
 opt_usage :: OptHelp -> [OptUsr] -> IO ()
-opt_usage usg def = putStrLn (opt_help_pp usg def)  >> exitWith ExitSuccess
+opt_usage usg def = putStrLn (opt_help_pp usg def)  >> exitSuccess
 
 -- | Print help and error.
 opt_error :: OptHelp -> [OptUsr] -> t
@@ -135,9 +141,11 @@ opt_get_arg chk usg def = do
   when chk (opt_verify usg def o)
   return (opt_merge o (map opt_plain def),p)
 
--- | Parse param set, one parameter per line.
---
--- > opt_param_set_parse "a\nb=c" == [("a","True"),("b","c")]
+{- | Parse param set, one parameter per line.
+
+>>> opt_param_set_parse "a\nb=c"
+[("a","True"),("b","c")]
+-}
 opt_param_set_parse :: String -> [Opt]
 opt_param_set_parse = map opt_param_parse . lines
 

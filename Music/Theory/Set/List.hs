@@ -10,36 +10,43 @@ import qualified Music.Theory.List as List {- hmt-base -}
 
 {- | 'sort' then 'nub'.
 
-> set [3,3,3,2,2,1] == [1,2,3]
+>>> set [3,3,3,2,2,1]
+[1,2,3]
 -}
 set :: (Ord a) => [a] -> [a]
 set = nub . sort
 
 {- | Size of powerset of set of cardinality /n/, ie. @2@ '^' /n/.
 
-> map n_powerset [6..9] == [64,128,256,512]
+>>> map n_powerset [6..9]
+[64,128,256,512]
 -}
 n_powerset :: Integral n => n -> n
 n_powerset = (^) 2
 
 {- | Powerset, ie. set of all subsets.
 
-> sort (powerset [1,2]) == [[],[1],[1,2],[2]]
-> map length (map (\n -> powerset [1..n]) [6..9]) == [64,128,256,512]
+>>> sort (powerset [1,2])
+[[],[1],[1,2],[2]]
+
+>>> map length (map (\n -> powerset [1..n]) [6..9])
+[64,128,256,512]
 -}
 powerset :: [a] -> [[a]]
 powerset = filterM (const [True,False])
 
 {- | Variant where result is sorted and the empty set is not given.
 
-> powerset_sorted [1,2,3] == [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
+>>> powerset_sorted [1,2,3]
+[[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
 -}
 powerset_sorted :: Ord a => [a] -> [[a]]
 powerset_sorted = tail . List.sort_by_two_stage_on length id . powerset
 
 {- | Two element subsets.
 
-> pairs [1,2,3] == [(1,2),(1,3),(2,3)]
+>>> pairs [1,2,3]
+[(1,2),(1,3),(2,3)]
 -}
 pairs :: [a] -> [(a,a)]
 pairs s =
@@ -49,7 +56,8 @@ pairs s =
 
 {- | Three element subsets.
 
-> triples [1..4] == [(1,2,3),(1,2,4),(1,3,4),(2,3,4)]
+>>> triples [1..4]
+[(1,2,3),(1,2,4),(1,3,4),(2,3,4)]
 
 > import Music.Theory.Combinations
 > let f n = genericLength (triples [1..n]) == nk_combinations n 3
@@ -63,7 +71,8 @@ triples s =
 
 {- | Set expansion (ie. to multiset of degree /n/).
 
-> expand_set 4 [1,2,3] == [[1,1,2,3],[1,2,2,3],[1,2,3,3]]
+>>> expand_set 4 [1,2,3]
+[[1,1,2,3],[1,2,2,3],[1,2,3,3]]
 -}
 expand_set :: (Ord a) => Int -> [a] -> [[a]]
 expand_set n xs =
@@ -73,24 +82,33 @@ expand_set n xs =
 
 {- | All distinct multiset partitions, see 'Multiset.partitions'.
 
-> partitions "aab" == [["aab"],["a","ab"],["b","aa"],["b","a","a"]]
-> partitions "abc" == [["abc"],["bc","a"],["b","ac"],["c","ab"],["c","b","a"]]
+>>> partitions "aab"
+[["aab"],["a","ab"],["b","aa"],["b","a","a"]]
+
+>>> partitions "abc"
+[["abc"],["bc","a"],["b","ac"],["c","ab"],["c","b","a"]]
 -}
 partitions :: Eq a => [a] -> [[[a]]]
 partitions = map (map Multiset.toList . Multiset.toList) . Multiset.partitions . Multiset.fromListEq
 
 {- | Cartesian product of two sets.
 
-> cartesian_product "abc" [1,2] == [('a',1),('a',2),('b',1),('b',2),('c',1),('c',2)]
-> cartesian_product "abc" "" == []
+>>> cartesian_product "abc" [1,2]
+[('a',1),('a',2),('b',1),('b',2),('c',1),('c',2)]
+
+>>> cartesian_product "abc" "" 
+[]
 -}
 cartesian_product :: [a] -> [b] -> [(a,b)]
 cartesian_product p q = [(i,j) | i <- p, j <- q]
 
 {- | List form of n-fold cartesian product.
 
-> length (nfold_cartesian_product [[1..13],[1..4]]) == 52
-> length (nfold_cartesian_product ["abc","de","fgh"]) == 3 * 2 * 3
+>>> length (nfold_cartesian_product [[1..13],[1..4]])
+52
+
+>>> length (nfold_cartesian_product ["abc","de","fgh"]) == 3 * 2 * 3
+True
 -}
 nfold_cartesian_product :: [[a]] -> [[a]]
 nfold_cartesian_product l =
@@ -102,7 +120,8 @@ nfold_cartesian_product l =
 
 {- | Generate all distinct cycles, aka necklaces, with elements taken from a multiset.
 
-> concatMap multiset_cycles [replicate i 0 ++ replicate (6 - i) 1 | i <- [0 .. 6]]
+>>> concatMap multiset_cycles [replicate i 0 ++ replicate (6 - i) 1 | i <- [0 .. 6]]
+[[1,1,1,1,1,1],[1,1,1,1,1,0],[1,1,0,1,1,0],[1,1,1,0,1,0],[1,1,1,1,0,0],[1,0,1,0,1,0],[1,0,1,1,0,0],[1,1,0,1,0,0],[1,1,1,0,0,0],[1,0,0,1,0,0],[1,0,1,0,0,0],[1,1,0,0,0,0],[1,0,0,0,0,0],[0,0,0,0,0,0]]
 -}
 multiset_cycles :: Ord t => [t] -> [[t]]
 multiset_cycles = Multiset.cycles . Multiset.fromList

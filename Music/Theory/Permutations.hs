@@ -6,9 +6,11 @@ import qualified Numeric {- base -}
 
 import qualified Music.Theory.List as L {- hmt-base -}
 
--- | Factorial function.
---
--- > (factorial 20,maxBound::Int)
+{- | Factorial function.
+
+>>> (factorial 20,maxBound::Int)
+(2432902008176640000,9223372036854775807)
+-}
 factorial :: Integral n => n -> n
 factorial n = product [1..n]
 

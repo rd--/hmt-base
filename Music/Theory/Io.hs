@@ -49,7 +49,7 @@ interactWithFiles inputFile outputFile process = do
 getLineFromStdinIfReady :: IO (Maybe String)
 getLineFromStdinIfReady = do
   r <- hReady stdin
-  if r then fmap Just (hGetLine stdin) else return Nothing
+  if r then fmap Just getLine else return Nothing
 
 -- | Wait for input to be available, and then get lines while input remains available.
 getAvailableLinesFromStdin :: IO [String]
@@ -59,4 +59,4 @@ getAvailableLinesFromStdin = do
 
 -- | Interact with stdin and stdout.  Like Prelude.interact, but with pipes.
 interactWithStdio :: (String -> String) -> IO ()
-interactWithStdio strFunc = forever (getAvailableLinesFromStdin >>= \ln -> hPutStrLn stdout (strFunc (unlines ln)) >> hFlush stdout)
+interactWithStdio strFunc = forever (getAvailableLinesFromStdin >>= \ln -> putStrLn (strFunc (unlines ln)) >> hFlush stdout)

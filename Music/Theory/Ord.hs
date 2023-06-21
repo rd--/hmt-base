@@ -13,9 +13,11 @@ ord_to_int = fromEnum
 int_to_ord :: Int -> Ordering
 int_to_ord = toEnum
 
--- | Invert 'Ordering'.
---
--- > map ord_invert [LT,EQ,GT] == [GT,EQ,LT]
+{- | Invert 'Ordering'.
+
+>>> map ord_invert [LT,EQ,GT]
+[GT,EQ,LT]
+-}
 ord_invert :: Ordering -> Ordering
 ord_invert x =
     case x of
@@ -31,9 +33,11 @@ order_pair o (x,y) =
       EQ -> (x,y)
       GT -> (y,x)
 
--- | Sort a pair of equal type values using given comparison function.
---
--- > sort_pair compare ('b','a') == ('a','b')
+{- | Sort a pair of equal type values using given comparison function.
+
+>>> sort_pair compare ('b','a')
+('a','b')
+-}
 sort_pair :: (t -> t -> Ordering) -> (t,t) -> (t,t)
 sort_pair fn (x,y) = order_pair (fn x y) (x,y)
 

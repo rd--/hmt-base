@@ -1,9 +1,9 @@
--- | Tuple functions.
---
--- Uniform tuples have types 'T2', 'T3' etc. and functions names are
--- prefixed @t2_@ etc.
---
--- Heterogenous tuples (products) are prefixed @p2_@ etc.
+{- | Tuple functions.
+
+Uniform tuples have types 'T2', 'T3' etc. and functions names are prefixed @t2_@ etc.
+
+Heterogenous tuples (products) are prefixed @p2_@ etc.
+-}
 module Music.Theory.Tuple where
 
 import Data.List {- base -}
@@ -17,9 +17,11 @@ p2_from_list (f1,f2) l =
     [c1,c2] -> (f1 c1,f2 c2)
     _ -> error "p2_from_list"
 
--- | Swap elements of P2
---
--- > p2_swap (1,2) == (2,1)
+{- | Swap elements of P2
+
+>>> p2_swap (1,2)
+(2,1)
+-}
 p2_swap :: (s,t) -> (t,s)
 p2_swap (i,j) = (j,i)
 
@@ -46,21 +48,27 @@ t2_zipWith f (p,q) (p',q') = (f p p',f q q')
 t2_infix :: (a -> a -> b) -> T2 a -> b
 t2_infix f (i,j) = i `f` j
 
--- | 't2_infix' 'mappend'.
---
--- > t2_join ([1,2],[3,4]) == [1,2,3,4]
+{- | 't2_infix' 'mappend'.
+
+>>> t2_join ([1,2],[3,4])
+[1,2,3,4]
+-}
 t2_join :: Data.Monoid.Monoid m => T2 m -> m
 t2_join = t2_infix mappend
 
--- | 't2_map' 'mconcat' of 'unzip'
---
--- > t2_concat [("ab","cd"),("ef","gh")] == ("abef","cdgh")
+{- | 't2_map' 'mconcat' of 'unzip'
+
+>>> t2_concat [("ab","cd"),("ef","gh")]
+("abef","cdgh")
+-}
 t2_concat :: Data.Monoid.Monoid m => [T2 m] -> T2 m
 t2_concat = t2_map mconcat . unzip
 
--- | 'sort'
---
--- > t2_sort (2,1) == (1,2)
+{- | 'sort'
+
+>>> t2_sort (2,1)
+(1,2)
+-}
 t2_sort :: Ord t => (t,t) -> (t,t)
 t2_sort (p,q) = (min p q,max p q)
 
@@ -78,9 +86,11 @@ t2_mapM_ f (i,j) = f i >> f j >> return ()
 
 -- * P3 (3-product)
 
--- | Left rotation.
---
--- > p3_rotate_left (1,2,3) == (2,3,1)
+{- | Left rotation.
+
+>>> p3_rotate_left (1,2,3)
+(2,3,1)
+-}
 p3_rotate_left :: (s,t,u) -> (t,u,s)
 p3_rotate_left (i,j,k) = (j,k,i)
 

@@ -992,6 +992,10 @@ compare_adjacent = compare_adjacent_by compare
 headTail :: [a] -> (a, [a])
 headTail l = (head l, tail l)
 
+-- | Second element of list
+second :: [t] -> t
+second l = l !! 1
+
 -- | First and second elements of list. Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list has less than two elements.
 firstSecond :: [t] -> (t, t)
 firstSecond l = (l !! 0, l !! 1)

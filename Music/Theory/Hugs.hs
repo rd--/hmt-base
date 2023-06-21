@@ -10,8 +10,8 @@ import Music.Theory.Either as M
 import Music.Theory.Enum as M
 import Music.Theory.Function as M
 import Music.Theory.Graph.Bliss as M
-import Music.Theory.Graph.LCF as M
-import Music.Theory.Graph.LGL as M
+import Music.Theory.Graph.Lcf as M
+import Music.Theory.Graph.Lgl as M
 import Music.Theory.Graph.Type as M
 import Music.Theory.List as M
 import Music.Theory.Map as M
@@ -27,7 +27,6 @@ import Music.Theory.Show as M
 import Music.Theory.String as M
 import Music.Theory.Time.Duration as M
 import Music.Theory.Tuple as M
-import Music.Theory.String as M
 
 {-
 import Music.Theory.Array.CSV as M

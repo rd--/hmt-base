@@ -11,8 +11,11 @@ Values larger than this require a different thread delay mechanism, see 'threadS
 The value is the number of microseconds in @maxBound::Int@.
 For 64-bit architectures this is not likely to be an issue, however for 32-bit it can be.
 
-> round ((2 ** 31) / (60 * 60) / 1e6) == 1 -- hours
-> round ((2 ** 63) / (60 * 60 * 24 * 365 * 100) / 1e6) == 2925 -- years
+>>> round ((2 ** 31) / (60 * 60) / 1e6) -- hours
+1
+
+>>> round ((2 ** 63) / (60 * 60 * 24 * 365 * 100) / 1e6) -- years
+2925
 -}
 threadDelaySecondsLimit :: Fractional n => n
 threadDelaySecondsLimit = fromIntegral ((maxBound::Int) - 1) / 1e6
