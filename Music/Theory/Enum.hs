@@ -11,37 +11,48 @@ genericFromEnum = fromIntegral . fromEnum
 genericToEnum :: (Integral i,Enum e) => i -> e
 genericToEnum = toEnum . fromIntegral
 
--- | Variant of 'enumFromTo' that, if /p/ is after /q/, cycles from
--- 'maxBound' to 'minBound'.
---
--- > import Data.Word
--- > enum_from_to_cyclic (254 :: Word8) 1 == [254,255,0,1]
+{- | Variant of 'enumFromTo' that, if /p/ is after /q/, cycles from 'maxBound' to 'minBound'.
+
+>>> import Data.Word
+>>> enum_from_to_cyclic (254 :: Word8) 1
+[254,255,0,1]
+-}
 enum_from_to_cyclic :: (Bounded a, Enum a) => a -> a -> [a]
 enum_from_to_cyclic p q =
     if fromEnum p > fromEnum q
     then [p .. maxBound] ++ [minBound .. q]
     else [p .. q]
 
--- | Variant of 'enumFromTo' that, if /p/ is after /q/, enumerates
--- from /q/ to /p/.
---
--- > enum_from_to_reverse 5 1 == [5,4,3,2,1]
--- > enum_from_to_reverse 1 5 == enumFromTo 1 5
+{- | Variant of 'enumFromTo' that, if /p/ is after /q/, enumerates from /q/ to /p/.
+
+>>> enum_from_to_reverse 5 1
+[5,4,3,2,1]
+
+>>> enum_from_to_reverse 1 5
+[1,2,3,4,5]
+-}
 enum_from_to_reverse :: Enum a => a -> a -> [a]
 enum_from_to_reverse p q =
     if fromEnum p > fromEnum q
     then reverse [q .. p]
     else [p .. q]
 
--- | All elements in sequence.
---
--- > (enum_univ :: [Data.Word.Word8]) == [0 .. 255]
+{- | All elements in sequence.
+
+>>> length (enum_univ :: [Data.Word.Word8])
+256
+
+>>> (enum_univ :: [Bool])
+[False,True]
+-}
 enum_univ :: (Bounded t,Enum t) => [t]
 enum_univ = [minBound .. maxBound]
 
--- | List of 'Enum' values not in sorted input list.
---
--- > enum_list_gaps "abdh" == "cefg"
+{- | List of 'Enum' values not in sorted input list.
+
+>>> enum_list_gaps "abdh"
+"cefg"
+-}
 enum_list_gaps :: (Enum t,Eq t) => [t] -> [t]
 enum_list_gaps l =
   let e0 = head l

@@ -26,7 +26,8 @@ braille_dots (_,_,d,_,_) = d
 
 {- | Ascii Braille table.
 
-> all id (map (\(x,c,_,_,_) -> x == fromEnum c) braille_table) == True
+>>> all id (map (\(x,c,_,_,_) -> x == fromEnum c) braille_table)
+True
 -}
 braille_table :: [Braille]
 braille_table =
@@ -98,15 +99,19 @@ braille_table =
 
 {- | Lookup 'Braille' value for unicode character.
 
-> braille_lookup_unicode '⠝' == Just (0x4E,'N',[1,3,4,5],'⠝',"n")
+>>> braille_lookup_unicode '⠝' == Just (0x4E,'N',[1,3,4,5],'⠝',"n")
+True
 -}
 braille_lookup_unicode :: Char -> Maybe Braille
 braille_lookup_unicode c = find ((== c) . braille_unicode) braille_table
 
 {- | Lookup 'Braille' value for ascii character (case invariant).
 
-> braille_lookup_ascii 'n' == Just (0x4E,'N',[1,3,4,5],'⠝',"n")
-> braille_lookup_ascii 'N' == braille_lookup_ascii 'n'
+>>> braille_lookup_ascii 'n' == Just (0x4E,'N',[1,3,4,5],'⠝',"n")
+True
+
+>>> braille_lookup_ascii 'N' == braille_lookup_ascii 'n'
+True
 -}
 braille_lookup_ascii :: Char -> Maybe Braille
 braille_lookup_ascii c = find ((== toUpper c) . braille_ascii) braille_table
@@ -163,7 +168,8 @@ transcribe_char_grid (w,b) =
 
 {- | Generate 6-dot grid given (white,black) values.
 
-> dots_grid (0,1) [1,2,3,5] == [[1,0],[1,1],[1,0]]
+>>> dots_grid (0,1) [1,2,3,5]
+[[1,0],[1,1],[1,0]]
 -}
 dots_grid :: (c,c) -> [Int] -> [[c]]
 dots_grid (w,b) d =
@@ -197,7 +203,9 @@ braille_rng = (0x2800,0x28FF)
 
 {- | All characters, in sequence.
 
-> length braille_seq == 256
+>>> length braille_seq
+256
+
 > putStrLn braille_seq
 -}
 braille_seq :: [Char]

@@ -31,8 +31,11 @@ either_swap = either Right Left
 
 {- | Variant of 'Data.Either.rights' that preserves first 'Left'.
 
-> all_right (map Right [1..3]) == Right [1..3]
-> all_right [Right 1,Left 'a',Left 'b'] == Left 'a'
+>>> all_right (map Right [1..3])
+Right [1,2,3]
+
+>>> all_right [Right 1,Left 'a',Left 'b']
+Left 'a'
 -}
 all_right :: [Either a b] -> Either a [b]
 all_right x =

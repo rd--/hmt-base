@@ -22,7 +22,7 @@ import qualified Data.ByteString.Lazy as L {- bytestring -}
 
 -- * LBS
 
--- | Section function for 'L.ByteString', ie. from (n,m).
+- | Section function for 'L.ByteString', ie. from (n,m).
 --
 -- > lbs_slice 4 5 (L.pack [1..10]) == L.pack [5,6,7,8,9]
 lbs_slice :: Int64 -> Int64 -> L.ByteString -> L.ByteString
@@ -71,9 +71,11 @@ word8_at l = (!!) l . T.word8_to_int
 
 -- * Text
 
--- | Given /n/ in (0,255) make two character hex string.
---
--- > mapMaybe byte_hex_pp [0x0F,0xF0,0xF0F] == ["0F","F0"]
+{- | Given /n/ in (0,255) make two character hex string.
+
+>>> mapMaybe byte_hex_pp [0x0F,0xF0,0xF0F]
+["0F","F0"]
+-}
 byte_hex_pp :: (Integral i, Show i) => i -> Maybe String
 byte_hex_pp n =
     case showHex n "" of
@@ -85,16 +87,20 @@ byte_hex_pp n =
 byte_hex_pp_err :: (Integral i, Show i) => i -> String
 byte_hex_pp_err = fromMaybe (error "byte_hex_pp") . byte_hex_pp
 
--- | 'byte_hex_pp_err' either plain (ws = False) or with spaces (ws = True).
---   Plain is the same format written by xxd -p and read by xxd -r -p.
---
--- > byte_seq_hex_pp True [0x0F,0xF0] == "0F F0"
+{- | 'byte_hex_pp_err' either plain (ws = False) or with spaces (ws = True).
+  Plain is the same format written by xxd -p and read by xxd -r -p.
+
+>>> byte_seq_hex_pp True [0x0F,0xF0]
+"0F F0"
+-}
 byte_seq_hex_pp :: (Integral i, Show i) => Bool -> [i] -> String
 byte_seq_hex_pp ws = (if ws then unwords else concat) . map byte_hex_pp_err
 
--- | Read two character hexadecimal string.
---
--- > mapMaybe read_hex_byte (Split.chunksOf 2 "0FF0F") == [0x0F,0xF0]
+{- | Read two character hexadecimal string.
+
+>>> mapMaybe read_hex_byte (Split.chunksOf 2 "0FF0F") == [0x0F,0xF0]
+True
+-}
 read_hex_byte :: (Eq t, Integral t) => String -> Maybe t
 read_hex_byte s =
     case s of
@@ -105,15 +111,19 @@ read_hex_byte s =
 read_hex_byte_err :: (Eq t, Integral t) => String -> t
 read_hex_byte_err = fromMaybe (error "read_hex_byte") . read_hex_byte
 
--- | Sequence of 'read_hex_byte_err'
---
--- > read_hex_byte_seq "000FF0FF" == [0x00,0x0F,0xF0,0xFF]
+{- | Sequence of 'read_hex_byte_err'
+
+>>> read_hex_byte_seq "000FF0FF" == [0x00,0x0F,0xF0,0xFF]
+True
+-}
 read_hex_byte_seq :: (Eq t, Integral t) => String -> [t]
 read_hex_byte_seq = map read_hex_byte_err . Split.chunksOf 2
 
--- | Variant that filters white space.
---
--- > read_hex_byte_seq_ws "00 0F F0 FF" == [0x00,0x0F,0xF0,0xFF]
+{- | Variant that filters white space.
+
+>>> read_hex_byte_seq_ws "00 0F F0 FF" == [0x00,0x0F,0xF0,0xFF]
+True
+-}
 read_hex_byte_seq_ws :: (Eq t, Integral t) => String -> [t]
 read_hex_byte_seq_ws = read_hex_byte_seq . filter (not . isSpace)
 
@@ -149,18 +159,34 @@ map word8_to_char e
 
 -- * Cast
 
--- > castFloatToWord32 3.141 == 1078527525
+{- | Cast Float to Word32
+
+>>> castFloatToWord32 3.141
+1078527525
+-}
 castFloatToWord32 :: Float -> Word32
 castFloatToWord32 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word32)
 
--- > castWord32ToFloat 1078527525 == 3.141
+{- | Case Word32 to Float
+
+>>> castWord32ToFloat 1078527525
+3.141
+-}
 castWord32ToFloat :: Word32 -> Float
 castWord32ToFloat d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Float)
 
--- > castDoubleToWord64 3.141 == 4614255322014802772
+{- | Cast Double to Word64
+
+>>> castDoubleToWord64 3.141
+4614255322014802772
+-}
 castDoubleToWord64 :: Double -> Word64
 castDoubleToWord64 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word64)
 
--- > castWord64ToDouble 4614255322014802772 == 3.141
+{- | Case Word64 to Double
+
+>>> castWord64ToDouble 4614255322014802772
+3.141
+-}
 castWord64ToDouble :: Word64 -> Double
 castWord64ToDouble d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Double)
