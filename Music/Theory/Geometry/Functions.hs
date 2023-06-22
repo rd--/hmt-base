@@ -29,8 +29,11 @@ cot z = 1 / tan z
 
 {- | Degrees to radians.
 
-> degrees_to_radians 60 == (pi/3)
-> map degrees_to_radians [-180,-90,0,90,180] == [-pi,-pi/2,0,pi/2,pi]
+>>> degrees_to_radians 60 == (pi/3)
+True
+
+>>> map degrees_to_radians [-180,-90,0,90,180] == [-pi,-pi/2,0,pi/2,pi]
+True
 -}
 degrees_to_radians :: Floating n => n -> n
 degrees_to_radians = (* pi) . (/ 180)
@@ -45,28 +48,38 @@ degrees_minutes_seconds_to_radians (i,j,k) = degrees_to_radians (i + (j / 60) + 
 
 {- | Radians to degrees.
 
-> radians_to_degrees (pi/3) == 60
-> map radians_to_degrees [-pi,-pi/2,0,pi/2,pi] == [-180,-90,0,90,180]
-> radians_to_degrees (pi/8) == 22.5
-> radians_to_degrees 0.463648 ~= 26.565074
+>>> radians_to_degrees (pi/3)
+60.0
+
+>>> map radians_to_degrees [-pi,-pi/2,0,pi/2,pi]
+[-180.0,-90.0,0.0,90.0,180.0]
+
+>>> radians_to_degrees (pi/8)
+22.5
+
+>>> radians_to_degrees 0.463648
+26.565073579681595
 -}
 radians_to_degrees :: Floating n => n -> n
 radians_to_degrees = (* 180) . (/ pi)
 
 {- | (magnitude,phase:radians) -> (x,y)
 
-> let f ph = Data.Bifunctor.bimap round round (polar_to_rectangular (100,ph))
-> map f [0,pi/4 .. pi] == [(100,0),(71,71),(0,100),(-71,71),(-100,0)]
+>>> let f ph = Data.Bifunctor.bimap round round (polar_to_rectangular (100,ph))
+>>> map f [0,pi/4 .. pi]
+[(100,0),(71,71),(0,100),(-71,71),(-100,0)]
 -}
 polar_to_rectangular :: RealFloat t => V2 t -> V2 t
 polar_to_rectangular (mg,ph) = let c = mkPolar mg ph in (realPart c,imagPart c)
 
 {- | (magnitude,phase:degrees) -> (x,y)
 
-> polar_to_rectangular_dgr (100,108) -- (-31,95)
+>>> polar_to_rectangular_dgr (100,108) -- (-31,95)
+(-30.901699437494734,95.10565162951536)
 
-> let f ph = Data.Bifunctor.bimap round round (polar_to_rectangular_dgr (100,ph))
-> map f [0,60 .. 180] == [(100,0),(50,87),(-50,87),(-100,0)]
+>>> let f ph = Data.Bifunctor.bimap round round (polar_to_rectangular_dgr (100,ph))
+>>> map f [0,60 .. 180]
+[(100,0),(50,87),(-50,87),(-100,0)]
 -}
 polar_to_rectangular_dgr :: RealFloat t => V2 t -> V2 t
 polar_to_rectangular_dgr (i, j) = polar_to_rectangular (i, degrees_to_radians j)
@@ -85,14 +98,16 @@ rectangular_to_polar_dgr = (\(i, j) -> (i, radians_to_degrees j)) . rectangular_
 
 {- | <https://mathworld.wolfram.com/Semiperimeter.html> sss=side-side-side
 
-> triangle_semiperimeter_sss 1 1 1 == 1.5
+>>> triangle_semiperimeter_sss 1 1 1
+1.5
 -}
 triangle_semiperimeter_sss :: Fractional a => a -> a -> a -> a
 triangle_semiperimeter_sss a b c = (1/2) * (a + b + c)
 
 {- | <https://mathworld.wolfram.com/Area.html>
 
-> triangle_area_herons_sss 1 1 1 == 0.4330127018922193
+>>> triangle_area_herons_sss 1 1 1
+0.4330127018922193
 -}
 triangle_area_herons_sss :: Floating a => a -> a -> a -> a
 triangle_area_herons_sss a b c =
@@ -172,31 +187,41 @@ unit_square = [(0, 0), (1, 0), (1, 1), (0, 1)]
 
 {- | Regular pentagon circumradius (R), c.f. <https://mathworld.wolfram.com/Circumradius.html>
 
-> pentagon_circumradius_a 1 == 0.85065080835204
-> regular_polygon_circumradius_a 5 1 == 0.8506508083520399
+>>> pentagon_circumradius_a 1
+0.85065080835204
+
+>>> regular_polygon_circumradius_a 5 1
+0.8506508083520399
 -}
 pentagon_circumradius_a :: Floating a => a -> a
 pentagon_circumradius_a a = (1/10) * sqrt (50 + 10 * sqrt 5) * a
 
 {- | Regular pentagon inradius (r), c.f. <https://mathworld.wolfram.com/Inradius.html>
 
-> pentagon_inradius_a 1 == regular_polygon_inradius_a 5 1
+>>> pentagon_inradius_a 1 == regular_polygon_inradius_a 5 1
+True
 -}
 pentagon_inradius_a :: Floating a => a -> a
 pentagon_inradius_a a = (1/10) * sqrt (25 + 10 * sqrt 5) * a
 
 {- | Regular pentagon sagitta, c.f. <https://mathworld.wolfram.com/Sagitta.html>
 
-> pentagon_sagitta_a 1 == 0.16245984811645314
-> regular_polygon_sagitta_cr 5 (pentagon_circumradius_a 1) == pentagon_sagitta_a 1
+>>> pentagon_sagitta_a 1
+0.16245984811645314
+
+>>> regular_polygon_sagitta_cr 5 (pentagon_circumradius_a 1) == pentagon_sagitta_a 1
+True
 -}
 pentagon_sagitta_a :: Floating a => a -> a
 pentagon_sagitta_a a = (1/10) * sqrt (25 - 10 * sqrt 5) * a
 
 {- | Regular pentagon area, c.f. <https://mathworld.wolfram.com/Area.html>
 
-> pentagon_area_a 1 == 1.720477400588967
-> pentagon_area_a 1 == regular_polygon_area_a 5 1
+>>> pentagon_area_a 1
+1.720477400588967
+
+>>> pentagon_area_a 1 == regular_polygon_area_a 5 1
+True
 -}
 pentagon_area_a :: Floating a => a -> a
 pentagon_area_a a = (1/4) * sqrt (25 + 10 * sqrt 5) * a * a
@@ -207,17 +232,26 @@ pentagon_area_a a = (1/4) * sqrt (25 + 10 * sqrt 5) * a * a
      denoted r or sometimes rho.  <https://mathworld.wolfram.com/Inradius.html>
      The indiameter of a unit hexagon is (sqrt 3).
 
-> hexagon_inradius_a 1 == 0.8660254037844386
-> regular_polygon_inradius_a 6 1 == 0.8660254037844387
-> hexagon_inradius_a 1 == sqrt 3 / 2
+>>> hexagon_inradius_a 1
+0.8660254037844386
+
+>>> regular_polygon_inradius_a 6 1
+0.8660254037844387
+
+>>> hexagon_inradius_a 1 == sqrt 3 / 2
+True
 -}
 hexagon_inradius_a :: Floating a => a -> a
 hexagon_inradius_a a = 0.5 * sqrt 3 * a
 
--- | For hexagons, the side length (a) and the circumradius (R) are equal.
---
--- > hexagon_circumradius_a 1 == 1
--- > regular_polygon_circumradius_a 6 1 == 1.0000000000000002
+{- | For hexagons, the side length (a) and the circumradius (R) are equal.
+
+>>> hexagon_circumradius_a 1
+1
+
+>>> regular_polygon_circumradius_a 6 1
+1.0000000000000002
+-}
 hexagon_circumradius_a :: a -> a
 hexagon_circumradius_a = id
 
@@ -225,8 +259,11 @@ hexagon_circumradius_a = id
    across it, equal to the radius R minus the apothem r.
    <https://mathworld.wolfram.com/Sagitta.html>
 
-> hexagon_sagitta_a 1 == 0.1339745962155614
-> regular_polygon_sagitta_cr 6 (hexagon_circumradius_a 1) == 0.13397459621556132
+>>> hexagon_sagitta_a 1
+0.1339745962155614
+
+>>> regular_polygon_sagitta_cr 6 (hexagon_circumradius_a 1)
+0.13397459621556132
 -}
 hexagon_sagitta_a :: Floating a => a -> a
 hexagon_sagitta_a a = 0.5 * (2 - sqrt 3) * a
@@ -438,7 +475,7 @@ hexadecachoron =
 hexadecachoron_graph :: ([Int], [(Int,Int)])
 hexadecachoron_graph =
   let v = [0..7]
-      f i j = not (even i) || j /= (i + 1)
+      f i j = odd i || j /= (i + 1)
   in (v,[(i,j) | i <- v, j <- v, i < j, f i j])
 
 -- * Fano
