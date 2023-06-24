@@ -16,7 +16,8 @@ import qualified Music.Theory.List as T {- hmt-base -}
 
 {- | /k/ points on unit circle
 
-> v_on_unit_circle 4 -- [(1,0),(0,1),(-1,0),(0,-1)]
+>>> map v2_round (v_on_unit_circle 4)
+[(1,0),(0,1),(-1,0),(0,-1)]
 -}
 v_on_unit_circle :: Int -> [V2 R]
 v_on_unit_circle k =
@@ -26,9 +27,11 @@ v_on_unit_circle k =
 -- | [(Vertex,Coordinate)]
 type V_Loc = [(Int,V2 R)]
 
--- | k = n-vertices
---
--- > v_init_loc 8 [0,1,2,3]
+{- | k = n-vertices
+
+>>> map (\(i, j) -> (i, v2_round j)) (v_init_loc 8 [0,1,2,3])
+[(0,(1,0)),(1,(0,1)),(2,(-1,0)),(3,(0,-1)),(4,(0,0)),(5,(0,0)),(6,(0,0)),(7,(0,0))]
+-}
 v_init_loc :: Int -> [Int] -> V_Loc
 v_init_loc k fc =
   let fc_v = zip fc (v_on_unit_circle (length fc))

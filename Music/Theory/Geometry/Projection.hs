@@ -10,10 +10,11 @@ import Music.Theory.Geometry.Vector {- hmt-base -}
 -- | Project V3 to V2.
 type Prj n = V3 n -> V2 n
 
--- | Select X & Y, X & Z, Y & Z, also reverse.
---
--- > let r = [(1,2),(1,3),(2,3)]
--- > let p = (1,2,3) in map (\f -> f p) [prj_xy,prj_xz,prj_yz] == r
+{- | Select X & Y, X & Z, Y & Z, also reverse.
+
+>>> let p = (1,2,3) in map (\f -> f p) [prj_xy,prj_xz,prj_yz]
+[(1,2),(1,3),(2,3)]
+-}
 prj_xy,prj_xz,prj_yz :: Prj n
 prj_xy (x,y,_) = (x,y)
 prj_xz (x,_,z) = (x,z)
@@ -25,22 +26,27 @@ prj_yx (x,y,_) = (y,x)
 prj_zx (x,_,z) = (z,x)
 prj_zy (_,y,z) = (z,y)
 
-{-
-> prj_stereographic (0,0,-1) == (0,0)
+{- | Stereographic
+
+>>> prj_stereographic (0,0,-1)
+(0.0,0.0)
 -}
 prj_stereographic :: Fractional n => V3 n -> V2 n
 prj_stereographic (x,y,z) = (x / (1 - z),y / (1 - z))
 
-{-
-> prj_stereographic_inv (0,0) == (0,0,-1)
+{- Stereographic (Inv)
+
+>>> prj_stereographic_inv (0,0)
+(0,0,-1)
 -}
 prj_stereographic_inv :: Fractional n => V2 n -> V3 n
 prj_stereographic_inv (x,y) = let i = 1 + x * x + y * y in ((2 * x) / i,(2 * y) / i,(i - 2) / i)
 
--- | M33 variants.
---
--- > let r = [(1,2,0),(1,3,0),(2,3,0)]
--- > let p = (1,2,3) in map (\m -> m33_apply m p) [prj_xy_m33,prj_xz_m33,prj_yz_m33] == r
+{- | M33 variants.
+
+>>> let p = (1,2,3) in map (\m -> m33_apply m p) [prj_xy_m33,prj_xz_m33,prj_yz_m33]
+[(1,2,0),(1,3,0),(2,3,0)]
+-}
 prj_xy_m33,prj_xz_m33,prj_yz_m33 :: Num n => M33 n
 prj_xy_m33 = ((1,0,0),(0,1,0),(0,0,0))
 prj_xz_m33 = ((1,0,0),(0,0,1),(0,0,0))
@@ -68,8 +74,9 @@ identity_prj3 = (0,0,(1,1,1))
 
 {- | (α=β=π÷6,×=1) ; ISO 5456-3 ; sin(pi/6)=1/2
 
-> f = prj3_apply isometric_prj3
-> map (v2_distance (0,0) . f) [(1,0,0),(1,1,0),(1,1,1)] == [1,sqrt 3,2]
+>>> f = prj3_apply isometric_prj3
+>>> map (v2_distance (0,0) . f) [(1,0,0),(1,1,0),(1,1,1)] == [1,sqrt 3,2]
+True
 -}
 isometric_prj3 :: Floating n => Prj3 n
 isometric_prj3 = (pi/6,pi/6,(1,1,1))
@@ -78,10 +85,12 @@ isometric_prj3 = (pi/6,pi/6,(1,1,1))
 isometric_tile_prj3 :: Floating n => Prj3 n
 isometric_tile_prj3 = let x = atan (1/2) in (x,x,(1,1,1))
 
--- | (α=π÷4,β=0,×=1÷2) ; sin(pi/4)==1/sqrt(2)
---
--- > let m = ((-1,0,cos (pi/4)/2),(0,1,sin (pi/4)/2),(0,0,0))
--- > prj3_to_m33 cabinet_oblique_prj3 == m
+{- | (α=π÷4,β=0,×=1÷2) ; sin(pi/4)==1/sqrt(2)
+
+>>> let m = ((-1,0,cos (pi/4)/2),(0,1,sin (pi/4)/2),(0,0,0))
+>>> prj3_to_m33 cabinet_oblique_prj3 == m
+True
+-}
 cabinet_oblique_prj3 :: Floating n => Prj3 n
 cabinet_oblique_prj3 = (pi/4,0,(1,1,1/2))
 

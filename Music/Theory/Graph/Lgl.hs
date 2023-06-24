@@ -37,8 +37,11 @@ ncol_load_int = ncol_load
 
 {- | Format Ncol_Ent.
 
-> ncol_ent_format 4 ((0,1),Nothing) == "0 1"
-> ncol_ent_format 4 ((0,1),Just 2.0) == "0 1 2.0000"
+>>> ncol_ent_format 4 ((0,1),Nothing)
+"0 1"
+
+>>> ncol_ent_format 4 ((0,1),Just 2.0)
+"0 1 2.0000"
 -}
 ncol_ent_format :: Show t => Int -> Ncol_Ent t -> String
 ncol_ent_format k ((i,j),w) = unwords (map show [i,j]) ++ maybe "" ((' ':) . T.double_pp k) w
@@ -84,7 +87,11 @@ lgl_format k =
 lgl_store :: Show t => Int -> FilePath -> Lgl t -> IO ()
 lgl_store k fn = writeFile fn . lgl_format k
 
--- | adj (adjaceny-set) to 'Lgl'.
+{- | adj (adjaceny-set) to 'Lgl'.
+
+>>> lgl_format 4 $ adj_to_lgl [(0,[1,2,3]),(1,[2,3]),(2,[3])]
+"# 0\n1\n2\n3\n# 1\n2\n3\n# 2\n3\n"
+-}
 adj_to_lgl :: T.Adj t -> Lgl t
 adj_to_lgl = map (\(i,j) -> (i,zip j (repeat Nothing)))
 
@@ -95,5 +102,3 @@ lgl_to_adj = map (second (map (\(k,w) -> case w of {Nothing -> k;_ -> error "lgl
 -- | 'lgl_store' of 'adj_to_lgl'
 lgl_store_adj :: Show t => FilePath -> T.Adj t -> IO ()
 lgl_store_adj fn = lgl_store undefined fn . adj_to_lgl
-
--- > putStrLn $ lgl_format 4 $ adj_to_lgl [(0,[1,2,3]),(1,[2,3]),(2,[3])]

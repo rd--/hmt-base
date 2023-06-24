@@ -361,15 +361,19 @@ t12_from_list l =
       [p,q,r,s,t,u,v,w,x,y,z,a] -> (p,q,r,s,t,u,v,w,x,y,z,a)
       _ -> error "t12_from_list"
 
--- | 'foldr1' of 't12_to_list'.
---
--- > t12_foldr1 (+) (1,2,3,4,5,6,7,8,9,10,11,12) == 78
+{- | 'foldr1' of 't12_to_list'.
+
+>>> t12_foldr1 (+) (1,2,3,4,5,6,7,8,9,10,11,12)
+78
+-}
 t12_foldr1 :: (t -> t -> t) -> T12 t -> t
 t12_foldr1 f = foldr1 f . t12_to_list
 
--- | 'sum' of 't12_to_list'.
---
--- > t12_sum (1,2,3,4,5,6,7,8,9,10,11,12) == 78
+{- | 'sum' of 't12_to_list'.
+
+>>> t12_sum (1,2,3,4,5,6,7,8,9,10,11,12)
+78
+-}
 t12_sum :: Num n => T12 n -> n
 t12_sum t =
     let (n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12) = t

@@ -14,38 +14,58 @@ import qualified Music.Theory.Unicode as Unicode {- hmt -}
 
 {- | Alias for 'Primes.primes'.
 
-> take 12 primes_list == [2,3,5,7,11,13,17,19,23,29,31,37]
+>>> take 12 primes_list
+[2,3,5,7,11,13,17,19,23,29,31,37]
 -}
 primes_list :: Integral i => [i]
 primes_list = Primes.primes
 
 {- | Give zero-index of prime, or Nothing if value is not prime.
 
-> map prime_k [2,3,5,7,11,13,17,19,23,29,31,37] == map Just [0 .. 11]
-> map prime_k [1,4,6,8,9,10,12,14,15,16,18,20,21,22] == replicate 14 Nothing
-> filter Primes.isPrime [1 .. 99] == [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
-> length (filter Primes.isPrime [1 .. 999]) == 168
-> length (filter Primes.isPrime [1 .. 9999]) == 1229
-> length (filter Primes.isPrime [1 .. 99999]) == 9592
+>>> map prime_k [2,3,5,7,11,13,17,19,23,29,31,37] == map Just [0 .. 11]
+True
+
+>>> map prime_k [1,4,6,8,9,10,12,14,15,16,18,20,21,22] == replicate 14 Nothing
+True
+
+>>> filter Primes.isPrime [1 .. 99]
+[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
+
+>>> length (filter Primes.isPrime [1 .. 999])
+168
+
+>>> length (filter Primes.isPrime [1 .. 9999])
+1229
+
+>>> length (filter Primes.isPrime [1 .. 99999])
+9592
 -}
 prime_k :: Integral a => a -> Maybe Int
 prime_k i = if Primes.isPrime i then Just (List.findIndex_err (== i) primes_list) else Nothing
 
--- | 'maybe' 'error' of 'prime_k'
---
--- > prime_k_err 13 == 5
+{- | 'maybe' 'error' of 'prime_k'
+
+>>> prime_k_err 13
+5
+-}
 prime_k_err :: Integral a => a -> Int
 prime_k_err = fromMaybe (error "prime_k: not prime?") . prime_k
 
 {- | Generate list of factors of /n/ from /x/.
 
-> factor primes_list 315 == [3,3,5,7]
-> Primes.primeFactors 315 == [3,3,5,7]
+>>> factor primes_list 315
+[3,3,5,7]
+
+>>> Primes.primeFactors 315
+[3,3,5,7]
 
 As a special case 1 gives the empty list.
 
-> factor primes_list 1 == []
-> Primes.primeFactors 1 == []
+>>> factor primes_list 1
+[]
+
+>>> Primes.primeFactors 1
+[]
 -}
 factor :: Integral i => [i] -> i -> [i]
 factor x n =
@@ -59,39 +79,57 @@ factor x n =
                         then i : factor x (quot n i)
                         else factor x' n
 
--- | 'factor' of 'primes_list'.
---
--- > map prime_factors [-1,0,1] == [[],[],[]]
--- > map prime_factors [1,4,231,315] == [[],[2,2],[3,7,11],[3,3,5,7]]
--- > map Primes.primeFactors [1,4,231,315] == [[],[2,2],[3,7,11],[3,3,5,7]]
+{- | 'factor' of 'primes_list'.
+
+>>> map prime_factors [-1,0,1]
+[[],[],[]]
+
+>>> map prime_factors [1,4,231,315]
+[[],[2,2],[3,7,11],[3,3,5,7]]
+
+>>> map Primes.primeFactors [1,4,231,315]
+[[],[2,2],[3,7,11],[3,3,5,7]]
+-}
 prime_factors :: Integral i => i -> [i]
 prime_factors = factor primes_list
 
--- | 'maximum' of 'prime_factors'
---
--- > map prime_limit [243,125] == [3,5]
--- > map prime_limit [0,1] == [1,1]
+{- | 'maximum' of 'prime_factors'
+
+>>> map prime_limit [243,125]
+[3,5]
+
+>>> map prime_limit [0,1]
+[1,1]
+-}
 prime_limit :: Integral i => i -> i
 prime_limit x = if x < 2 then 1 else maximum (prime_factors x)
 
--- | Collect number of occurences of each element of a sorted list.
---
--- > multiplicities [1,1,1,2,2,3] == [(1,3),(2,2),(3,1)]
+{- | Collect number of occurences of each element of a sorted list.
+
+>>> multiplicities [1,1,1,2,2,3]
+[(1,3),(2,2),(3,1)]
+-}
 multiplicities :: Eq t => [t] -> [(t,Int)]
 multiplicities = List.generic_histogram_by (==) Nothing
 
--- | Pretty printer for histogram (multiplicites).
---
--- > multiplicities_pp [(3,2),(5,1),(7,1)] == "3×2 5×1 7×1"
+{- | Pretty printer for histogram (multiplicites).
+
+>>> multiplicities_pp [(3,2),(5,1),(7,1)] == "3×2 5×1 7×1"
+True
+-}
 multiplicities_pp :: Show t => [(t,Int)] -> String
 multiplicities_pp =
   let f (x,y) = show x ++ "×" ++ show y
   in unwords . map f
 
--- | 'multiplicities' of 'Primes.primeFactors'.
---
--- > prime_factors_m 1 == []
--- > prime_factors_m 315 == [(3,2),(5,1),(7,1)]
+{- | 'multiplicities' of 'Primes.primeFactors'.
+
+>>> prime_factors_m 1
+[]
+
+>>> prime_factors_m 315
+[(3,2),(5,1),(7,1)]
+-}
 prime_factors_m :: Integral i => i -> [(i,Int)]
 prime_factors_m = multiplicities . Primes.primeFactors
 
@@ -110,29 +148,38 @@ rational_prime_factors = rat_prime_factors . Math.rational_nd
 {- | Variant that writes factors of numerator as positive and factors for denominator as negative.
      Sorted by absolute value.
 
-> rat_prime_factors_sgn (3 * 5 * 7 * 11,1) == [3,5,7,11]
-> rat_prime_factors_sgn (3 * 5,7 * 11) == [3,5,-7,-11]
-> rat_prime_factors_sgn (3 * 7,5) == [3,-5,7]
+>>> rat_prime_factors_sgn (3 * 5 * 7 * 11,1)
+[3,5,7,11]
+
+>>> rat_prime_factors_sgn (3 * 5,7 * 11)
+[3,5,-7,-11]
+
+>>> rat_prime_factors_sgn (3 * 7,5)
+[3,-5,7]
 -}
 rat_prime_factors_sgn :: Integral i => (i,i) -> [i]
 rat_prime_factors_sgn r = let (n,d) = rat_prime_factors r in sortOn abs (n ++ map negate d)
 
--- | Rational variant.
---
--- > rational_prime_factors_sgn (2 * 2 * 2 * 1/3 * 1/3 * 1/3 * 1/3 * 5) == [2,2,2,-3,-3,-3,-3,5]
+{- | Rational variant.
+
+>>> rational_prime_factors_sgn (2 * 2 * 2 * 1/3 * 1/3 * 1/3 * 1/3 * 5)
+[2,2,2,-3,-3,-3,-3,5]
+-}
 rational_prime_factors_sgn :: Integral i => Ratio i -> [i]
 rational_prime_factors_sgn = rat_prime_factors_sgn . Math.rational_nd
 
 {- | The largest prime factor of n/d.
 
-> rat_prime_limit (243, 125) == 5
+>>> rat_prime_limit (243, 125)
+5
 -}
 rat_prime_limit :: Integral i => (i,i) -> i
 rat_prime_limit = uncurry max . Function.bimap1 prime_limit
 
 {- | The largest prime factor of /n/.
 
-> rational_prime_limit (243/125) == 5
+>>> rational_prime_limit (243/125)
+5
 -}
 rational_prime_limit :: Integral i => Ratio i -> i
 rational_prime_limit = rat_prime_limit . Math.rational_nd
@@ -158,13 +205,26 @@ ascending order with their positive or negative multiplicities,
 depending on whether the prime factor occurs in the numerator or the
 denominator (after cancelling out common factors).
 
-> rat_prime_factors_m (1,1) == []
-> rat_prime_factors_m (16,15) == [(2,4),(3,-1),(5,-1)]
-> rat_prime_factors_m (10,9) == [(2,1),(3,-2),(5,1)]
-> rat_prime_factors_m (81,64) == [(2,-6),(3,4)]
-> rat_prime_factors_m (27,16) == [(2,-4),(3,3)]
-> rat_prime_factors_m (12,7) == [(2,2),(3,1),(7,-1)]
-> rat_prime_factors_m (5,31) == [(5,1),(31,-1)]
+>>> rat_prime_factors_m (1,1)
+[]
+
+>>> rat_prime_factors_m (16,15)
+[(2,4),(3,-1),(5,-1)]
+
+>>> rat_prime_factors_m (10,9)
+[(2,1),(3,-2),(5,1)]
+
+>>> rat_prime_factors_m (81,64)
+[(2,-6),(3,4)]
+
+>>> rat_prime_factors_m (27,16)
+[(2,-4),(3,3)]
+
+>>> rat_prime_factors_m (12,7)
+[(2,2),(3,1),(7,-1)]
+
+>>> rat_prime_factors_m (5,31)
+[(5,1),(31,-1)]
 -}
 rat_prime_factors_m :: Integral i => (i,i) -> [(i,Int)]
 rat_prime_factors_m (n,d) = rat_pf_merge (prime_factors_m n) (prime_factors_m d)
@@ -173,12 +233,20 @@ rat_prime_factors_m (n,d) = rat_pf_merge (prime_factors_m n) (prime_factors_m d)
 rational_prime_factors_m :: Integral i => Ratio i -> [(i,Int)]
 rational_prime_factors_m = rat_prime_factors_m . Math.rational_nd
 
--- | Variant of 'rat_prime_factors_m' giving results in a list.
---
--- > rat_prime_factors_l (1,1) == []
--- > rat_prime_factors_l (2^5,9) == [5,-2]
--- > rat_prime_factors_l (2*2*3,7) == [2,1,0,-1]
--- > rat_prime_factors_l (3*3,11*13) == [0,2,0,0,-1,-1]
+{- | Variant of 'rat_prime_factors_m' giving results in a list.
+
+>>> rat_prime_factors_l (1,1)
+[]
+
+>>> rat_prime_factors_l (2^5,9)
+[5,-2]
+
+>>> rat_prime_factors_l (2*2*3,7)
+[2,1,0,-1]
+
+>>> rat_prime_factors_l (3*3,11*13)
+[0,2,0,0,-1,-1]
+-}
 rat_prime_factors_l :: Integral i => (i,i) -> [Int]
 rat_prime_factors_l x =
   case rat_prime_factors_m x of
@@ -186,17 +254,22 @@ rat_prime_factors_l x =
     r -> let lm = maximum (map fst r)
          in map (\i -> fromMaybe 0 (lookup i r)) (List.take_until (== lm) primes_list)
 
--- | 'Ratio' variant of 'rat_prime_factors_l'
---
--- > map rational_prime_factors_l [1/31,256/243] == [[0,0,0,0,0,0,0,0,0,0,-1],[8,-5]]
+{- | 'Ratio' variant of 'rat_prime_factors_l'
+
+>>> map rational_prime_factors_l [1/31,256/243]
+[[0,0,0,0,0,0,0,0,0,0,-1],[8,-5]]
+-}
 rational_prime_factors_l :: Integral i => Ratio i -> [Int]
 rational_prime_factors_l = rat_prime_factors_l . Math.rational_nd
 
--- | Variant of 'rational_prime_factors_l' padding table to /k/ places.
---   It is an error for /k/ to indicate a prime less than the limit of /x/.
---
--- > map (rat_prime_factors_t 6) [(5,13),(12,7)] == [[0,0,1,0,0,-1],[2,1,0,-1,0,0]]
--- > rat_prime_factors_t 3 (9,7) == undefined
+{- | Variant of 'rational_prime_factors_l' padding table to /k/ places.
+It is an error for /k/ to indicate a prime less than the limit of /x/.
+
+>>> map (rat_prime_factors_t 6) [(5,13),(12,7)]
+[[0,0,1,0,0,-1],[2,1,0,-1,0,0]]
+
+> rat_prime_factors_t 3 (9,7) == undefined
+-}
 rat_prime_factors_t :: (Integral i,Show i) => Int -> (i,i) -> [Int]
 rat_prime_factors_t k = List.pad_right_err 0 k . rat_prime_factors_l
 
@@ -204,12 +277,19 @@ rat_prime_factors_t k = List.pad_right_err 0 k . rat_prime_factors_l
 rational_prime_factors_t :: (Integral i,Show i) => Int -> Ratio i -> [Int]
 rational_prime_factors_t n = rat_prime_factors_t n . Math.rational_nd
 
--- | Condense factors list to include only indicated places.
---   It is an error if a deleted factor has a non-zero entry in the table.
---
--- > rat_prime_factors_l (12,7) == [2,1,0,-1]
--- > rat_prime_factors_c [2,3,5,7] (12,7) == [2,1,0,-1]
--- > rat_prime_factors_c [2,3,7] (12,7) == [2,1,-1]
+{- | Condense factors list to include only indicated places.
+It is an error if a deleted factor has a non-zero entry in the table.
+
+
+>>> rat_prime_factors_l (12,7)
+[2,1,0,-1]
+
+>>> rat_prime_factors_c [2,3,5,7] (12,7)
+[2,1,0,-1]
+
+>>> rat_prime_factors_c [2,3,7] (12,7)
+[2,1,-1]
+-}
 rat_prime_factors_c :: (Integral i,Show i) => [i] -> (i,i) -> [Int]
 rat_prime_factors_c fc r =
   let t = rat_prime_factors_l r
@@ -219,27 +299,43 @@ rat_prime_factors_c fc r =
                  else Just e
   in mapMaybe f (zip [0..] t)
 
--- | 'Ratio' variant of 'rat_prime_factors_t'
---
--- > map (rational_prime_factors_c [3,5,31]) [3,5,31]
+{- | 'Ratio' variant of 'rat_prime_factors_t'
+
+>>> map (rational_prime_factors_c [3,5,31]) [3,5,31]
+[[1],[0,1],[0,0,1]]
+-}
 rational_prime_factors_c :: (Integral i,Show i) => [i] -> Ratio i -> [Int]
 rational_prime_factors_c fc = rat_prime_factors_c fc . Math.rational_nd
 
 {- | Pretty printer for prime factors.
 
-> prime_factors_pp [3, 5, 7, 11] == "3·5·7·11"
-> prime_factors_pp [3, 5, -7, -11] == "3·5·-7·-11"
-> prime_factors_pp [3, 3, 3, 3, 5] == "3·3·3·3·5"
+
+>>> prime_factors_pp [3, 5, 7, 11] == "3·5·7·11"
+True
+
+>>> prime_factors_pp [3, 5, -7, -11] == "3·5·-7·-11"
+True
+
+>>> prime_factors_pp [3, 3, 3, 3, 5] == "3·3·3·3·5"
+True
 -}
 prime_factors_pp :: [Integer] -> String
 prime_factors_pp = intercalate [Unicode.middle_dot] . map show
 
 {- | Pretty printer for prime factors.  sup=superscript ol=overline
 
-> prime_factors_pp_sup_ol True [2,2,-3,5] == "2²·3̅·5"
-> prime_factors_pp_sup_ol True [2,2,2,3,3,3,3,5] == "2³·3⁴·5"
-> prime_factors_pp_sup_ol True [2,2,2,-3,-3,-3,-3,5] == "2³·3̅⁴·5"
-> prime_factors_pp_sup_ol False [-2,-2,-2,3,3,5,5,5,5] == "-2³·3²·5⁴"
+
+>>> prime_factors_pp_sup_ol True [2,2,-3,5] == "2²·3̅·5"
+True
+
+>>> prime_factors_pp_sup_ol True [2,2,2,3,3,3,3,5] == "2³·3⁴·5"
+True
+
+>>> prime_factors_pp_sup_ol True [2,2,2,-3,-3,-3,-3,5] == "2³·3̅⁴·5"
+True
+
+>>> prime_factors_pp_sup_ol False [-2,-2,-2,3,3,5,5,5,5] == "-2³·3²·5⁴"
+True
 -}
 prime_factors_pp_sup_ol :: Bool -> [Integer] -> String
 prime_factors_pp_sup_ol ol =

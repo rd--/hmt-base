@@ -53,10 +53,10 @@ g6_dsc_load_gr = fmap (map (second T.edg_to_g)) . g6_dsc_load_edg
 
 {- | Generate the text format read by nauty-amtog.
 
-> e = ((4,3),[(0,3),(1,3),(2,3)])
-> m = T.edg_to_adj_mtx_undir (0,1) e
-> putStrLn (adj_mtx_to_am m)
-
+>>> let e = ((4,3),[(0,3),(1,3),(2,3)])
+>>> let m = T.edg_to_adj_mtx_undir (0,1) e
+>>> adj_mtx_to_am m
+"n=4\nm\n0 0 0 1\n0 0 0 1\n0 0 0 1\n1 1 1 0\n\n"
 -}
 adj_mtx_to_am :: T.Adj_Mtx Int -> String
 adj_mtx_to_am (nv,mtx) =
@@ -64,9 +64,13 @@ adj_mtx_to_am (nv,mtx) =
           ,"m"
           ,unlines (map (unwords . map show) mtx)]
 
--- | Call nauty-amtog to transform a sequence of Adj_Mtx to G6.
---
--- > adj_mtx_to_g6 [m,m]
+{- | Call nauty-amtog to transform a sequence of Adj_Mtx to G6.
+
+>>> let e = ((4,3),[(0,3),(1,3),(2,3)])
+>>> let m = T.edg_to_adj_mtx_undir (0,1) e
+>>> adj_mtx_to_g6 [m,m]
+["CF","CF"]
+-}
 adj_mtx_to_g6 :: [T.Adj_Mtx Int] -> IO [String]
 adj_mtx_to_g6 adj = do
   r <- Process.readProcess "nauty-amtog" ["-q"] (unlines (map adj_mtx_to_am adj))
@@ -86,10 +90,11 @@ g6_labelg = fmap lines . Process.readProcess "nauty-labelg" ["-q"] . unlines
 
 {- | 'g6_to_g' of 'g6_labelg' of 'g_to_g6'
 
-> g1 = ([0,1,2,3],[(0,3),(3,1),(3,2),(1,2)])
-> g2 = ([0,1,2,3],[(1,0),(0,3),(0,2),(2,3)])
-> [g3,g4] <- g_labelg [g1,g2]
-> (g1 == g2,g3 == g4)
+>>> let g1 = ([0,1,2,3],[(0,3),(3,1),(3,2),(1,2)])
+>>> let g2 = ([0,1,2,3],[(1,0),(0,3),(0,2),(2,3)])
+>>> [g3,g4] <- g_labelg [g1,g2]
+>>> (g1 == g2,g3 == g4)
+(False,True)
 -}
 g_labelg :: [T.G] -> IO [T.G]
 g_labelg g = g_to_g6 g >>= g6_labelg >>= g6_to_g

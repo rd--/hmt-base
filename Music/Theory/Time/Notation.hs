@@ -228,22 +228,36 @@ fsec_to_fminsec n =
         s = n - (m * 60)
     in m + (s / 100)
 
--- > sec_to_fminsec 935 == 15.35
+{- | Sec to FMinSec
+
+>>> sec_to_fminsec 935
+15.35
+-}
 sec_to_fminsec :: Sec -> FMinSec
 sec_to_fminsec n =
     let m = ffloor (fromIntegral n / 60)
         s = fromIntegral n - (m * 60)
     in m + (s / 100)
 
--- > fminsec_add 1.30 0.45 == 2.15
--- > fminsec_add 1.30 0.45 == 2.15
+{- | FMinSec addition
+
+>>> fminsec_add 1.30 0.45
+2.15
+
+>>> fminsec_add 1.30 0.45
+2.15
+-}
 fminsec_add :: Function.BinOp FMinSec
 fminsec_add p q = fsec_to_fminsec (fminsec_to_fsec p + fminsec_to_fsec q)
 
 fminsec_sub :: Function.BinOp FMinSec
 fminsec_sub p q = fsec_to_fminsec (fminsec_to_fsec p - fminsec_to_fsec q)
 
--- > fminsec_mul 0.45 2 == 1.30
+{- | FMinSec multiplication
+
+>>> fminsec_mul 0.45 2
+1.3
+-}
 fminsec_mul :: Function.BinOp FMinSec
 fminsec_mul t n = fsec_to_fminsec (fminsec_to_fsec t * n)
 
@@ -390,27 +404,35 @@ minsec_to_sec (m,s) = m * 60 + s
 minsec_binop :: Integral t => (t -> t -> t) -> GMinSec t -> GMinSec t -> GMinSec t
 minsec_binop f p q = sec_to_minsec (f (minsec_to_sec p) (minsec_to_sec q))
 
--- | 'minsec_binop' '-', assumes /q/ precedes /p/.
---
--- > minsec_sub (2,35) (1,59) == (0,36)
+{- | 'minsec_binop' '-', assumes /q/ precedes /p/.
+
+>>> minsec_sub (2,35) (1,59)
+(0,36)
+-}
 minsec_sub :: Integral n => GMinSec n -> GMinSec n -> GMinSec n
 minsec_sub = minsec_binop (-)
 
--- | 'minsec_binop' 'subtract', assumes /p/ precedes /q/.
---
--- > minsec_diff (1,59) (2,35) == (0,36)
+{- | 'minsec_binop' 'subtract', assumes /p/ precedes /q/.
+
+>>> minsec_diff (1,59) (2,35)
+(0,36)
+-}
 minsec_diff :: Integral n => GMinSec n -> GMinSec n -> GMinSec n
 minsec_diff = minsec_binop subtract
 
--- | 'minsec_binop' '+'.
---
--- > minsec_add (1,59) (2,35) == (4,34)
+{- | 'minsec_binop' '+'.
+
+>>> minsec_add (1,59) (2,35)
+(4,34)
+-}
 minsec_add :: Integral n => GMinSec n -> GMinSec n -> GMinSec n
 minsec_add = minsec_binop (+)
 
--- | 'foldl' of 'minsec_add'
---
--- > minsec_sum [(1,59),(2,35),(4,34)] == (9,08)
+{- | 'foldl' of 'minsec_add'
+
+>>> minsec_sum [(1,59),(2,35),(4,34)]
+(9,8)
+-}
 minsec_sum :: Integral n => [GMinSec n] -> GMinSec n
 minsec_sum = foldl minsec_add (0,0)
 
@@ -455,7 +477,11 @@ fsec_to_mincsec tm =
 mincsec_to_fsec :: Real n => GMinCsec n -> FSec
 mincsec_to_fsec (m,s,cs) = realToFrac m * 60 + realToFrac s + (realToFrac cs / 100)
 
--- > map (mincsec_to_csec . fsec_to_mincsec) [1,6+2/3,123.45] == [100,667,12345]
+{- | GMinCsec -> Num
+
+>>> map (mincsec_to_csec . fsec_to_mincsec) [1,6+2/3,123.45]
+[100,667,12345]
+-}
 mincsec_to_csec :: Num n => GMinCsec n -> n
 mincsec_to_csec (m,s,cs) = m * 60 * 100 + s * 100 + cs
 

@@ -22,7 +22,7 @@ import qualified Data.ByteString.Lazy as L {- bytestring -}
 
 -- * LBS
 
-- | Section function for 'L.ByteString', ie. from (n,m).
+-- | Section function for 'L.ByteString', ie. from (n,m).
 --
 -- > lbs_slice 4 5 (L.pack [1..10]) == L.pack [5,6,7,8,9]
 lbs_slice :: Int64 -> Int64 -> L.ByteString -> L.ByteString

@@ -74,9 +74,11 @@ plc_edge_set (k,n) =
       f (i,j) = map (\x -> (i,x)) j
   in concatMap f (zip v n)
 
--- | Element in /x/ after /i/, the element after the last is the first.
---
--- > map (plc_next_elem "abcd") "abcd" == "bcda"
+{- | Element in /x/ after /i/, the element after the last is the first.
+
+>>> map (plc_next_elem "abcd") "abcd"
+"bcda"
+-}
 plc_next_elem :: Eq t => [t] -> t -> t
 plc_next_elem x i =
   case dropWhile (/= i) x of

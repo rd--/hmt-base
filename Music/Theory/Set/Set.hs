@@ -8,7 +8,11 @@ import qualified Music.Theory.Set.List as Set.List {- hmt-base -}
 toSet :: (Ord a) => [a] -> Set.Set a
 toSet = Set.fromList
 
--- > setPowerset (toSet [1,2])
+{- | Powerset of set
+
+>>> setPowerset (toSet [1,2])
+fromList [fromList [],fromList [1],fromList [1,2],fromList [2]]
+-}
 setPowerset :: Ord a => Set.Set a -> Set.Set (Set.Set a)
 setPowerset = Set.fromList . map Set.fromList . Set.List.powerset . Set.elems
 
