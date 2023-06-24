@@ -19,17 +19,20 @@ m22_map f ((a,b),(c,d)) = ((f a,f b),(f c,f d))
 m22_zip :: (t -> u -> v) -> M22 t -> M22 u -> M22 v
 m22_zip fn ((a,b),(c,d)) ((i,j),(k,l)) = ((fn a i,fn b j),(fn c k,fn d l))
 
--- | 2×2 Matrix determinant
---
--- > m22_determinant ((1,4),(-1,9)) == 13
+{- | 2×2 Matrix determinant
+
+>>> m22_determinant ((1,4),(-1,9))
+13
+-}
 m22_determinant :: Num t => M22 t -> t
 m22_determinant ((a,b),(c,d)) = a * d - b * c
 
 {- | Inverse matrix
 
-> m22_inverse ((-1,3/2),(1,-1)) == ((2,3),(2,2))
+>>> m22_inverse ((-1,3/2),(1,-1))
+((2.0,3.0),(2.0,2.0))
 
-> > sage: matrix(2,2,[-1,3/2,1,-1]).inverse() == matrix(2,2,[2,3,2,2])
+> sage: matrix(2,2,[-1,3/2,1,-1]).inverse() == matrix(2,2,[2,3,2,2])
 -}
 m22_inverse :: Fractional t => M22 t -> M22 t
 m22_inverse m =
@@ -37,16 +40,22 @@ m22_inverse m =
       mul = 1 / m22_determinant m
   in m22_map (* mul) ((d,-b),(-c,a))
 
--- | 2×2 Identity Matrix
---
--- > m22_mul ((0,-1/3),(1/3,0)) m22_id == ((0,-1/3),(1/3,0))
+{- | 2×2 Identity Matrix
+
+>>> m22_mul ((0,-1/3),(1/3,0)) m22_id == ((0,-1/3),(1/3,0))
+True
+-}
 m22_id :: Num t => M22 t
 m22_id = ((1,0),(0,1))
 
--- | 2×2 matrix multiplication.
---
--- > m22_mul ((0,1),(0,0)) ((0,0),(1,0)) == ((1,0),(0,0))
--- > m22_mul ((0,0),(1,0)) ((0,1),(0,0)) == ((0,0),(0,1))
+{- | 2×2 matrix multiplication.
+
+>>> m22_mul ((0,1),(0,0)) ((0,0),(1,0))
+((1,0),(0,0))
+
+>>> m22_mul ((0,0),(1,0)) ((0,1),(0,0))
+((0,0),(0,1))
+-}
 m22_mul :: Num t => M22 t -> M22 t -> M22 t
 m22_mul (a,b) (c,d) =
   let (i,j) = m22_transpose (c,d)
@@ -56,9 +65,11 @@ m22_mul (a,b) (c,d) =
 m22_apply :: Num n => M22 n -> V2 n -> V2 n
 m22_apply ((a,b),(c,d)) (x,y) = (a * x + b * y,c * x + d * y)
 
--- | Rotation M22 (radians).
---
--- > m22_apply (m22_rotation (pi/2)) (0,1) -- ~= (1,0)
+{- | Rotation M22 (radians).
+
+>>> m22_apply (m22_rotation (pi/2)) (0,1) `v2_approx_eq` (1,0)
+True
+-}
 m22_rotation :: Floating t => t -> M22 t
 m22_rotation n = ((cos n,sin n),(negate (sin n),cos n))
 
@@ -70,7 +81,11 @@ type M33 n = V3 (V3 n)
 m33_determinant :: Num t => M33 t -> t
 m33_determinant ((a,b,c),(d,e,f),(g,h,i)) = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h
 
--- > m33_inverse ((1,1,1),(1,0,0),(0,1,0)) == ((0,1,0),(0,0,1),(1,-1,-1))
+{- | Inverse
+
+>>> m33_inverse ((1,1,1),(1,0,0),(0,1,0))
+((0,1,0),(0,0,1),(1,-1,-1))
+-}
 m33_inverse :: Num t => M33 t -> M33 t
 m33_inverse m =
   let ((a,b,c),(d,e,f),(g,h,i)) = m
@@ -81,7 +96,11 @@ m33_inverse m =
      ,(-(d * i - f * g),a * i - c * g,-(a * f - c * d))
      ,(d * h - e * g,-(a * h - b * g),a * e - b * d))
 
--- > m33_inverse_ ((1,1,1),(1,0,0),(0,1,0)) == ((0,1,0),(0,0,1),(1,-1,-1))
+{- | Inverse
+
+>>> m33_inverse_ ((1,1,1),(1,0,0),(0,1,0))
+((0,1,0),(0,0,1),(1,-1,-1))
+-}
 m33_inverse_ :: Num t => M33 t -> M33 t
 m33_inverse_ m =
   let ((a11,a12,a13),(a21,a22,a23),(a31,a32,a33)) = m
@@ -168,7 +187,7 @@ m44_transpose ((a,b,c,d),(e,f,g,h),(i,j,k,l),(m,n,o,p)) = ((a,e,i,m),(b,f,j,n),(
 
 {- | M44 identity matrix
 
-matrix.identity(4) == matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+> sage: matrix.identity(4) == matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
 -}
 m44_id :: Num t => M44 t
 m44_id = ((1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1))
@@ -191,10 +210,10 @@ m44_zip fn m1 m2 =
 
 {- | M44 matrix multiplication
 
-> m1 = ((1,2,3,4),(5,6,7,8),(2,3,4,5),(6,7,8,9))
-> m2 = ((6,7,8,9),(5,6,7,8),(2,3,4,5),(1,2,3,4))
-> m3 = ((26,36,46,56),(82,108,134,160),(40,54,68,82),(96,126,156,186))
-> m44_mul m1 m2 == m3
+>>> let m1 = ((1,2,3,4),(5,6,7,8),(2,3,4,5),(6,7,8,9))
+>>> let m2 = ((6,7,8,9),(5,6,7,8),(2,3,4,5),(1,2,3,4))
+>>> m44_mul m1 m2
+((26,36,46,56),(82,108,134,160),(40,54,68,82),(96,126,156,186))
 
 sage:
 

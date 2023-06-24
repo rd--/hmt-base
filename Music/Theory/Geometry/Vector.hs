@@ -380,6 +380,9 @@ v3_z (_,_,z) = z
 v3_approx_eq :: (Floating n,Ord n) => V3 n -> V3 n -> Bool
 v3_approx_eq (x1,y1,z1) (x2,y2,z2) = (x1 Math.~= x2) && (y1 Math.~= y2) && (z1 Math.~= z2)
 
+v3_list_approx_eq :: (Floating n, Ord n) => [V3 n] -> [V3 n] -> Bool
+v3_list_approx_eq p q = all id (zipWith v3_approx_eq p q)
+
 v3_map :: (t -> u) -> V3 t -> V3 u
 v3_map f (a,b,c) = (f a,f b,f c)
 

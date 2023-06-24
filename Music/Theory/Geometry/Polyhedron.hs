@@ -185,9 +185,11 @@ johnson_names_tbl =
   ,(91,"Bilunabirotunda")
   ,(92,"Triangular hebesphenorotunda")]
 
--- | (J,(3,4,5,6,8,10))
---
--- > map (fmap T.t6_sum) johnson_ngon_tbl
+{- | (J,(3,4,5,6,8,10))
+
+> import Music.Theory.Tuple
+> map (fmap t6_sum) johnson_ngon_tbl
+-}
 johnson_ngon_tbl :: [(Int,(Int,Int,Int,Int,Int,Int))]
 johnson_ngon_tbl =
   [(1,(4,1,0,0,0,0))
@@ -285,9 +287,11 @@ johnson_ngon_tbl =
 
 -- * Polymake
 
--- | Polymake names for archimedean_solid
---
--- > length polymake_platonic_solid_nm == 5
+{- | Polymake names for archimedean_solid
+
+>>> length polymake_platonic_solid_nm
+5
+-}
 polymake_platonic_solid_nm :: [String]
 polymake_platonic_solid_nm =
   ["tetrahedron"
@@ -296,9 +300,11 @@ polymake_platonic_solid_nm =
   ,"dodecahedron"
   ,"icosahedron"]
 
--- | Polymake names for archimedean_solid
---
--- > length polymake_archimedean_solid_nm == 13
+{- | Polymake names for archimedean_solid
+
+>>> length polymake_archimedean_solid_nm
+13
+-}
 polymake_archimedean_solid_nm :: [String]
 polymake_archimedean_solid_nm =
   ["truncated_tetrahedron"
@@ -315,9 +321,11 @@ polymake_archimedean_solid_nm =
   ,"truncated_icosidodecahedron"
   ,"snub_dodecahedron"]
 
--- | Polymake names for catalan_solid
---
--- > length polymake_catalan_solid_nm == 13
+{- | Polymake names for catalan_solid
+
+>>> length polymake_catalan_solid_nm
+13
+-}
 polymake_catalan_solid_nm :: [String]
 polymake_catalan_solid_nm =
   ["triakis_tetrahedron"
@@ -334,9 +342,11 @@ polymake_catalan_solid_nm =
   ,"deltoidal_hexecontahedron"
   ,"disdyakis_triacontahedron"]
 
--- | Polymake names for johnson_solid
---
--- > length polymake_johnson_solid_nm == 92
+{- | Polymake names for johnson_solid
+
+>>> length polymake_johnson_solid_nm
+92
+-}
 polymake_johnson_solid_nm :: [String]
 polymake_johnson_solid_nm =
   ["square_pyramid" -- J1

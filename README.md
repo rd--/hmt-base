@@ -15,6 +15,6 @@ related:
 
 ```
 $ doctest Music/Theory/Base.hs
-Examples: 728  Tried: 728  Errors: 0  Failures: 0
+Examples: 876  Tried: 876  Errors: 0  Failures: 0
 $
 ```

@@ -10,20 +10,20 @@ module Music.Theory.Geometry.Functions where
 import Data.Complex {- base -}
 
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.Math (sqr) {- hmt-base -}
+import qualified Music.Theory.Math as Math {- hmt-base -}
 import qualified Music.Theory.Tuple {- hmt-base -}
 
 -- * Math
 
--- | Twice 'pi'
+{- | Twice 'pi' -}
 two_pi :: Floating n => n
 two_pi = 2 * pi
 
--- | Secant.
+{- | Secant. -}
 sec :: Floating a => a -> a
 sec z = 1 / cos z
 
--- | Cotangent.
+{- | Cotangent. -}
 cot :: Floating a => a -> a
 cot z = 1 / tan z
 
@@ -38,11 +38,11 @@ True
 degrees_to_radians :: Floating n => n -> n
 degrees_to_radians = (* pi) . (/ 180)
 
--- | (degrees,minutes) to radians
+{- | (degrees,minutes) to radians -}
 degrees_minutes_to_radians :: Floating n => (n,n) -> n
 degrees_minutes_to_radians (i,j) = degrees_to_radians (i + (j / 60))
 
--- | (degrees,minutes,seconds) to radians
+{- | (degrees,minutes,seconds) to radians -}
 degrees_minutes_seconds_to_radians :: Floating n => (n,n,n) -> n
 degrees_minutes_seconds_to_radians (i,j,k) = degrees_to_radians (i + (j / 60) + (k / 3600))
 
@@ -84,13 +84,15 @@ polar_to_rectangular (mg,ph) = let c = mkPolar mg ph in (realPart c,imagPart c)
 polar_to_rectangular_dgr :: RealFloat t => V2 t -> V2 t
 polar_to_rectangular_dgr (i, j) = polar_to_rectangular (i, degrees_to_radians j)
 
--- | (x,y) -> (magnitude,phase:radians)
+{- | (x,y) -> (magnitude,phase:radians) -}
 rectangular_to_polar :: RealFloat t => V2 t -> V2 t
 rectangular_to_polar (x,y) = polar (x :+ y)
 
--- | (x,y) -> (magnitude,phase:degrees)
---
--- > rectangular_to_polar_dgr (-31,95) -- (100,108)
+{- | (x,y) -> (magnitude,phase:degrees)
+
+>>> v2_round (rectangular_to_polar_dgr (-31,95))
+(100,108)
+ -}
 rectangular_to_polar_dgr :: RealFloat t => V2 t -> V2 t
 rectangular_to_polar_dgr = (\(i, j) -> (i, radians_to_degrees j)) . rectangular_to_polar
 
@@ -114,72 +116,102 @@ triangle_area_herons_sss a b c =
     let s = triangle_semiperimeter_sss a b c
     in sqrt (s * (s - a) * (s - b) * (s - c))
 
--- > triangle_area_aas (two_pi / 3) (pi / 6) 1 == 0.14433756729740643
+{- | Area (aas)
+
+>>> triangle_area_aas (two_pi / 3) (pi / 6) 1
+0.14433756729740643
+-}
 triangle_area_aas :: Floating a => a -> a -> a -> a
 triangle_area_aas alpha beta a =
     let gamma = pi - alpha - beta
-        n = sqr a * sin beta * sin gamma
+        n = Math.sqr a * sin beta * sin gamma
         d = 2 * sin alpha
     in n / d
 
--- > triangle_area_asa (pi / 6) 1 (pi / 6) == 0.14433756729740643
+{- | Area (asa)
+
+>>> triangle_area_asa (pi / 6) 1 (pi / 6)
+0.14433756729740643
+-}
 triangle_area_asa :: Floating a => a -> a -> a -> a
 triangle_area_asa alpha c beta =
-    let n = sqr c
+    let n = Math.sqr c
         d = 2 * (cot alpha + cot beta)
     in n / d
 
--- > triangle_side_asa (pi / 6) 1 (pi / 6) == 0.5773502691896258
+{- | Side (asa)
+
+>>> triangle_side_asa (pi / 6) 1 (pi / 6)
+0.5773502691896258
+-}
 triangle_side_asa :: Floating a => a -> a -> a -> a
 triangle_side_asa alpha c beta =
     let gamma = pi - alpha - beta
     in (sin alpha / sin gamma) * c
 
--- | <http://mathworld.wolfram.com/LawofCosines.html>
+{- | <http://mathworld.wolfram.com/LawofCosines.html> -}
 law_of_cosines :: Floating a => a -> a -> a -> a
-law_of_cosines s a s' = sqrt (sqr s + sqr s' - 2 * s * s' * cos a)
+law_of_cosines s a s' = sqrt (Math.sqr s + Math.sqr s' - 2 * s * s' * cos a)
 
--- | Given lengths of two sides (a and b) and the angle between them (gamma) calculate side length (c).
---   Argument order is: a gamma b.
---
--- > triangle_side_sas 0.5 (two_pi / 3) 0.5 == 0.8660254037844386
+{- | Given lengths of two sides (a and b) and the angle between them (gamma) calculate side length (c).
+Argument order is: a gamma b.
+
+>>> triangle_side_sas 0.5 (two_pi / 3) 0.5
+0.8660254037844386
+-}
 triangle_side_sas :: Floating a => a -> a -> a -> a
 triangle_side_sas = law_of_cosines
 
--- > triangle_centroid (-1,0) (0,1) (1,0) == (0,1/3)
+{- | Centroid
+
+>>> triangle_centroid (-1,0) (0,1) (1,0) == (0,1/3)
+True
+-}
 triangle_centroid :: Fractional t => V2 t -> V2 t -> V2 t -> V2 t
 triangle_centroid (x1,y1) (x2,y2) (x3,y3) =
     let x = (x1 + x2 + x3) / 3
         y = (y1 + y2 + y3) / 3
     in (x,y)
 
--- | Given lengths of three sides (a, b and c) calculate the angle between b and c (alpha).
+{- | Given lengths of three sides (a, b and c) calculate the angle between b and c (alpha). -}
 triangle_angle_alpha :: Floating a => a -> a -> a -> a
 triangle_angle_alpha a b c = acos ((b * b + c * c - a * a) / (2 * b * c))
 
--- | Given lengths of three sides (a, b and c) calculate the angle between a and c (beta).
+{- | Given lengths of three sides (a, b and c) calculate the angle between a and c (beta). -}
 triangle_angle_beta :: Floating a => a -> a -> a -> a
 triangle_angle_beta a b c = acos ((a * a + c * c - b * b) / (2 * a * c))
 
--- | Given lengths of three sides (a, b and c) calculate the angle between a and b (gamma).
+{- | Given lengths of three sides (a, b and c) calculate the angle between a and b (gamma). -}
 triangle_angle_gamma :: Floating a => a -> a -> a -> a
 triangle_angle_gamma a b c = acos ((a * a + b * b - c * c) / (2 * a * b))
 
 -- * Equilateral triangle
 
--- > equilateral_triangle_area 1 == triangle_area_herons_sss 1 1 1
+{- Area (sss)
+
+>>> equilateral_triangle_area 1 == triangle_area_herons_sss 1 1 1
+True
+-}
 equilateral_triangle_area :: Floating a => a -> a
 equilateral_triangle_area a = (sqrt 3 / 4) * (a * a)
 
--- > equilateral_triangle_circumradius 1 == regular_polygon_circumradius_a 3 1
+{- | Circumradius
+
+>>> equilateral_triangle_circumradius 1 == regular_polygon_circumradius_a 3 1
+True
+-}
 equilateral_triangle_circumradius :: Floating a => a -> a
 equilateral_triangle_circumradius a = a / sqrt 3
 
--- > (equilateral_triangle_inradius 1,regular_polygon_inradius_a 3 1)
+{- | Inradius
+
+>>> equilateral_triangle_inradius 1 Math.~= regular_polygon_inradius_a 3 1
+True
+-}
 equilateral_triangle_inradius :: Floating a => a -> a
 equilateral_triangle_inradius = (/ 2) . equilateral_triangle_circumradius
 
--- | Ccw unit square.  <https://mathworld.wolfram.com/UnitSquare.html>
+{- | Ccw unit square.  <https://mathworld.wolfram.com/UnitSquare.html> -}
 unit_square :: Num n => [V2 n]
 unit_square = [(0, 0), (1, 0), (1, 1), (0, 1)]
 
@@ -249,8 +281,8 @@ hexagon_inradius_a a = 0.5 * sqrt 3 * a
 >>> hexagon_circumradius_a 1
 1
 
->>> regular_polygon_circumradius_a 6 1
-1.0000000000000002
+>>> hexagon_circumradius_a 1 Math.~= regular_polygon_circumradius_a 6 1
+True
 -}
 hexagon_circumradius_a :: a -> a
 hexagon_circumradius_a = id
@@ -274,17 +306,22 @@ hexagon_sagitta_a a = 0.5 * (2 - sqrt 3) * a
    apothem simply is the distance from the center to a side, i.e., the
    inradius r of the polygon. <https://mathworld.wolfram.com/Apothem.html>
 
-> hexagon_apothem_a 1 == 0.8660254037844386
-> regular_polygon_apothem_a 6 1 == 0.8660254037844387
+>>> hexagon_apothem_a 1
+0.8660254037844386
+
+>>> regular_polygon_apothem_a 6 1
+0.8660254037844387
 -}
 hexagon_apothem_a :: Floating a => a -> a
 hexagon_apothem_a = hexagon_inradius_a
 
--- | Area of hexagon of indicated side length.
---
--- > hexagon_area_a 1 == 2.598076211353316
+{- | Area of hexagon of indicated side length.
+
+>>> hexagon_area_a 1
+2.598076211353316
+-}
 hexagon_area_a :: Floating a => a -> a
-hexagon_area_a a = 1.5 * sqrt 3 * sqr a
+hexagon_area_a a = 1.5 * sqrt 3 * Math.sqr a
 
 -- * Polygon
 
@@ -294,10 +331,12 @@ Note that the area of a convex polygon is defined to be positive if
 the points are arranged in a counterclockwise order, and negative
 if they are in clockwise order (Beyer 1987).
 
-> let u = [(0,0),(1,0),(1,1),(0,1)]
-> polygon_signed_area u  == 1
-> polygon_signed_area (reverse u) == -1
+>>> let u = [(0,0),(1,0),(1,1),(0,1)]
+>>> polygon_signed_area u 
+1.0
 
+>>> polygon_signed_area (reverse u)
+-1.0
 -}
 polygon_signed_area :: Fractional t => [V2 t] -> t
 polygon_signed_area p =
@@ -305,63 +344,85 @@ polygon_signed_area p =
         f ((x1,y1),(x2,y2)) = x1 * y2 - x2 * y1
     in sum (map f q) / 2
 
--- | a = 2 × R × sin (π / n)
---
--- > regular_polygon_side_length 5 1 == 1.1755705045849463
+{- | a = 2 × R × sin (π / n)
+
+>>> regular_polygon_side_length 5 1
+1.1755705045849463
+-}
 regular_polygon_side_length :: Floating a => a -> a -> a
 regular_polygon_side_length n cr = 2 * cr * sin (pi / n)
 
--- | r = R × cos (π / n)
---
--- > map (\n -> regular_polygon_inradius_cr n 1) [3,4,5,6]
+{- | r = R × cos (π / n)
+
+>>> map (\n -> regular_polygon_inradius_cr n 1) [3,4,5,6]
+[0.5000000000000001,0.7071067811865476,0.8090169943749475,0.8660254037844387]
+-}
 regular_polygon_inradius_cr :: Floating a => a -> a -> a
 regular_polygon_inradius_cr n cr = cr * cos (pi / n)
 
--- | r = ½ × a × cot (π / n)
---
--- > map (\n -> regular_polygon_circumradius_a n 1) [3,4,5,6]
-regular_polygon_inradius_a :: Floating a => a -> a -> a
-regular_polygon_inradius_a n a = (1/2) * a * cot (pi / n)
+{- | r = ½ × a × cot (π / n)
 
--- | R = r × cot (π / n)
---
--- > map (\n -> regular_polygon_circumradius_r n 1) [3,4,5,6]
+>>> map (\n -> regular_polygon_circumradius_a n 1) [3,4,5,6]
+[0.5773502691896258,0.7071067811865476,0.8506508083520399,1.0000000000000002]
+-}
+regular_polygon_inradius_a :: Floating a => a -> a -> a
+regular_polygon_inradius_a n a = (1 / 2) * a * cot (pi / n)
+
+{- | R = r × cot (π / n)
+
+>>> map (\n -> regular_polygon_circumradius_r n 1) [3,4,5,6]
+[0.577350269189626,1.0000000000000002,1.3763819204711736,1.7320508075688774]
+-}
 regular_polygon_circumradius_r :: Floating a => a -> a -> a
 regular_polygon_circumradius_r n r = r * cot (pi / n)
 
--- | R = ½ × a × csc (π / n)
---
--- > map (\n -> regular_polygon_circumradius_a n 1) [3,4,5,6]
+{- | R = ½ × a × csc (π / n)
+
+>>> map (\n -> regular_polygon_circumradius_a n 1) [3,4,5,6]
+[0.5773502691896258,0.7071067811865476,0.8506508083520399,1.0000000000000002]
+-}
 regular_polygon_circumradius_a :: Floating a => a -> a -> a
 regular_polygon_circumradius_a n a =
   let csc x = 1 / sin x
   in (1/2) * a * csc (pi / n)
 
--- | A = ½ × n × R × R × sin (2 × π / n)
---
--- > regular_polygon_area_cr 6 1 == 2.59807621135331
+{- | A = ½ × n × R × R × sin (2 × π / n)
+
+>>> regular_polygon_area_cr 6 1
+2.598076211353316
+-}
 regular_polygon_area_cr :: Floating a => a -> a -> a
-regular_polygon_area_cr n cr = (1/2) * n * sqr cr * sin (two_pi / n)
+regular_polygon_area_cr n cr = (1/2) * n * Math.sqr cr * sin (two_pi / n)
 
--- | A = ¼ × n × a × a × cot (π / n)
---
--- > map (\n -> regular_polygon_area_a n 1) [3,4,5,6]
+{- | A = ¼ × n × a × a × cot (π / n)
+
+>>> map (\n -> regular_polygon_area_a n 1) [3,4,5,6]
+[0.43301270189221946,1.0000000000000002,1.720477400588967,2.598076211353316]
+-}
 regular_polygon_area_a :: Floating a => a -> a -> a
-regular_polygon_area_a n a = (1/4) * n * sqr a * cot (pi / n)
+regular_polygon_area_a n a = (1/4) * n * Math.sqr a * cot (pi / n)
 
--- > regular_polygon_sagitta_cr 6 1 == 0.13397459621556132
+{- | Sagitta
+
+>>> regular_polygon_sagitta_cr 6 1
+0.13397459621556132
+-}
 regular_polygon_sagitta_cr :: Floating a => a -> a -> a
-regular_polygon_sagitta_cr n cr = 2 * cr * sqr (sin (pi / (2 * n)))
+regular_polygon_sagitta_cr n cr = 2 * cr * Math.sqr (sin (pi / (2 * n)))
 
--- | Apothem given side length.
---
--- > regular_polygon_apothem_a 6 1 == 0.8660254037844387
+{- | Apothem given side length.
+
+>>> regular_polygon_apothem_a 6 1
+0.8660254037844387
+-}
 regular_polygon_apothem_a :: Floating a => a -> a -> a
 regular_polygon_apothem_a n a = a / (2 * tan (pi / n))
 
--- | Apothem given side circumradius.
---
--- > regular_polygon_apothem_r 6 1 == 0.8660254037844387
+{- | Apothem given side circumradius.
+
+>>> regular_polygon_apothem_r 6 1
+0.8660254037844387
+-}
 regular_polygon_apothem_r :: Floating a => a -> a -> a
 regular_polygon_apothem_r n r = r * cos (pi / n)
 
@@ -377,17 +438,19 @@ regular_polygon_apothem_r n r = r * cos (pi / n)
       |/      |/    |/
       0-------4     +--x
 
-cube_vertices (0,1)
-
+>>> cube_vertices (0,1)
+[(0,0,0),(0,0,1),(0,1,0),(0,1,1),(1,0,0),(1,0,1),(1,1,0),(1,1,1)]
 -}
 cube_vertices :: Num n => V2 n -> [V3 n]
 cube_vertices (i,j) = [(i,i,i),(i,i,j),(i,j,i),(i,j,j),(j,i,i),(j,i,j),(j,j,i),(j,j,j)]
 
--- | Un-directed graph of cube given lexographic labelling as above.
---   Construction of Q3 by connecting pairs of corresponding vertices in two copies of Q2
---
--- > (v,e) = cube_graph
--- > (length v,length e) == (8,12)
+{- | Un-directed graph of cube given lexographic labelling as above.
+Construction of Q3 by connecting pairs of corresponding vertices in two copies of Q2
+
+>>> let (v,e) = cube_graph
+>>> (length v,length e)
+(8,12)
+-}
 cube_graph :: ([Int],[(Int,Int)])
 cube_graph =
   let v = [0,4,6,2, 1,5,7,3]
@@ -405,28 +468,30 @@ cube_graph =
       |/      |/    |/
       C-------D     +--x
 
-> import Data.List
-> map snd (sort cube_vertices_label_tbl) == "CcAaDdBb"
-
+>>> import Data.List
+>>> map snd (sort cube_vertices_label_tbl)
+"CcAaDdBb"
 -}
 cube_vertices_label_tbl :: [(Int,Char)]
 cube_vertices_label_tbl = zip [2,6,0,4,3,7,1,5] "ABCDabcd"
 
 {- | C4 (8-cell, octachoron, tesseract, 4-cube) vertices, lexographic ordering.
 
-> length (tesseract_vertices (0,1)) == 16
-
+>>> length (tesseract_vertices (0,1))
+16
 -}
 tesseract_vertices :: Num n => V2 n -> [V4 n]
 tesseract_vertices (i,j) =
   let c3 = cube_vertices (i,j)
   in concatMap (\n -> map (\(x,y,z) -> (n,x,y,z)) c3) [i,j]
 
--- | Un-directed graph of tesseract.
---   Construction of Q4 by connecting pairs of corresponding vertices in two copies of Q3.
---
--- > (v,e) = tesseract_graph
--- > (length v,length e) == (16,32)
+{- | Un-directed graph of tesseract.
+Construction of Q4 by connecting pairs of corresponding vertices in two copies of Q3.
+
+>>> let (v,e) = tesseract_graph
+>>> (length v,length e)
+(16,32)
+-}
 tesseract_graph :: ([Int],[(Int,Int)])
 tesseract_graph =
   let (c3_v,c3_e) = cube_graph
@@ -436,9 +501,12 @@ tesseract_graph =
                     ,zip [0 .. 7] [8 .. 15]]
   in (c4_v,c4_e)
 
--- | Table to label tesseract_vertices as cube_vertices.
---
--- > map snd (sort tesseract_vertices_label_tbl) == "CcAaDdBbGgEeHhFf"
+{- | Table to label tesseract_vertices as cube_vertices.
+
+>>> import Data.List
+>>> map snd (sort tesseract_vertices_label_tbl)
+"CcAaDdBbGgEeHhFf"
+-}
 tesseract_vertices_label_tbl :: [(Int,Char)]
 tesseract_vertices_label_tbl =
   let f (i,c) = (i + 8,toEnum (fromEnum c + 4))
@@ -447,8 +515,9 @@ tesseract_vertices_label_tbl =
 {- | C5 (5-cell, pentachoron, pentatope, 4-simplex) co-ordinates.
      All vertices are connected by edges.
 
-c = pentatope (0,2)
-Data.List.nub [v4_distance i j | i <- c,j <- c, i < j]
+>>> let c = pentatope (0,2)
+>>> Data.List.nub [v4_distance i j | i <- c,j <- c, i < j]
+[2.8284271247461903]
 -}
 pentatope :: (Num t,Floating t) => (t,t) -> [V4 t]
 pentatope (i,j) =
@@ -456,7 +525,7 @@ pentatope (i,j) =
       k = 0.5 * phi * (j - i) + i
   in [(j,i,i,i),(i,j,i,i),(i,i,j,i),(i,i,i,j),(k,k,k,k)]
 
--- | C5 graph. |v|=4 |e|=10
+{- | C5 graph. |v|=4 |e|=10 -}
 pentatope_graph :: ([Int], [(Int,Int)])
 pentatope_graph = let v = [0 .. 4] in (v,[(i,j) | i <- v, j <- v, i < j])
 
@@ -471,7 +540,7 @@ hexadecachoron =
   ,(0,0,1,0),( 0, 0,-1, 0)
   ,(0,0,0,1),( 0, 0, 0,-1)]
 
--- | C16 graph. |v|=8 |e|=24. Opposite vertices are adjacent (even,odd).
+{- | C16 graph. |v|=8 |e|=24. Opposite vertices are adjacent (even,odd). -}
 hexadecachoron_graph :: ([Int], [(Int,Int)])
 hexadecachoron_graph =
   let v = [0..7]
@@ -480,18 +549,25 @@ hexadecachoron_graph =
 
 -- * Fano
 
--- | Graph of Fano plane with zero-indexed nimber labelling of nodes.
---
--- > (v,e) = fano_plane_graph
--- > (length v,length e) == (7,15)
--- > gr_map (subtract 1) fano_plane_graph
+{- | Graph of Fano plane with zero-indexed nimber labelling of nodes.
+
+>>> let (v,e) = fano_plane_graph
+>>> (length v,length e)
+(7,15)
+
+> import Music.Theory.Graph.Type
+> gr_map (subtract 1) fano_plane_graph
+([-1,0,1,2,3,4,5],[(-1,1),(-1,3),(-1,5),(0,1),(0,4),(0,5),(1,3),(1,4),(1,5),(2,3),(2,4),(2,5),(3,4),(3,5),(4,5)])
+-}
+
 fano_plane_graph :: ([Int], [(Int,Int)])
 fano_plane_graph =
   ([0,1,2,3,4,5,6]
   ,[(0,2),(0,4),(0,6),(1,2),(1,5),(1,6),(2,4),(2,5),(2,6),(3,4),(3,5),(3,6),(4,5),(4,6),(5,6)])
 
--- | Polar co-ordinates for the standard drawing of the Fano plane,
---   with circumradius /cr/ and P7 at (0,0).
+{- | Polar co-ordinates for the standard drawing of the Fano plane,
+with circumradius /cr/ and P7 at (0,0).
+-}
 fano_plane_coord :: Floating n => n -> [V2 n]
 fano_plane_coord cr =
   let r = regular_polygon_inradius_cr 3 cr
@@ -510,13 +586,14 @@ fano_plane_coord cr =
      u is the distance along (p1,p2) to which p3 is nearest.
      p4 is the nearest point to p3 along the line (p1,p2).
      If u is not in (0,1) then the intersection point is not in the line segment.
-`
+
      <http://paulbourke.net/geometry/pointlineplane/>
 
-> let r = [(0.75,(7.5,7.5)),(0.75,(7.5,7.5))]
-> map (point_line_intersect ((0,0),(10,10))) [(10,5),(15,0)] == r
+>>> map (point_line_intersect ((0,0),(10,10))) [(10,5),(15,0)]
+[(0.75,(7.5,7.5)),(0.75,(7.5,7.5))]
 
-> point_line_intersect ((0,0),(10,10)) (-2.5,-7.5) == (-0.5,(-5,-5))
+>>> point_line_intersect ((0,0),(10,10)) (-2.5,-7.5)
+(-0.5,(-5.0,-5.0))
 -}
 point_line_intersect :: Fractional t => V2 (V2 t) -> V2 t -> (t,V2 t)
 point_line_intersect ((x1,y1),(x2,y2)) (x3,y3) =
@@ -531,16 +608,19 @@ point_line_intersect ((x1,y1),(x2,y2)) (x3,y3) =
    if the intersection point is within the indicated line segment or
    not.
 
-> map (point_line_distance ((0,0),(10,10))) [(2,7.5),(-7.5,-2)]
+>>> map (point_line_distance ((0,0),(10,10))) [(2,7.5),(-7.5,-2)]
+[(True,3.8890872965260113),(False,3.8890872965260113)]
 -}
 point_line_distance :: (Floating t,Ord t) => V2 (V2 t) -> V2 t -> (Bool,t)
 point_line_distance (p1,p2) p3 =
   let (u,p4) = point_line_intersect (p1,p2) p3
   in (u >= 0 && u <= 1,v2_distance p3 p4)
 
--- | 'v2_reflect_xy' about 'point_line_intersect'.
---
--- > map (point_line_reflect ((0,0),(1,1))) [(1,0),(0.25,1)] == [(0,1),(1,0.25)]
+{- | 'v2_reflect_xy' about 'point_line_intersect'.
+
+>>> map (point_line_reflect ((0,0),(1,1))) [(1,0),(0.25,1)]
+[(0.0,1.0),(1.0,0.25)]
+-}
 point_line_reflect :: Fractional a => (V2 a, V2 a) -> V2 a -> V2 a
 point_line_reflect ln p =
   let (_,r) = point_line_intersect ln p
@@ -551,7 +631,8 @@ point_line_reflect ln p =
 {- | Give translation and rotation from /p/ to /q/.
      Magnitude is not considered.
 
-> line_align ((0,0),(1,0)) ((1,1),(1,2)) == ((1,1),((1,1),-4.71238898038469))
+>>> line_align ((0,0),(1,0)) ((1,1),(1,2))
+((1.0,1.0),((1.0,1.0),-4.71238898038469))
 -}
 line_align :: RealFloat r => V2 (V2 r) -> V2 (V2 r) -> (V2 r, (V2 r, r))
 line_align p q =
@@ -565,11 +646,11 @@ line_align p q =
 
 {- | Distances along a line, given as Pt and Vc, that it intersects with a circle.
 
-> let o = (0,0)
-> let c = (o,1)
-> let z = sqrt 2 / 2
-> map (\v -> line_circle_intersection (o,v) c) [(1,0),(1,1)] == [Just (1,-1),Just (z,-z)]
-
+>>> let o = (0,0)
+>>> let c = (o,1)
+>>> let z = sqrt 2 / 2
+>>> map (\v -> line_circle_intersection (o,v) c) [(1,0),(1,1)] == [Just (1,-1),Just (z,-z)]
+True
 -}
 line_circle_intersection :: (Ord a,Floating a) => (V2 a,V2 a) -> (V2 a,a) -> Maybe (V2 a)
 line_circle_intersection ((lx,ly),(dx,dy)) ((cx,cy),r) =
@@ -588,12 +669,21 @@ line_circle_intersection ((lx,ly),(dx,dy)) ((cx,cy),r) =
 
 {- | Iso convention (r=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
-> let c2s = cartesian_to_spherical
-> c2s (spherical_to_cartesian (1,1,1)) == (1,1,1)
-> map c2s [(0,0,1),(0,1,0),(1,0,0)] -- ~= [(1,0,0),(1,pi/2,pi/2),(1,pi/2,0)]
-> map c2s [(1,1,0),(1,0,1),(0,1,1)] -- ~= [(sqrt 2,pi/2,pi/4),(sqrt 2,pi/4,0),(sqrt 2,pi/4,pi/2)]
-> c2s (1,1,1) -- ~= (sqrt 3,atan (sqrt 2),pi/4)
-> map c2s [(0,0,-1),(0,-1,0),(-1,0,0)] -- ~= [(1,pi,0),(1,pi/2,-pi/2),(1,pi/2,pi)]
+>>> let c2s = cartesian_to_spherical
+>>> c2s (spherical_to_cartesian (1,1,1))
+(1.0,1.0,1.0)
+
+>>> map c2s [(0,0,1),(0,1,0),(1,0,0)] `v3_list_approx_eq` [(1,0,0),(1,pi/2,pi/2),(1,pi/2,0)]
+True
+
+>>> map c2s [(1,1,0),(1,0,1),(0,1,1)] `v3_list_approx_eq` [(sqrt 2,pi/2,pi/4),(sqrt 2,pi/4,0),(sqrt 2,pi/4,pi/2)]
+True
+
+>>> c2s (1,1,1) `v3_approx_eq` (sqrt 3,atan (sqrt 2),pi/4)
+True
+
+>>> map c2s [(0,0,-1),(0,-1,0),(-1,0,0)] `v3_list_approx_eq` [(1,pi,0),(1,pi/2,-pi/2),(1,pi/2,pi)]
+True
 -}
 cartesian_to_spherical :: RealFloat n => V3 n -> V3 n
 cartesian_to_spherical (x,y,z) =
@@ -606,12 +696,21 @@ cartesian_to_spherical (x,y,z) =
 
 By convention: r ≥ 0, 0 ≤ θ ≤ π, 0 ≤ φ < 2π
 
-> let s2c = spherical_to_cartesian
-> s2c (cartesian_to_spherical (1,1,1)) -- ~= (1,1,1)
-> map s2c [(1,0,0),(1,pi/2,pi/2),(1,pi/2,0)] -- ~= [(0,0,1),(0,1,0),(1,0,0)] -- Z Y X
-> map s2c [(sqrt 2,pi/2,pi/4),(sqrt 2,pi/4,0),(sqrt 2,pi/4,pi/2)] -- ~= [(1,1,0),(1,0,1),(0,1,1)]
-> s2c (sqrt 3,atan (sqrt 2),pi/4) -- ~= (1,1,1)
-> map s2c [(1,pi,0),(1,pi/2,-pi/2),(1,pi/2,pi)] -- ~= [(0,0,-1),(0,-1,0),(-1,0,0)]
+>>> let s2c = spherical_to_cartesian
+>>> s2c (cartesian_to_spherical (1,1,1)) `v3_approx_eq` (1,1,1)
+True
+
+>>> map s2c [(1,0,0),(1,pi/2,pi/2),(1,pi/2,0)] `v3_list_approx_eq` [(0,0,1),(0,1,0),(1,0,0)] -- Z Y X
+True
+
+>>> map s2c [(sqrt 2,pi/2,pi/4),(sqrt 2,pi/4,0),(sqrt 2,pi/4,pi/2)] `v3_list_approx_eq` [(1,1,0),(1,0,1),(0,1,1)]
+True
+
+>>> s2c (sqrt 3,atan (sqrt 2),pi/4) `v3_approx_eq` (1,1,1)
+True
+
+>>> map s2c [(1,pi,0),(1,pi/2,-pi/2),(1,pi/2,pi)] `v3_list_approx_eq` [(0,0,-1),(0,-1,0),(-1,0,0)]
+True
 -}
 spherical_to_cartesian :: Floating n => V3 n -> V3 n
 spherical_to_cartesian (r,theta,phi) =
@@ -621,10 +720,14 @@ spherical_to_cartesian (r,theta,phi) =
 
 -- * Surface Normal
 
--- | <https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal>
---
--- > v3_p3_normal ((0,0,0),(1,0,0),(0,1,0)) == (0,0,1)
--- > v3_p3_normal ((0,0,1),(1,0,0),(0,1,0)) == (1,1,1)
+{- | <https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal>
+
+>>> v3_p3_normal ((0,0,0),(1,0,0),(0,1,0))
+(0,0,1)
+
+>>> v3_p3_normal ((0,0,1),(1,0,0),(0,1,0))
+(1,1,1)
+-}
 v3_p3_normal :: Num t => V3 (V3 t) -> V3 t
 v3_p3_normal (p1,p2,p3) =
   let (ux,uy,uz) = v3_sub p2 p1
@@ -633,17 +736,25 @@ v3_p3_normal (p1,p2,p3) =
      ,uz * vx - ux * vz
      ,ux * vy - uy * vx)
 
--- | 'v3_normalize' of 'v3_p3_normal'.
---
--- > v3_p3_normal_unit ((0,0,0),(1,0,0),(0,1,0)) == (0,0,1)
--- > v3_p3_normal_unit ((0,0,1),(1,0,0),(0,1,0)) == (1/sqrt 3,1/sqrt 3,1/sqrt 3)
+{- | 'v3_normalize' of 'v3_p3_normal'.
+
+>>> v3_p3_normal_unit ((0,0,0),(1,0,0),(0,1,0))
+(0.0,0.0,1.0)
+
+>>> v3_p3_normal_unit ((0,0,1),(1,0,0),(0,1,0)) == (1/sqrt 3,1/sqrt 3,1/sqrt 3)
+True
+-}
 v3_p3_normal_unit :: Floating t => V3 (V3 t) -> V3 t
 v3_p3_normal_unit = v3_normalize . v3_p3_normal
 
--- | <https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal>
---
--- > v3_normal [(0,0,0),(1,0,0),(0,1,0)] == (0,0,1)
--- > v3_normal [(0,0,1),(1,0,0),(0,1,0)] == (1,1,1)
+{- | <https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal>
+
+>>> v3_normal [(0,0,0),(1,0,0),(0,1,0)]
+(0,0,1)
+
+>>> v3_normal [(0,0,1),(1,0,0),(0,1,0)]
+(1,1,1)
+-}
 v3_normal :: Num t => [V3 t] -> V3 t
 v3_normal =
   let close l = l ++ [head l]
@@ -656,10 +767,14 @@ v3_normal =
           _ ->  (nx,ny,nz)
   in recur (0,0,0) . close
 
--- | 'v3_normalize' of 'v3_normal'.
---
--- > v3_normal_unit [(0,0,0),(1,0,0),(0,1,0)] == (0,0,1)
--- > v3_normal_unit [(0,0,1),(1,0,0),(0,1,0)] == (1/sqrt 3,1/sqrt 3,1/sqrt 3)
+{- | 'v3_normalize' of 'v3_normal'.
+
+>>> v3_normal_unit [(0,0,0),(1,0,0),(0,1,0)]
+(0.0,0.0,1.0)
+
+>>> v3_normal_unit [(0,0,1),(1,0,0),(0,1,0)] == (1/sqrt 3,1/sqrt 3,1/sqrt 3)
+True
+-}
 v3_normal_unit :: Floating t => [V3 t] -> V3 t
 v3_normal_unit = v3_normalize . v3_normal
 
@@ -674,16 +789,18 @@ v3_normal_unit = v3_normalize . v3_normal
 h1 |    |
    .--a-.
 
-> let f = right_trapezoid_area 1
-> [f 0 0, f 0 1, f 1 1, f 1 2, f 2 2] == [0, 0.5, 1, 1.5, 2]
+>>> let f = right_trapezoid_area 1
+>>> [f 0 0, f 0 1, f 1 1, f 1 2, f 2 2]
+[0.0,0.5,1.0,1.5,2.0]
 -}
 right_trapezoid_area :: Fractional a => a -> a -> a -> a
 right_trapezoid_area a h1 h2 = 0.5 * a * (h1 + h2)
 
 {- | Perimeter of right trapezoid.
 
-> let f = right_trapezoid_perimeter 1
-> [f 0 1, f 1 1, f 1 2] == [3.414213562373095, 4, 5.414213562373095]
+>>> let f = right_trapezoid_perimeter 1
+>>> [f 0 1, f 1 1, f 1 2]
+[3.414213562373095,4.0,5.414213562373095]
 -}
 right_trapezoid_perimeter :: Floating a => a -> a -> a -> a
 right_trapezoid_perimeter a h1 h2 = let sq x = x * x in a + h1 + h2 + sqrt (sq a + sq (h2 - h1))
