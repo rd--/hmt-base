@@ -133,7 +133,7 @@ delete_trailing_point s =
 
 {- | 'read_err' disallows trailing decimal points.
 
->>> map read_fractional_allow_trailing_point_err ["123.","123.4"]
+>>> map read_fractional_allow_trailing_point_err ["123.","123.4"] :: [Double]
 [123.0,123.4]
 -}
 read_fractional_allow_trailing_point_err :: Read n => String -> n
@@ -222,14 +222,20 @@ read_hex_word32 = read_hex_sz 8
 
 {- | Parser for 'rational_pp'.
 
->>> map rational_parse ["1","3/2","5/4","2"]
-[1 % 1,3 % 2,5 % 4,2 % 1]
-
->>> rational_parse ""
+>>> rational_parse "" :: Maybe Rational
+Nothing
 -}
-rational_parse :: (Read t,Integral t) => String -> Ratio t
+rational_parse :: (Read t,Integral t) => String -> Maybe (Ratio t)
 rational_parse s =
   case break (== '/') s of
-    ([],_) -> error "rational_parse"
-    (n,[]) -> read n % 1
-    (n,_:d) -> read n % read d
+    ([],_) -> Nothing
+    (n,[]) -> Just (read n % 1)
+    (n,_:d) -> Just (read n % read d)
+
+{- | Erroring variant of 'rational_pp'.
+
+>>> map rational_parse_err ["1","3/2","5/4","2"]
+[1 % 1,3 % 2,5 % 4,2 % 1]
+-}
+rational_parse_err :: (Read t,Integral t) => String -> Ratio t
+rational_parse_err = fromMaybe (error "rational_parse") . rational_parse

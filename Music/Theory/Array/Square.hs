@@ -7,11 +7,11 @@ import Data.Maybe {- base -}
 import qualified Data.Map as Map {- containers -}
 import qualified Data.List.Split as Split {- split -}
 
-import qualified Music.Theory.Array as T {- hmt-base -}
-import qualified Music.Theory.Array.Text as T {- hmt-base -}
-import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Array as Array {- hmt-base -}
+import qualified Music.Theory.Array.Text as Array.Text {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
-import qualified Music.Theory.Math.Oeis as T {- hmt -}
+import qualified Music.Theory.Math.Oeis as Oeis {- hmt -}
 
 -- | Square as list of lists.
 type Square t = [[t]]
@@ -51,19 +51,23 @@ type Square_Linear t = [t]
 sq_from_list :: Int -> Square_Linear t -> Square t
 sq_from_list = Split.chunksOf
 
--- | True if list can form a square, ie. if 'length' is a square.
---
--- > sq_is_linear_square T.a126710 == True
-sq_is_linear_square :: Square_Linear t -> Bool
-sq_is_linear_square l = length l `T.elem_ordered` T.a000290
+{- | True if list can form a square, ie. if 'length' is a square.
 
--- | Calculate degree of linear square, ie. square root of 'length'.
---
--- > sq_linear_degree T.a126710 == 4
+>>> sq_is_linear_square Oeis.a126710
+True
+-}
+sq_is_linear_square :: Square_Linear t -> Bool
+sq_is_linear_square l = length l `List.elem_ordered` Oeis.a000290
+
+{- | Calculate degree of linear square, ie. square root of 'length'.
+
+>>> sq_linear_degree Oeis.a126710
+4
+-}
 sq_linear_degree :: Square_Linear t -> Int
 sq_linear_degree =
     fromMaybe (error "sq_linear_degree") .
-    flip T.elemIndex_ordered T.a000290 .
+    flip List.elemIndex_ordered Oeis.a000290 .
     length
 
 -- | Type specialised 'transpose'
@@ -72,19 +76,30 @@ sq_transpose = transpose
 
 {- | Full upper-left (ul) to lower-right (lr) diagonals of a square.
 
-> sq = sq_from_list 4 T.a126710
-> sq_wr $ sq
-> sq_wr $ sq_diagonals_ul_lr sq
-> sq_wr $ sq_diagonals_ll_ur sq
-> sq_undiagonals_ul_lr (sq_diagonals_ul_lr sq) == sq
-> sq_undiagonals_ll_ur (sq_diagonals_ll_ur sq) == sq
+>>> let sq = sq_from_list 4 Oeis.a126710
+>>> sq_pp sq
+" 7 12  1 14\n 2 13  8 11\n16  3 10  5\n 9  6 15  4\n"
 
-> sq_diagonal_ul_lr sq == sq_diagonals_ul_lr sq !! 0
-> sq_diagonal_ll_ur sq == sq_diagonals_ll_ur sq !! 0
+>>> sq_pp $ sq_diagonals_ul_lr sq
+" 7 13 10  4\n12  8  5  9\n 1 11 16  6\n14  2  3 15\n"
 
+>>> sq_pp $ sq_diagonals_ll_ur sq
+" 9  3  8 14\n 6 10 11  7\n15  5  2 12\n 4 16 13  1\n"
+
+>>> sq_undiagonals_ul_lr (sq_diagonals_ul_lr sq) == sq
+True
+
+>>> sq_undiagonals_ll_ur (sq_diagonals_ll_ur sq) == sq
+True
+
+>>> sq_diagonal_ul_lr sq == sq_diagonals_ul_lr sq !! 0
+True
+
+>>> sq_diagonal_ll_ur sq == sq_diagonals_ll_ur sq !! 0
+True
 -}
 sq_diagonals_ul_lr :: Square t -> Square t
-sq_diagonals_ul_lr = sq_transpose . zipWith T.rotate_left [0..]
+sq_diagonals_ul_lr = sq_transpose . zipWith List.rotate_left [0..]
 
 -- | Full lower-left (ll) to upper-right (ur) diagonals of a square.
 sq_diagonals_ll_ur :: Square t -> Square t
@@ -92,7 +107,7 @@ sq_diagonals_ll_ur = sq_diagonals_ul_lr . reverse
 
 -- | Inverse of 'diagonals_ul_lr'
 sq_undiagonals_ul_lr :: Square t -> Square t
-sq_undiagonals_ul_lr = zipWith T.rotate_right [0..] . sq_transpose
+sq_undiagonals_ul_lr = zipWith List.rotate_right [0..] . sq_transpose
 
 -- | Inverse of 'diagonals_ll_ur'
 sq_undiagonals_ll_ur :: Square t -> Square t
@@ -108,9 +123,12 @@ sq_diagonal_ll_ur = sq_diagonal_ul_lr . reverse
 
 {- | Horizontal reflection (ie. map reverse).
 
-> sq = sq_from_list 4 T.a126710
-> sq_wr $ sq
-> sq_wr $ sq_h_reflection sq
+>>> sq = sq_from_list 4 Oeis.a126710
+>>> sq_pp sq
+" 7 12  1 14\n 2 13  8 11\n16  3 10  5\n 9  6 15  4\n"
+ 
+>>> sq_pp $ sq_h_reflection sq
+"14  1 12  7\n11  8 13  2\n 5 10  3 16\n 4 15  6  9\n"
 
 -}
 sq_h_reflection :: Square t -> Square t
@@ -130,19 +148,19 @@ sq_sums sq =
   ,map sum (sq_diagonals_ul_lr sq)
   ,map sum (sq_diagonals_ll_ur sq))
 
--- * PP
+-- * Pp
 
-sq_opt :: T.Text_Table_Opt
+sq_opt :: Array.Text.Text_Table_Opt
 sq_opt = (False,True,False," ",False)
 
 sq_pp :: Show t => Square t -> String
-sq_pp = unlines . T.table_pp_show sq_opt
+sq_pp = unlines . Array.Text.table_pp_show sq_opt
 
 sq_wr :: Show t => Square t -> IO ()
 sq_wr = putStrLn . ('\n' :) . sq_pp
 
 sq_pp_m :: Show t => String -> Square (Maybe t) -> String
-sq_pp_m e = unlines . T.table_pp sq_opt . map (map (maybe e (T.pad_left '·' 2 . show)))
+sq_pp_m e = unlines . Array.Text.table_pp sq_opt . map (map (maybe e (List.pad_left '·' 2 . show)))
 
 sq_wr_m :: Show t => String -> Square (Maybe t) -> IO ()
 sq_wr_m e = putStrLn . sq_pp_m e
@@ -150,7 +168,7 @@ sq_wr_m e = putStrLn . sq_pp_m e
 -- * Square Map
 
 -- | (row,column) index.
-type Square_Ix = T.Ix Int
+type Square_Ix = Array.Ix Int
 
 -- | Map from Square_Ix to value.
 type Square_Map t = Map.Map Square_Ix t
@@ -174,9 +192,9 @@ sqm_ix_seq m = map (sqm_ix m)
 sqm_to_partial_sq :: Int -> Square_Map t -> [Square_Ix] -> Square (Maybe t)
 sqm_to_partial_sq dm m ix_set =
     let f i = if i `elem` ix_set then Just (m Map.! i) else Nothing
-    in Split.chunksOf dm (map f (T.matrix_indices (dm,dm)))
+    in Split.chunksOf dm (map f (Array.matrix_indices (dm,dm)))
 
--- * TRS SEQ
+-- * Trs Seq
 
 sq_trs_op :: [(String,Square t -> Square t)]
 sq_trs_op =

@@ -14,7 +14,8 @@ data Duration = Duration {hours :: Int
 
 {- | Convert fractional /seconds/ to integral /(seconds,milliseconds)/.
 
-> s_sms 1.75 == (1,750)
+>>> s_sms 1.75
+(1,750)
 -}
 s_sms :: (RealFrac n,Integral i) => n -> (i,i)
 s_sms s =
@@ -24,7 +25,8 @@ s_sms s =
 
 {- | Inverse of 's_sms'.
 
-> sms_s (1,750) == 1.75
+>>> sms_s (1,750)
+1.75
 -}
 sms_s :: (Integral i) => (i,i) -> Double
 sms_s (s,ms) = fromIntegral s + fromIntegral ms / 1000
@@ -44,9 +46,14 @@ read_duration_tuple x =
 
 {- | 'Read' function for 'Duration'.  Allows either @H:M:S.MS@ or @M:S.MS@ or @S.MS@.
 
-> read_duration "01:35:05.250" == Duration 1 35 5 250
-> read_duration    "35:05.250" == Duration 0 35 5 250
-> read_duration       "05.250" == Duration 0 0 5 250
+>>> read_duration "01:35:05.250"
+01:35:05.250
+
+>>> read_duration "35:05.250"
+00:35:05.250
+
+>>> read_duration "05.250"
+00:00:05.250
 -}
 read_duration :: String -> Duration
 read_duration = tuple_to_duration id . read_duration_tuple
@@ -58,9 +65,14 @@ instance Read Duration where
      Inverse of read_duration.
      Hours and minutes are always shown, even if zero.
 
-> show_duration (Duration 1 35 5 250) == "01:35:05.250"
-> show (Duration 1 15 0 000) == "01:15:00.000"
-> show (Duration 0 0 3 500) == "00:00:03.500"
+>>> show_duration (Duration 1 35 5 250)
+"01:35:05.250"
+
+>>> show (Duration 1 15 0 000)
+"01:15:00.000"
+
+>>> show (Duration 0 0 3 500)
+"00:00:03.500"
 -}
 show_duration :: Duration -> String
 show_duration (Duration h m s ms) =

@@ -14,6 +14,10 @@ import qualified Music.Theory.Io as T {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Read as T {- hmt-base -}
 
+-- $setup
+-- >>> let tblFn = "/home/rohan/data/unicode.org/Public/11.0.0/ucd/UnicodeData.txt"
+-- >>> tbl <- unicode_data_table_read tblFn
+
 -- * Non-music
 
 {- | Unicode non breaking hypen character.
@@ -101,18 +105,17 @@ type Unicode_Table = [Unicode_Point]
 
 {- | <http://unicode.org/Public/11.0.0/ucd/UnicodeData.txt>
 
->>> let fn = "/home/rohan/data/unicode.org/Public/11.0.0/ucd/UnicodeData.txt"
->>> tbl <- unicode_data_table_read fn
 >>> length tbl
 32292
 
->>> T.reverse_lookup_err "MIDDLE DOT" tbl == 0x00B7
+>>> List.reverse_lookup_err "MIDDLE DOT" tbl == 0x00B7
 True
 
->>> T.lookup_err 0x22C5 tbl
+>>> List.lookup_err 0x22C5 tbl
 "DOT OPERATOR"
 
->>> putStrLn $ unwords $ map (\(n,x) -> toEnum n : x) $ filter (\(_,x) -> "EMPTY SET" `isInfixOf` x) tbl
+>>> length $ map (\(n,x) -> toEnum n : x) $ filter (\(_,x) -> "EMPTY SET" `isInfixOf` x) tbl
+6
 -}
 unicode_data_table_read :: FilePath -> IO Unicode_Table
 unicode_data_table_read fn = do
@@ -134,21 +137,22 @@ unicode_table_hs = List.bracket ('[',']') . intercalate "," . map unicode_point_
 
 {- | Music table
 
->>> putStrLn$ map (toEnum . fst) (concat music_tbl)
+>>> map (toEnum . fst) (concat music_tbl) == "𝄀𝄁𝄂𝄃𝄄𝄅♭♮♯𝄪𝄫𝄬𝄭𝄮𝄯𝄰𝄱𝄲𝄳𝅜𝅝𝅗𝅥𝅘𝅥𝅘𝅥𝅮𝅘𝅥𝅯𝅘𝅥𝅰𝅘𝅥𝅱𝅘𝅥𝅲𝄻𝄼𝄽𝄾𝄿𝅀𝅁𝅂𝄞𝄟𝄠𝄡𝄢𝄣𝄤𝄥𝄦"
+True
 -}
 music_tbl :: [Unicode_Table]
 music_tbl = [barlines_tbl,accidentals_tbl,notes_tbl,rests_tbl,clefs_tbl]
 
 {- | Accidentals ranges
 
->>> putStrLn$ concatMap (unicode_table_hs . flip unicode_table_block tbl) accidentals_rng_set
+> putStrLn $ concatMap (unicode_table_hs . flip unicode_table_block tbl) accidentals_rng_set
 -}
 accidentals_rng_set :: [Unicode_Range]
 accidentals_rng_set = [(0x266D,0x266F),(0x1D12A,0x1D133)]
 
 {- | Barlines range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block barlines_rng tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block barlines_rng tbl)
 -}
 barlines_rng :: Unicode_Range
 barlines_rng = (0x1D100,0x1D105)
@@ -190,7 +194,7 @@ accidentals_tbl =
 
 {- | Notes range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block notes_rng tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block notes_rng tbl)
 -}
 notes_rng :: Unicode_Range
 notes_rng = (0x1D15C,0x1D164)
@@ -214,7 +218,7 @@ notes_tbl =
 
 {- | Rests range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block rests_rng tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block rests_rng tbl)
 -}
 rests_rng :: Unicode_Range
 rests_rng = (0x1D13B,0x1D142)
@@ -245,7 +249,7 @@ augmentation_dot = (0x1D16D, "MUSICAL SYMBOL COMBINING AUGMENTATION DOT")
 
 {- | Clefs range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block clefs_rng tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block clefs_rng tbl)
 -}
 clefs_rng :: Unicode_Range
 clefs_rng = (0x1D11E,0x1D126)
@@ -269,7 +273,7 @@ clefs_tbl =
 
 {- | Noteheads unicode range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block noteheads_rng tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block noteheads_rng tbl)
 -}
 noteheads_rng :: Unicode_Range
 noteheads_rng = (0x1D143,0x1D15B)
@@ -317,7 +321,7 @@ stem = (0x1D165, "MUSICAL SYMBOL COMBINING STEM")
 
 {- | Dynamics Unicode range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block dynamics_rng tbl)
+> putStrLn$ unicode_table_hs (unicode_table_block dynamics_rng tbl)
 -}
 dynamics_rng :: Unicode_Range
 dynamics_rng = (0x1D18C,0x1D193)
@@ -340,14 +344,15 @@ dynamics_tbl =
 
 {- | Music articulations range
 
->>> putStrLn$ unicode_table_hs (unicode_table_block articulations_rng tbl)
+> putStrLn$ unicode_table_hs (unicode_table_block articulations_rng tbl)
 -}
 articulations_rng :: Unicode_Range
 articulations_rng = (0x1D17B,0x1D18B)
 
 {- | Music articulations table
 
->>> putStrLn (map (toEnum . fst) articulations_tbl :: String)
+>>> map (toEnum . fst) articulations_tbl == "𝅻𝅼𝅽𝅾𝅿𝆀𝆁𝆂𝆃𝆄𝆊𝆋𝆅𝆆𝆇𝆈𝆉"
+True
 -}
 articulations_tbl :: Unicode_Table
 articulations_tbl =
@@ -382,9 +387,10 @@ True
 dot_operator :: Char
 dot_operator = toEnum 0x22C5
 
--- | Math symbols outside of the math blocks.
---
--- > putStrLn (unicode_table_hs (ix_set_to_tbl tbl math_plain_ix))
+{- | Math symbols outside of the math blocks.
+
+> putStrLn (unicode_table_hs (ix_set_to_tbl tbl math_plain_ix))
+-}
 math_plain_ix :: [Unicode_Index]
 math_plain_ix = [0x00D7,0x00F7]
 
@@ -402,7 +408,7 @@ type Unicode_Block = (Unicode_Range,String)
 
 {- | Unicode blocks
 
->>> putStrLn$ unicode_table_hs (concatMap (flip unicode_table_block tbl . fst) unicode_blocks)
+> putStrLn $ unicode_table_hs (concatMap (flip unicode_table_block tbl . fst) unicode_blocks)
 -}
 unicode_blocks :: [Unicode_Block]
 unicode_blocks =
@@ -424,7 +430,7 @@ unicode_blocks =
 
 {- | Bagua tri-grams.
 
->>> putStrLn $ unicode_table_hs (unicode_table_block (fst bagua) tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block (fst bagua) tbl)
 -}
 bagua :: Unicode_Block
 bagua = ((0x02630,0x02637),"BAGUA")
@@ -456,7 +462,7 @@ bagua_tbl =
 
 {- | Yijing hexagrams in King Wen sequence.
 
->>> putStrLn $ unicode_table_hs (unicode_table_block (fst yijing) tbl)
+> putStrLn $ unicode_table_hs (unicode_table_block (fst yijing) tbl)
 -}
 yijing :: Unicode_Block
 yijing = ((0x04DC0,0x04DFF),"YIJING")
