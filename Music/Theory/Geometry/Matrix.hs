@@ -143,30 +143,42 @@ m33_apply ((a,b,c),(d,e,f),(g,h,i)) (x,y,z) =
   ,d * x + e * y + f * z
   ,g * x + h * y + i * z)
 
--- | Rotation X M33 (radians).
---
--- > m33_apply (m33_rotation_x (pi/2)) (0,0,1) -- ~= (0,-1,0)
+{- | Rotation X M33 (radians).
+
+>>> m33_apply (m33_rotation_x (pi/2)) (0,0,1) `v3_approx_eq` (0,-1,0)
+True
+-}
 m33_rotation_x :: Floating t => t -> M33 t
 m33_rotation_x n = ((1,0,0),(0,cos n,- (sin n)),(0,sin n,cos n))
 
--- | Rotation Y M33 (radians).
---
--- > m33_apply (m33_rotation_y (pi/2)) (0,0,1) -- ~= (-1,0,0)
+{- | Rotation Y M33 (radians).
+
+>>> m33_apply (m33_rotation_y (pi/2)) (0,0,1) `v3_approx_eq` (1,0,0)
+True
+-}
 m33_rotation_y :: Floating t => t -> M33 t
 m33_rotation_y n = ((cos n,0,sin n),(0,1,0),(- (sin n),0,cos n))
 
--- | Rotation Z M33 (radians).
---
--- > m33_apply (m33_rotation_z (pi/2)) (1,0,0) -- ~= (0,1,0)
+{- | Rotation Z M33 (radians).
+
+>>> m33_apply (m33_rotation_z (pi/2)) (1,0,0) `v3_approx_eq` (0,1,0)
+True
+-}
 m33_rotation_z :: Floating t => t -> M33 t
 m33_rotation_z n = ((cos n,- (sin n),0),(sin n,cos n,0),(0,0,1))
 
--- | Rotation by angle θ around the axis of the unit vector (x,y,z).
---   x*x + y*y + z*z = 1
---
--- > m33_apply (m33_rotation_axis_angle (1,0,0) (pi/2)) (0,1,0) -- ~= (0,0,-1)
--- > m33_apply (m33_rotation_axis_angle (0,1,0) (pi/2)) (1,0,0) -- ~= (0,0,1)
--- > m33_apply (m33_rotation_axis_angle (0,0,1) (pi/2)) (1,0,0) -- ~= (0,-1,0)
+{- | Rotation by angle θ around the axis of the unit vector (x,y,z).
+x*x + y*y + z*z = 1
+
+>>> m33_apply (m33_rotation_axis_angle (1,0,0) (pi/2)) (0,1,0) `v3_approx_eq` (0,0,-1)
+True
+
+>>> m33_apply (m33_rotation_axis_angle (0,1,0) (pi/2)) (1,0,0) `v3_approx_eq` (0,0,1)
+True
+
+>>> m33_apply (m33_rotation_axis_angle (0,0,1) (pi/2)) (1,0,0) `v3_approx_eq` (0,-1,0)
+True
+-}
 m33_rotation_axis_angle :: Floating t => V3 t -> t -> M33 t
 m33_rotation_axis_angle (x,y,z) theta =
   let c = cos theta

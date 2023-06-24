@@ -93,16 +93,19 @@ polygon_param_dgr = let at_snd f (p, q) = (p, f q) in map (at_snd radians_to_deg
 -- | Polygon.
 type Polygon t = [V2 t]
 
--- | Degree is the number of points.
---
--- > let tri = [(0,0),(1,0),(0,1)]
--- > polygon_degree tri == 3
+{- | Degree is the number of points.
+
+>>> polygon_degree [(0,0),(1,0),(0,1)]
+3
+-}
 polygon_degree :: Polygon t -> Int
 polygon_degree = length
 
--- | List of /k/ edges of /k/ polygon.
---
--- > polygon_edges tri == [((0,0),(1,0)),((1,0),(0,1)),((0,1),(0,0))]
+{- | List of /k/ edges of /k/ polygon.
+
+>>> polygon_edges [(0,0),(1,0),(0,1)]
+[((0,0),(1,0)),((1,0),(0,1)),((0,1),(0,0))]
+-}
 polygon_edges :: Polygon t -> [V2 (V2 t)]
 polygon_edges l = zip l (tail (cycle l))
 
@@ -141,9 +144,11 @@ polygon_reflect_x_right l = let m = maximum (map v2_x l) in map (v2_reflect_x m)
 polygon_reflect_y_up :: (Ord t, Num t) => Polygon t -> Polygon t
 polygon_reflect_y_up l = let m = maximum (map v2_y l) in map (v2_reflect_y m) l
 
--- | Does point lie inside polygon.
---
--- > polygon_contains_point [(0, 0),(1, 0),(1, 1),(0, 1)] (0.5, 0.5)
+{- | Does point lie inside polygon.
+
+>>> polygon_contains_point [(0, 0),(1, 0),(1, 1),(0, 1)] (0.5, 0.5)
+True
+-}
 polygon_contains_point :: (Ord t, Fractional t) => Polygon t -> V2 t -> Bool
 polygon_contains_point p (x, y) =
   case p of

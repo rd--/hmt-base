@@ -6,9 +6,11 @@ import Music.Theory.Colour {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import Music.Theory.Math {- hmt-base -}
 
--- | image-size:(width,height) viewbox:(x,y,width,height)
---
--- > svg_begin_elem (100,100) ((-1,-1),(1,1))
+{- | image-size:(width,height) viewbox:(x,y,width,height)
+
+>>> svg_begin_elem (100,100) ((-1,-1),(1,1))
+"<svg width=\"100.0\" height=\"100.0\" viewBox=\"-1.0 -1.0 1.0 1.0\" xmlns=\"http://www.w3.org/2000/svg\">"
+-}
 svg_begin_elem :: V2 R -> V2 (V2 R) -> String
 svg_begin_elem (w,h) ((vx,vy),(vw,vh)) =
   printf
@@ -20,8 +22,11 @@ svg_end_elem = "</svg>"
 
 {- | stroke and stroke-width attributes
 
-> stroke_attr ((0,0,0),1)
-> stroke_attr ((0,0,255),2)
+>>> stroke_attr ((0,0,0),1)
+"stroke=\"black\" "
+
+>>> stroke_attr ((0,0,255),2)
+"stroke=\"#0000ff\" stroke-width=\"2.0\""
 -}
 stroke_attr :: (Rgb I,R) -> String
 stroke_attr (clr_s,w) =
@@ -34,7 +39,8 @@ stroke_attr (clr_s,w) =
 
 k = precision
 
-> line_elem  ((0,0,0),1) ((0,100),(100,0))
+>>> line_elem 0 ((0,0,0),1) ((0,100),(100,0))
+"<line x1=\"0\" y1=\"100\" x2=\"100\" y2=\"0\" stroke=\"black\"  fill=\"none\" />"
 -}
 line_elem :: Int -> (Rgb I,R) -> V2 (V2 R) -> String
 line_elem k strk ((x1,y1),(x2,y2)) =
@@ -58,8 +64,11 @@ fill_attr_m = maybe "fill=\"none\"" fill_attr
 
 {- | <https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle>
 
-> circle_elem (Just ((0,0,0),1),Nothing) ((0,0),10)
-> circle_elem (Nothing,Just ((255,0,0),1)) ((0,0),10)
+>>> circle_elem (Just ((0,0,0),1),Nothing) ((0,0),10)
+"<circle cx=\"0.0\" cy=\"0.0\" r=\"10.0\" stroke=\"black\"  fill=\"none\" />"
+
+>>> circle_elem (Nothing,Just ((255,0,0),1)) ((0,0),10)
+"<circle cx=\"0.0\" cy=\"0.0\" r=\"10.0\"  fill=\"#ff0000\"  />"
 -}
 circle_elem :: Strk_Fill -> (V2 R,R) -> String
 circle_elem (strk,fill) ((x,y),r) =
@@ -67,10 +76,14 @@ circle_elem (strk,fill) ((x,y),r) =
   "<circle cx=\"%f\" cy=\"%f\" r=\"%f\" %s %s />"
   x y r (maybe "" stroke_attr strk) (fill_attr_m fill)
 
--- | <https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline>
---
--- > polyline_elem (Just ((0,0,255),1),Nothing) [(0,100),(100,0)]
--- > polyline_elem (Nothing,Just ((0,0,0),1)) [(0,100),(100,0)]
+{- | <https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline>
+
+>>> polyline_elem (Just ((0,0,255),1),Nothing) [(0,100),(100,0)]
+"<polyline points=\"0.0,100.0 100.0,0.0\" stroke=\"#0000ff\"  fill=\"none\" />"
+
+>>> polyline_elem (Nothing,Just ((0,0,0),1)) [(0,100),(100,0)]
+"<polyline points=\"0.0,100.0 100.0,0.0\"  fill=\"black\"  />"
+-}
 polyline_elem :: Strk_Fill -> [V2 R] -> String
 polyline_elem (strk,fill) ln =
   let ln_ = unwords (map (\(x,y) -> printf "%f,%f" x y) ln)
@@ -85,9 +98,11 @@ bezier4_elem strk ((x0,y0),(x1,y1),(x2,y2),(x3,y3)) =
   "<path d=\"M %f,%f C %f,%f %f,%f %f,%f\" %s fill=\"none\" />"
   x0 y0 x1 y1 x2 y2 x3 y3 (stroke_attr strk)
 
--- | <https://svgwg.org/specs/paths/#PathDataEllipticalArcCommands>
---
--- > arc_elem ((0,0,0),1) ((300,200),(150,150),0,(1,0),(150,-150))
+{- | <https://svgwg.org/specs/paths/#PathDataEllipticalArcCommands>
+
+>>> arc_elem ((0,0,0),1) ((300,200),(150,150),0,(1,0),(150,-150))
+"<path d=\"M 300.0,200.0 A 150.0,150.0 0.0 1,0 150.0,-150.0\" stroke=\"black\"  fill=\"none\" />"
+-}
 arc_elem :: (Rgb I,R) -> (V2 R,V2 R,R,V2 Int,V2 R) -> String
 arc_elem strk ((x1,y1),(rx,ry),rot,(f1,f2),(x2,y2)) =
   printf
