@@ -220,6 +220,16 @@ True
 a000142 :: (Enum n, Num n) => [n]
 a000142 = 1 : zipWith (*) [1..] a000142
 
+{- | <http://oeis.org/A000165>
+
+Double factorial of even numbers: (2n)!! = 2^n*n!. (Formerly M1878 N0742)
+
+>>> [1, 2, 8, 48, 384, 3840, 46080, 645120, 10321920, 185794560, 3715891200, 81749606400, 1961990553600] `isPrefixOf` a000165
+True
+-}
+a000165 :: (Enum n, Num n) => [n]
+a000165 = 1 : zipWith (*) [2, 4 ..] a000165
+
 {- | https://oeis.org/A000201
 
 Lower Wythoff sequence (a Beatty sequence): a(n) = floor(n*phi), where phi = (1+sqrt(5))/2 = A001622

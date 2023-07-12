@@ -386,6 +386,9 @@ v3_list_approx_eq p q = all id (zipWith v3_approx_eq p q)
 v3_map :: (t -> u) -> V3 t -> V3 u
 v3_map f (a,b,c) = (f a,f b,f c)
 
+v3_round :: (RealFrac n,Integral i) => V3 n -> V3 i
+v3_round = v3_map round
+
 v3_zip :: (a -> b -> c) -> V3 a -> V3 b -> V3 c
 v3_zip f (i,j,k) (p,q,r) = (f i p,f j q,f k r)
 

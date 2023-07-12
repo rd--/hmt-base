@@ -1671,7 +1671,7 @@ pad_right k n l = take n (l ++ repeat k)
 >>> map (pad_right_err '!' 3) ["x","xy","xyz"]
 ["x!!","xy!","xyz"]
 
-> pad_right_err '!' 3 "xyz!"
+> pad_right_err '!' 3 "xyz!" -- undefined
 -}
 pad_right_err :: t -> Int -> [t] -> [t]
 pad_right_err k n l = if length l > n then error "pad_right_err?" else pad_right k n l

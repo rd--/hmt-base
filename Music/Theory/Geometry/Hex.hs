@@ -7,7 +7,8 @@ import qualified Music.Theory.Geometry.Functions as Geometry {- hmt-base -}
 
 {- | Hex (q,r) co-ordinate to (q,r,s) co-ordinate.
 
-> map hex_qrs [(0, 0), (7,-2)] == [(0,0,0),(7,-2,-5)]
+>>> map hex_qrs [(0, 0), (7,-2)]
+[(0,0,0),(7,-2,-5)]
 -}
 hex_qrs :: Num n => V2 n -> V3 n
 hex_qrs (q,r) = (q,r,-q - r)
@@ -19,7 +20,8 @@ hex_qr (q,r,_) = (q,r)
 {- | Given unit size and initial angle return axis vectors for hex_qr co-ordinates.
 (sqrt 3) is twice the inradius of a hexagon with unit size length and unit circumradius.
 
-> hex_axis_vectors (sqrt 3) 0
+>>> hex_axis_vectors (sqrt 3) 0
+((1.7320508075688772,0.0),(0.8660254037844388,1.4999999999999998))
 -}
 hex_axis_vectors :: Floating n => n -> n -> V2 (V2 n)
 hex_axis_vectors u a = (v2_rotate a (u,0),v2_rotate (a + (pi / 3)) (u,0))
@@ -80,7 +82,8 @@ flat_mtx =
 The orientation is arranged so that (q,r) and (q+7,r-2) are aligned (on the x-axis).
 This is the usual Bosanquet/Wilson arrangement.
 
-> round (Geometry.radians_to_degrees mz_u648_angle) == 16
+>>> round (Geometry.radians_to_degrees mz_u648_angle)
+16
 -}
 mz_u648_angle :: Double
 mz_u648_angle =
@@ -104,7 +107,8 @@ mz_u648_mtx = flip hex_m22 mz_u648_angle
 {- | Ccw coordinate sequence for hexagonal face.
      a = angle, u = unit (diameter of hex), c = center coordinate
 
-> map (v2_map round) (hex_face 0 100 (50,50)) == [(93,75),(50,100),(7,75),(7,25),(50,0),(93,25)]
+>>> map (v2_map round) (hex_face 0 100 (50,50))
+[(93,75),(50,100),(7,75),(7,25),(50,0),(93,25)]
 -}
 hex_face :: (RealFloat n,Enum n) => n -> n -> V2 n -> [V2 n]
 hex_face a u c =

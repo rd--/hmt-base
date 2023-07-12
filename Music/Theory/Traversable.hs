@@ -41,8 +41,9 @@ list_number_2 = adopt_shape_2_zip_stream [1..]
 
 {- | Variant of 'adopt_shape' that considers only 'Just' elements at 'Traversable'.
 
+> import Music.Theory.List
 > let s = "a(b(cd)ef)ghi"
-> let t = group_tree (begin_end_cmp_eq '(' ')') s
+> let t = group_tree ((==) '(',(==) ')') s
 > adopt_shape_m (,) [1..13] t
 -}
 adopt_shape_m :: Traversable t => (a -> b-> c) -> [b] -> t (Maybe a) -> ([b],t (Maybe c))

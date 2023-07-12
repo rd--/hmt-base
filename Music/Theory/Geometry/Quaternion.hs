@@ -38,9 +38,10 @@ q_inverse (a,b,c,d) =
 
 {- | Quaternion to rotation matrix (to be multiplied with on the /left/).
 
-> q = map euler_angles_to_quaternion [(pi/2,0,0),(0,pi/2,0),(0,0,-pi/2)]
-> m = map q_to_m33_left q
-> map (flip m33_apply (0,0,1)) m -- ~= [(0,0,1),(1,0,0),(0,1,0)]
+>>> let q = map euler_angles_to_quaternion [(pi/2,0,0),(0,pi/2,0),(0,0,-pi/2)]
+>>> let m = map q_to_m33_left q
+>>> map (v3_round . flip m33_apply (0,0,1)) m
+[(0,0,1),(1,0,0),(0,1,0)]
 -}
 q_to_m33_left :: Num t => Q t -> M33 t
 q_to_m33_left (a,b,c,d) =
@@ -77,12 +78,17 @@ q_rot_normal (x,y,z) angle =
 
 {- | (z=yaw,y=pitch,x=roll)
 
-> e2q = euler_angles_to_quaternion
-> q2e = quaternion_to_euler_angles
-> q2e (e2q (pi/3,pi/4,pi/5)) -- ~= (pi/3,pi/4,pi/5)
-> q = map e2q [(pi/2,0,0),(0,pi/2,0),(0,0,-pi/2)]
-> map (flip q_act (0,0,1)) q -- ~= [(0,0,1),(1,0,0),(0,1,0)]
-> q2e (q_mul (e2q (pi/2,0,0)) (e2q (0,pi/2,0))) == (pi/2,pi/2,0)
+>>> let e2q = euler_angles_to_quaternion
+>>> let q2e = quaternion_to_euler_angles
+>>> q2e (e2q (pi/3,pi/4,pi/5)) `v3_approx_eq` (pi/3,pi/4,pi/5)
+True
+
+>>> let q = map e2q [(pi/2,0,0),(0,pi/2,0),(0,0,-pi/2)]
+>>> map (v3_round . flip q_act (0,0,1)) q
+[(0,0,1),(1,0,0),(0,1,0)]
+
+>>> q2e (q_mul (e2q (pi/2,0,0)) (e2q (0,pi/2,0))) == (pi/2,pi/2,0)
+True
 -}
 euler_angles_to_quaternion :: Floating t => V3 t -> V4 t
 euler_angles_to_quaternion (z,y,x) =

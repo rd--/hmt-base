@@ -6,7 +6,8 @@ import qualified Music.Theory.Math.Constant as Math.Constant {- hmt-base -}
 
 {- | Calculate histogram on numBins places.  Returns the range of each bin and the number of elements in each.
 
-> map (snd . bHistogram 10) [[1 .. 10],[1,1,1,2,2,3,10]] == [[1,1,1,1,1,1,1,1,1,1],[3,2,1,0,0,0,0,0,0,1]]
+>>> map (snd . bHistogram 10) [[1 .. 10],[1,1,1,2,2,3,10]]
+[[1,1,1,1,1,1,1,1,1,1],[3,2,1,0,0,0,0,0,0,1]]
 -}
 bHistogram :: Int -> [Double] -> ([(Double, Double)], [Int])
 bHistogram numBins xs =
@@ -20,10 +21,17 @@ bHistogram numBins xs =
 
 {- | Calculate range.
 
-> bHistogramRange 10 (replicate 10 1) == (0.9, 1.1)
-> bHistogramRange 10 (replicate 10 0) == (-1, 1)
-> bHistogramRange 10 [1 .. 10] == (0.5, 10.5)
-> bHistogramRange 25 [1 .. 10] == (0.8125,10.1875)
+>>> bHistogramRange 10 (replicate 10 1)
+(0.9,1.1)
+
+>>> bHistogramRange 10 (replicate 10 0)
+(-1.0,1.0)
+
+>>> bHistogramRange 10 [1 .. 10]
+(0.5,10.5)
+
+>>> bHistogramRange 25 [1 .. 10]
+(0.8125,10.1875)
 -}
 bHistogramRange :: Int -> [Double] -> (Double, Double)
 bHistogramRange numBins xs =

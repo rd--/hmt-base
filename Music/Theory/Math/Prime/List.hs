@@ -5,7 +5,11 @@ module Music.Theory.Math.Prime.List where
 - <https://llllllll.co/t/kyma-studies/38498/21>
 - <https://en.wikipedia.org/wiki/List_of_prime_numbers>
 
-> (length primesList == 20, map (length . snd) primesList == replicate 20 32)
+>>> length primesList
+20
+
+>>> map (length . snd) primesList == replicate 20 32
+True
 -}
 primesList :: Num n => [(String, [n])]
 primesList =

@@ -43,15 +43,16 @@ spencer_control_points_seq t =
 
 {- | For lines (ie. open curves) the first and last arcs are simple quadratics.
 
-> spencer_open_group "abcdef" == [Left 'a',Right ('b','c'),Right ('d','e'),Left 'f']
+>>> spencer_open_group "abcdef"
+[Left 'a',Right ('b','c'),Right ('d','e'),Left 'f']
 -}
 spencer_open_group :: [a] -> [Either a (a,a)]
 spencer_open_group l = concat [[Left (head l)],map Right (List.adj2 2 (tail l)),[Left (last l)]]
 
 {- | Transform input sequence and left-rotate control-point sequence.
 
-> r = [(75,175),(125,175),(175,225),(175,275),(125,325),(75,325),(25,275),(25,225)]
-> spencer_control_points_closed 0.5 [(50,200),(150,200),(150,300),(50,300)] == r
+>>> spencer_control_points_closed 0.5 [(50,200),(150,200),(150,300),(50,300)]
+[(75.0,175.0),(125.0,175.0),(175.0,225.0),(175.0,275.0),(125.0,325.0),(75.0,325.0),(25.0,275.0),(25.0,225.0)]
 -}
 spencer_control_points_closed :: Floating t => t -> [V2 t] -> [V2 t]
 spencer_control_points_closed t l =
@@ -62,8 +63,8 @@ spencer_control_points_closed t l =
 
 {- | For loops (ie. closed curves) all arcs are cubic.
 
-> r = [Right ('f','a'),Right ('b','c'),Right ('d','e'),Right ('f','a')]
-> spencer_closed_group "fabcdefa" == r
+>>> spencer_closed_group "fabcdefa"
+[Right ('f','a'),Right ('b','c'),Right ('d','e'),Right ('f','a')]
 -}
 spencer_closed_group :: [t] -> [Either a (t, t)]
 spencer_closed_group = map Right . List.adj2 2

@@ -44,8 +44,11 @@ edg_circ_gr rad ((n,_),e) =
 
 {- | Lcf graph set given at <http://mathworld.wolfram.com/LcfNotation.html>
 
-> length lcf_mw_set == 57
-> length (nub (map snd lcf_mw_set)) == 57 -- IE. UNIQ
+>>> length lcf_mw_set
+57
+
+>>> length (nub (map snd lcf_mw_set)) -- IE. UNIQ
+57
 -}
 lcf_mw_set :: [(String, Lcf)]
 lcf_mw_set =

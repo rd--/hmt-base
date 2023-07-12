@@ -1,12 +1,19 @@
 {- | Specialised type conversions, see mk/mk-convert.hs
 
-> map int_to_word8 [-1,0,255,256] == [255,0,255,0]
-> map int_to_word8_maybe [-1,0,255,256] == [Nothing,Just 0,Just 255,Nothing]
+>>> map int_to_word8 [-1,0,255,256]
+[255,0,255,0]
 
-> map integer_to_int64_maybe [-2 ^ 63 - 1,2 ^ 63] == [Nothing,Nothing]
-> map integer_to_word64_maybe [2 ^ 64 - 1,2 ^ 64] == [Just 18446744073709551615,Nothing]
+>>> map int_to_word8_maybe [-1,0,255,256]
+[Nothing,Just 0,Just 255,Nothing]
 
-> map int16_to_float [-1,0,1] == [-1,0,1]
+>>> map integer_to_int64_maybe [-2 ^ 63 - 1,2 ^ 63]
+[Nothing,Nothing]
+
+>>> map integer_to_word64_maybe [2 ^ 64 - 1,2 ^ 64]
+[Just 18446744073709551615,Nothing]
+
+>>> map int16_to_float [-1,0,1]
+[-1.0,0.0,1.0]
 
 -}
 module Music.Theory.Math.Convert where
@@ -41,10 +48,17 @@ double_to_word8 = id
 
 {- | Type-specialise /f/, ie. round, ceiling, truncate
 
-> map (double_to_int round) [0, 0.25 .. 1] == [0, 0, 0, 1, 1]
-> map (double_to_int ceiling) [0, 0.25 .. 1] == [0, 1, 1, 1, 1]
-> map (double_to_int floor) [0, 0.25 .. 1] == [0, 0, 0, 0, 1]
-> map (double_to_int truncate) [0, 0.25 .. 1] == [0, 0, 0, 0, 1]
+>>> map (double_to_int round) [0,0.25 .. 1]
+[0,0,0,1,1]
+
+>>> map (double_to_int ceiling) [0,0.25 .. 1]
+[0,1,1,1,1]
+
+>>> map (double_to_int floor) [0,0.25 .. 1]
+[0,0,0,0,1]
+
+>>> map (double_to_int truncate) [0,0.25 .. 1]
+[0,0,0,0,1]
 -}
 double_to_int :: (Double -> Int) -> Double -> Int
 double_to_int = id

@@ -112,7 +112,8 @@ normalise_duration =
 
 {- | Extract 'Duration' tuple applying filter function at each element
 
-> duration_to_tuple id (Duration 1 35 5 250) == (1,35,5,250)
+>>> duration_to_tuple id (Duration 1 35 5 250)
+(1,35,5,250)
 -}
 duration_to_tuple :: (Int -> a) -> Duration -> (a,a,a,a)
 duration_to_tuple f (Duration h m s ms) = (f h,f m,f s,f ms)
@@ -123,7 +124,8 @@ tuple_to_duration f (h,m,s,ms) = Duration (f h) (f m) (f s) (f ms)
 
 {- | Duration as fractional hours.
 
-> duration_to_hours (read "01:35:05.250") == 1.5847916666666668
+>>> duration_to_hours (read "01:35:05.250")
+1.5847916666666668
 -}
 duration_to_hours :: Fractional n => Duration -> n
 duration_to_hours d =
@@ -132,21 +134,24 @@ duration_to_hours d =
 
 {- | Duration as fractional minutes.
 
-> duration_to_minutes (read "01:35:05.250") == 95.0875
+>>> duration_to_minutes (read "01:35:05.250")
+95.0875
 -}
 duration_to_minutes :: Fractional n => Duration -> n
 duration_to_minutes = (* 60) . duration_to_hours
 
 {- | Duration as fractional seconds.
 
-> duration_to_seconds (read "01:35:05.250") == 5705.25
+>>> duration_to_seconds (read "01:35:05.250")
+5705.25
 -}
 duration_to_seconds :: Fractional n => Duration -> n
 duration_to_seconds = (* 60) . duration_to_minutes
 
 {- | Inverse of duration_to_hours.
 
-> hours_to_duration 1.5847916 == Duration 1 35 5 250
+>>> hours_to_duration 1.5847916 == Duration 1 35 5 250
+True
 -}
 hours_to_duration :: RealFrac a => a -> Duration
 hours_to_duration n =
@@ -180,9 +185,14 @@ negate_duration (Duration h m s ms) =
 {- | Difference between two durations as a duration.
      Implemented by translation to and from Rational fractional hours.
 
-> duration_diff (Duration 1 35 5 250) (Duration 0 25 1 125) == Duration 1 10 4 125
-> duration_diff (Duration 0 25 1 125) (Duration 1 35 5 250) == Duration (-1) 10 4 125
-> duration_diff (Duration 0 25 1 125) (Duration 0 25 1 250) == Duration 0 0 0 (-125)
+>>> duration_diff (Duration 1 35 5 250) (Duration 0 25 1 125)
+01:10:04.125
+
+>>> duration_diff (Duration 0 25 1 125) (Duration 1 35 5 250)
+-1:10:04.125
+
+>>> duration_diff (Duration 0 25 1 125) (Duration 0 25 1 250)
+00:00:-0.125
 -}
 duration_diff :: Duration -> Duration -> Duration
 duration_diff p q =

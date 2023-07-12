@@ -33,7 +33,8 @@ gl_perspective (fovy,aspect,zNear,zFar) =
 
 {- | <https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml>
 
-> lookAt (0,0,10) (0,0,0) (0,1,0) == ((1,0,0,0),(0,-1,0,0),(0,0,1,0),(0,0,-10,1))
+>>> lookAt (0,0,10) (0,0,0) (0,1,0)
+((1.0,0.0,0.0,-0.0),(0.0,-1.0,0.0,-0.0),(0.0,0.0,1.0,-10.0),(0.0,0.0,0.0,1.0))
 -}
 lookAt :: (Floating t) => V3 t -> V3 t -> V3 t -> M44 t
 lookAt (eyex,eyey,eyez) (centerx,centery,centerz) (upx,upy,upz) =

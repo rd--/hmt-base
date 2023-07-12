@@ -15,10 +15,11 @@ bezier_quadratic_to_cubic (q1,q2,q3) =
 
 {- | Calculate B(i,n) at t.
 
-> f = map (\t -> map (\b -> bernstein_base b t) [(0,3),(1,3),(2,3),(3,3)])
-> f [0,0.5,1] == [[1,0,0,0],[1/8,6/16,6/16,1/8],[0,0,0,1]]
+>>> let f = map (\t -> map (\b -> bernstein_base b t) [(0,3),(1,3),(2,3),(3,3)])
+>>> f [0,0.5,1] == [[1,0,0,0],[1/8,6/16,6/16,1/8],[0,0,0,1]]
+True
 
-> import Sound.SC3.Plot {- hsc3-plot -}
+> import Sound.Sc3.Plot {- hsc3-plot -}
 > f = map (\b -> map (\t -> bernstein_base b t) [0,0.01 .. 1])
 > b k = let i = k - 1 in (zip [0 .. i] (repeat i))
 > plot_p1_ln (f (b 5))
@@ -40,19 +41,23 @@ bezier_curve p t =
 
 {- | 'bezier_curve' at 'V2'.
 
-import Sound.SC3.Plot {- hsc3-plot -}
-p = [(16,106),(115,182),(212,0),(312,75),(273,151)]
-plot_p2_ln [p,map (bezier_curve_v2 p) [0,0.01 .. 1]]
+> import Sound.Sc3.Plot {- hsc3-plot -}
+> let p = [(16,106),(115,182),(212,0),(312,75),(273,151)]
+> plot_p2_ln [p,map (bezier_curve_v2 p) [0,0.01 .. 1]]
 -}
 bezier_curve_v2 :: Num a => [V2 a] -> a -> V2 a
 bezier_curve_v2 p t = let (x,y) = unzip p in (bezier_curve x t,bezier_curve y t)
 
 {- | Cubic Bernstein bases, ie. B(0,3) B(1,3) B(2,3) and B(3,3)
 
-> map bezier4_bases [0,0.5,1] == [(1,0,0,0),(1/8,6/16,6/16,1/8),(0,0,0,1)]
-> map bezier4_bases [1/4,1/3]
+>>> map bezier4_bases [0,0.5,1] == [(1,0,0,0),(1/8,6/16,6/16,1/8),(0,0,0,1)]
+True
 
-> import Sound.SC3.Plot {- hsc3-plot -}
+>>> import Data.Ratio
+>>> map bezier4_bases [1%4,1%3]
+[(27 % 64,27 % 64,9 % 64,1 % 64),(8 % 27,4 % 9,2 % 9,1 % 27)]
+
+> import Sound.Sc3.Plot {- hsc3-plot -}
 > (p,q,r,s) = Data.List.unzip4 (map bezier4_bases [0,0.01 .. 1])
 > plot_p1_ln [p,q,r,s]
 -}
@@ -91,7 +96,7 @@ bezier4_bases_mtx t = m44_apply bezier4_m44 (1,t,t*t,t*t*t)
 
 {- | Matrix form of 'bezier4'.
 
-> mk f = map (f (0,180,0,60)) [0,0.01 .. 1]
+> let mk f = map (f (0,180,0,60)) [0,0.01 .. 1]
 > plot_p1_ln [mk bezier4,mk bezier4_mtx]
 -}
 bezier4_mtx :: Num n => V4 n -> n -> n
@@ -154,15 +159,15 @@ bezier4_y_mt' dx (x0,y0) (x1,y1) (x2,y2) (x3,y3) i_mu x =
 
 {- | Variant with initial /mu/ at mid-point.
 
-> import Sound.SC3.Plot {- hsc3-plot -}
+> import Sound.Sc3.Plot {- hsc3-plot -}
 
-> f = bezier4_y_mt 0.0001 (0,0) (0.1,0.3) (0.5,0.2) (1,0.5)
+> let f = bezier4_y_mt 0.0001 (0,0) (0.1,0.3) (0.5,0.2) (1,0.5)
 > plot_p1_ln [map (snd . f) [0.0,0.01 .. 1.0]]
 
-> f = bezier4_y_mt 0.0001 (0,0) (0.4,1.3) (0.6,1.3) (1,0)
+> let f = bezier4_y_mt 0.0001 (0,0) (0.4,1.3) (0.6,1.3) (1,0)
 > plot_p1_ln [map (snd . f) [0.0,0.01 .. 1.0]]
 
-> f = bezier4_y_mt 0.0001 (1,0) (1.4,-1.3) (1.6,-1.3) (2,0)
+> let f = bezier4_y_mt 0.0001 (1,0) (1.4,-1.3) (1.6,-1.3) (2,0)
 > plot_p1_ln [map (snd . f) [1.0,1.01 .. 2.0]]
 
 -}

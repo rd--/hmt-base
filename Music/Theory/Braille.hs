@@ -145,8 +145,11 @@ braille_64 =
 
 {- | Transcribe Ascii to unicode braille.
 
-> transcribe_unicode "Braille Ascii Char Grid" == "⠃⠗⠁⠊⠇⠇⠑⠀⠁⠎⠉⠊⠊⠀⠉⠓⠁⠗⠀⠛⠗⠊⠙"
-> transcribe_unicode "Braille Html Table Grid" == "⠃⠗⠁⠊⠇⠇⠑⠀⠓⠞⠍⠇⠀⠞⠁⠃⠇⠑⠀⠛⠗⠊⠙"
+>>> transcribe_unicode "Braille Ascii Char Grid" == "⠃⠗⠁⠊⠇⠇⠑⠀⠁⠎⠉⠊⠊⠀⠉⠓⠁⠗⠀⠛⠗⠊⠙"
+True
+
+>>> transcribe_unicode "Braille Html Table Grid" == "⠃⠗⠁⠊⠇⠇⠑⠀⠓⠞⠍⠇⠀⠞⠁⠃⠇⠑⠀⠛⠗⠊⠙"
+True
 -}
 transcribe_unicode :: String -> String
 transcribe_unicode = map (braille_unicode . fromJust . braille_lookup_ascii)
