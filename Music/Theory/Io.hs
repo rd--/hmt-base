@@ -13,6 +13,14 @@ import qualified Data.Text as T {- text -}
 import qualified Data.Text.Encoding as T {- text -}
 import qualified Data.Text.IO as T {- text -}
 
+{- | File size, in bytes.
+
+>>> file_size "/home/rohan/sw/hmt-base/Music/Theory/Io.hs"
+2643
+-}
+file_size :: FilePath -> IO Integer
+file_size fn = withFile fn ReadMode hFileSize
+
 -- | 'T.decodeUtf8' of 'B.readFile', implemented via "Data.Text".
 read_file_utf8_text :: FilePath -> IO T.Text
 read_file_utf8_text = fmap T.decodeUtf8 . B.readFile
