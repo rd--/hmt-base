@@ -16,7 +16,7 @@ import qualified Data.Text.IO as T {- text -}
 {- | File size, in bytes.
 
 >>> file_size "/home/rohan/sw/hmt-base/Music/Theory/Io.hs"
-2643
+2634
 -}
 file_size :: FilePath -> IO Integer
 file_size fn = withFile fn ReadMode hFileSize

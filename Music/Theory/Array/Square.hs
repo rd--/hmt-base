@@ -126,7 +126,7 @@ sq_diagonal_ll_ur = sq_diagonal_ul_lr . reverse
 >>> sq = sq_from_list 4 Oeis.a126710
 >>> sq_pp sq
 " 7 12  1 14\n 2 13  8 11\n16  3 10  5\n 9  6 15  4\n"
- 
+
 >>> sq_pp $ sq_h_reflection sq
 "14  1 12  7\n11  8 13  2\n 5 10  3 16\n 4 15  6  9\n"
 

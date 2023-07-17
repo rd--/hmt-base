@@ -9,7 +9,7 @@ import Data.Ord {- base -}
 
 import qualified Data.IntMap as Map {- containers -}
 import qualified Data.List.Ordered as O {- data-ordlist -}
-import qualified Data.List.Split as S {- split -}
+import qualified Data.List.Split as Split {- split -}
 import qualified Data.Tree as Tree {- containers -}
 
 import qualified Music.Theory.Either as T {- hmt-base -}
@@ -78,9 +78,9 @@ unbracket_err = fromMaybe (error "unbracket") . unbracket
 
 -- * Split
 
-{- | Relative of 'S.splitOn', but only makes first separation.
+{- | Relative of 'Split.splitOn', but only makes first separation.
 
->>> S.splitOn "//" "lhs//rhs//rem"
+>>> Split.splitOn "//" "lhs//rhs//rem"
 ["lhs","rhs","rem"]
 
 >>> separate_at "//" "lhs//rhs//rem"
@@ -97,13 +97,13 @@ separate_at x =
                  else f (head rhs : lhs) (tail rhs)
     in f []
 
-{- | Variant of 'S.splitWhen' that keeps delimiters at left.
+{- | Variant of 'Split.splitWhen' that keeps delimiters at left.
 
 >>> split_when_keeping_left (== 'r') "rab rcd re rf r"
 ["","rab ","rcd ","re ","rf ","r"]
 -}
 split_when_keeping_left :: (a -> Bool) -> [a] -> [[a]]
-split_when_keeping_left = S.split . S.keepDelimsL . S.whenElt
+split_when_keeping_left = Split.split . Split.keepDelimsL . Split.whenElt
 
 {- | Split before the indicated element, keeping it at the left of the sub-sequence it begins.
      'split_when_keeping_left' of '=='
@@ -132,16 +132,16 @@ split_before x = split_when_keeping_left (== x)
 ["",";a",",b",",c",";d",";"]
 -}
 split_before_any :: Eq a => [a] -> [a] -> [[a]]
-split_before_any = S.split . S.keepDelimsL . S.oneOf
+split_before_any = Split.split . Split.keepDelimsL . Split.oneOf
 
-{- | Singleton variant of 'S.splitOn'.
+{- | Singleton variant of 'Split.splitOn'.
 
 >>> split_on_1 ":" "graph:layout"
 Just ("graph","layout")
 -}
 split_on_1 :: Eq t => [t] -> [t] -> Maybe ([t],[t])
 split_on_1 e l =
-    case S.splitOn e l of
+    case Split.splitOn e l of
       [p,q] -> Just (p,q)
       _ -> Nothing
 
@@ -436,7 +436,7 @@ interleave_set l =
 ["abcd","efgh","ijkl"]
 -}
 deinterleave :: Int -> [a] -> [[a]]
-deinterleave n = transpose . S.chunksOf n
+deinterleave n = transpose . Split.chunksOf n
 
 {- | Special case for two-part deinterleaving.
 
@@ -639,7 +639,7 @@ adj_intersect n = map intersect_l . segments 2 n
 [[1,5],[2,6],[3,7],[4,8]]
 -}
 cycles :: Int -> [a] -> [[a]]
-cycles n = transpose . S.chunksOf n
+cycles n = transpose . Split.chunksOf n
 
 {- | Variant of 'filter' that has a predicate to halt processing, ie. 'filter' of 'takeWhile'.
 
