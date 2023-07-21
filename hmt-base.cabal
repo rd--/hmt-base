@@ -49,6 +49,9 @@ Library
                    Music.Theory.Combinations
                    Music.Theory.Colour
                    Music.Theory.Concurrent
+                   Music.Theory.Db.Common
+                   Music.Theory.Db.Csv
+                   Music.Theory.Db.Plain
                    Music.Theory.Directory
                    Music.Theory.Directory.Find
                    Music.Theory.Either
