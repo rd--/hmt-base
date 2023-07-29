@@ -89,6 +89,9 @@ factor x n =
 
 >>> map Primes.primeFactors [1,4,231,315]
 [[],[2,2],[3,7,11],[3,3,5,7]]
+
+>>> prime_factors 8589298611
+[3,2863099537]
 -}
 prime_factors :: Integral i => i -> [i]
 prime_factors = factor primes_list
