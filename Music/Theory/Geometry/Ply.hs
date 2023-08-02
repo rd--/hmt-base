@@ -6,7 +6,7 @@ There is no reader.
 
 Greg Turk "The Ply Polygon File Format" (1994)
 
-SEE "Ply_Files.txt" in <https://www.cc.gatech.edu/projects/large_models/files/ply.tar.gz>
+See "Ply_Files.txt" in <https://www.cc.gatech.edu/projects/large_models/files/ply.tar.gz>
 
 -}
 module Music.Theory.Geometry.Ply where
