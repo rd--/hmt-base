@@ -13,4 +13,4 @@ mk-ply:
 	(make ply ; cp ply $(prefix)/bin/hmt-ply)
 
 mk-dep:
-	cabal v1-install --allow-newer ply-loader
+	cabal v1-install --allow-newer ply-loader GLUT

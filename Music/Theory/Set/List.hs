@@ -96,8 +96,11 @@ partitions = map (map Multiset.toList . Multiset.toList) . Multiset.partitions .
 >>> cartesian_product "abc" [1,2]
 [('a',1),('a',2),('b',1),('b',2),('c',1),('c',2)]
 
->>> cartesian_product "abc" "" 
+>>> cartesian_product "abc" ""
 []
+
+>>> cartesian_product "xy" "xy"
+[('x','x'),('x','y'),('y','x'),('y','y')]
 -}
 cartesian_product :: [a] -> [b] -> [(a,b)]
 cartesian_product p q = [(i,j) | i <- p, j <- q]
