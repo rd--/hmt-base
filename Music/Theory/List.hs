@@ -7,6 +7,8 @@ import Data.List {- base -}
 import Data.Maybe {- base -}
 import Data.Ord {- base -}
 
+import qualified Safe {- safe -}
+
 import qualified Data.IntMap as Map {- containers -}
 import qualified Data.List.Ordered as O {- data-ordlist -}
 import qualified Data.List.Split as Split {- split -}
@@ -78,6 +80,15 @@ unbracket_err = fromMaybe (error "unbracket") . unbracket
 
 -- * Split
 
+head_err :: [t] -> t
+head_err = Safe.headNote "head_err"
+
+tail_err :: [t] -> [t]
+tail_err = Safe.tailNote "tail_err"
+
+last_err :: [t] -> t
+last_err = Safe.lastNote "last_err"
+
 {- | Relative of 'Split.splitOn', but only makes first separation.
 
 >>> Split.splitOn "//" "lhs//rhs//rem"
@@ -94,7 +105,7 @@ separate_at x =
             then Nothing
             else if x == take n rhs
                  then Just (reverse lhs,drop n rhs)
-                 else f (head rhs : lhs) (tail rhs)
+                 else f (head_err rhs : lhs) (tail_err rhs)
     in f []
 
 {- | Variant of 'Split.splitWhen' that keeps delimiters at left.
@@ -316,7 +327,7 @@ genericAdj2 n l =
 >>> adj2 1 [1..5]
 [(1,2),(2,3),(3,4),(4,5)]
 
->>> let l = [1..5] in zip l (tail l) == adj2 1 l
+>>> let l = [1..5] in zip l (tail_err l) == adj2 1 l
 True
 
 >>> adj2 2 [1..4]
@@ -495,7 +506,7 @@ rezip f1 f2 l = let (p,q) = unzip l in zip (f1 p) (f2 q)
 generic_histogram_by :: Integral i => (a -> a-> Bool) -> Maybe (a -> a-> Ordering) -> [a] -> [(a,i)]
 generic_histogram_by eq_f cmp_f x =
     let g = groupBy eq_f (maybe x (`sortBy` x) cmp_f)
-    in zip (map head g) (map genericLength g)
+    in zip (map head_err g) (map genericLength g)
 
 {- | Type specialised 'generic_histogram_by'. -}
 histogram_by :: (a -> a-> Bool) -> Maybe (a -> a-> Ordering) -> [a] -> [(a,Int)]
@@ -849,7 +860,7 @@ dx_d' n l =
 [1,-3,4,-3]
 -}
 d_dx_by :: (t -> t -> u) -> [t] -> [u]
-d_dx_by f l = if null l then [] else zipWith f (tail l) l
+d_dx_by f l = if null l then [] else zipWith f (tail_err l) l
 
 {- | Integrate, 'd_dx_by' '-', ie. pitch class segment to interval sequence.
 
@@ -1213,7 +1224,7 @@ indicate_repetitions =
 [('a','b'),('b','c'),('c','d'),('d','e')]
 -}
 zip_with_adj :: (a -> a -> b) -> [a] -> [b]
-zip_with_adj f xs = zipWith f xs (tail xs)
+zip_with_adj f xs = zipWith f xs (tail_err xs)
 
 {- | Type-specialised 'zip_with_adj'. -}
 compare_adjacent_by :: (a -> a -> Ordering) -> [a] -> [Ordering]
@@ -1229,7 +1240,7 @@ compare_adjacent = compare_adjacent_by compare
 
 {- | Head and tail of list.  Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list is empty. -}
 headTail :: [a] -> (a, [a])
-headTail l = (head l, tail l)
+headTail l = (head_err l, tail_err l)
 
 {- | Second element of list -}
 second :: [t] -> t
@@ -1269,7 +1280,7 @@ adjacent_groupBy f p =
 -}
 group_ranges :: (Num t, Eq t) => [t] -> [(t,t)]
 group_ranges =
-    let f l = (head l,last l)
+    let f l = (head_err l,last_err l)
     in map f . adjacent_groupBy (\p q -> p + 1 == q)
 
 {- | 'groupBy' on /structure/ of 'Maybe', ie. all 'Just' compare equal.
@@ -1796,7 +1807,7 @@ group_tree (open_f,close_f) =
 > remove_ix 5 "short" -- error
 -}
 remove_ix :: Int -> [a] -> [a]
-remove_ix k l = let (p,q) = splitAt k l in p ++ tail q
+remove_ix k l = let (p,q) = splitAt k l in p ++ tail_err q
 
 {- | Delete element at ix from list (c.f. remove_ix, this has a more specific error if index does not exist).
 

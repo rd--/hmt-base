@@ -343,7 +343,7 @@ True
 prime_factors_pp_sup_ol :: Bool -> [Integer] -> String
 prime_factors_pp_sup_ol ol =
   let mk x = if x < 0 && ol then Unicode.overline (show (- x)) else show x
-      f x = let x0 = head x
+      f x = let x0 = List.head_err x
                 n = length x
             in if n == 1 then mk x0 else mk x0 ++ Unicode.int_show_superscript n
   in intercalate [Unicode.middle_dot] . map f . group

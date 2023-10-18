@@ -10,8 +10,8 @@ import qualified Data.Set as Set {- containers -}
 
 import qualified Data.MemoCombinators as Memo {- data-memocombinators -}
 
+import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
-
 import qualified Music.Theory.Math.Prime as Prime {- hmt -}
 
 {- | <http://oeis.org/A000005>
@@ -69,7 +69,7 @@ Lucas numbers beginning at 2: L(n) = L(n-1) + L(n-2), L(0) = 2, L(1) = 1. (Forme
 True
 -}
 a000032 :: Num n => [n]
-a000032 = 2 : 1 : zipWith (+) a000032 (tail a000032)
+a000032 = 2 : 1 : zipWith (+) a000032 (List.tail_err a000032)
 
 {- | <http://oeis.org/A000040>
 
@@ -114,7 +114,7 @@ Fibonacci numbers
 True
 -}
 a000045 :: Num n => [n]
-a000045 = 0 : 1 : zipWith (+) a000045 (tail a000045)
+a000045 = 0 : 1 : zipWith (+) a000045 (List.tail_err a000045)
 
 {- | <http://oeis.org/A000051>
 
@@ -144,7 +144,7 @@ a(n) = Fibonacci(n) - 1.
 True
 -}
 a000071 :: Num n => [n]
-a000071 = map (subtract 1) (tail a000045)
+a000071 = map (subtract 1) (List.tail_err a000045)
 
 {- | <http://oeis.org/A000073>
 
@@ -154,7 +154,7 @@ Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) for n >= 3 with a(0) = a(1) 
 True
 -}
 a000073 :: Num n => [n]
-a000073 = 0 : 0 : 1 : zipWith (+) a000073 (tail (zipWith (+) a000073 (tail a000073)))
+a000073 = 0 : 0 : 1 : zipWith (+) a000073 (List.tail_err (zipWith (+) a000073 (List.tail_err a000073)))
 
 {- | <http://oeis.org/A000078>
 
@@ -165,7 +165,7 @@ True
 -}
 a000078 :: Num n => [n]
 a000078 =
-  let f xs = let y = (sum . head . transpose . take 4 . tails) xs in y : f (y:xs)
+  let f xs = let y = (sum . List.head_err . transpose . take 4 . tails) xs in y : f (y:xs)
   in 0 : 0 : 0 : f [0, 0, 0, 1]
 
 {- | <http://oeis.org/A000079>
@@ -189,7 +189,7 @@ Number of self-inverse permutations on n letters, also known as involutions; num
 True
 -}
 a000085 :: Integral n => [n]
-a000085 = 1 : 1 : zipWith (+) (zipWith (*) [1..] a000085) (tail a000085)
+a000085 = 1 : 1 : zipWith (+) (zipWith (*) [1..] a000085) (List.tail_err a000085)
 
 {- | <http://oeis.org/A000108>
 
@@ -256,7 +256,7 @@ Lucas numbers (beginning with 1): L(n) = L(n-1) + L(n-2) with L(1) = 1, L(2) = 3
 True
 -}
 a000204 :: Num n => [n]
-a000204 = 1 : 3 : zipWith (+) a000204 (tail a000204)
+a000204 = 1 : 3 : zipWith (+) a000204 (List.tail_err a000204)
 
 {- | <http://oeis.org/A000213>
 
@@ -266,7 +266,7 @@ Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) with a(0)=a(1)=a(2)=1.
 True
 -}
 a000213 :: Num n => [n]
-a000213 = 1 : 1 : 1 : zipWith (+) a000213 (tail (zipWith (+) a000213 (tail a000213)))
+a000213 = 1 : 1 : 1 : zipWith (+) a000213 (List.tail_err (zipWith (+) a000213 (List.tail_err a000213)))
 
 {- | <https://oeis.org/A000215>
 
@@ -309,7 +309,7 @@ a(0) = 1, a(1) = 4, and a(n) = a(n-1) + a(n-2) for n >= 2. (Formerly M3246 N1309
 True
 -}
 a000285 :: Num n => [n]
-a000285 = 1 : 4 : zipWith (+) a000285 (tail a000285)
+a000285 = 1 : 4 : zipWith (+) a000285 (List.tail_err a000285)
 
 {- | <http://oeis.org/A000290>
 
@@ -351,7 +351,7 @@ True
 a000578 :: Num n => [n]
 a000578 =
   0 : 1 : 8 :
-  zipWith (+) (map (+ 6) a000578) (map (* 3) (tail (zipWith (-) (tail a000578) a000578)))
+  zipWith (+) (map (+ 6) a000578) (map (* 3) (List.tail_err (zipWith (-) (List.tail_err a000578) a000578)))
 
 {- | <http://oeis.org/A000583>
 
@@ -374,7 +374,7 @@ a000670 :: Integral n => [n]
 a000670 =
   let f xs (bs:bss) = let y = sum (zipWith (*) xs bs) in y : f (y : xs) bss
       f _ _ = error "a000670d"
-  in 1 : f [1] (map tail (tail a007318_tbl))
+  in 1 : f [1] (map List.tail_err (List.tail_err a007318_tbl))
 
 {- | <https://oeis.org/A000796>
 
@@ -415,7 +415,7 @@ Padovan sequence (or Padovan numbers): a(n) = a(n-2) + a(n-3) with a(0) = 1, a(1
 True
 -}
 a000931 :: Num n => [n]
-a000931 = 1 : 0 : 0 : zipWith (+) a000931 (tail a000931)
+a000931 = 1 : 0 : 0 : zipWith (+) a000931 (List.tail_err a000931)
 
 {- | <https://oeis.org/A001008>
 
@@ -486,7 +486,7 @@ a001156 =
   let p _ 0 = 1
       p ks'@(k:ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A001156"
-  in map (p (tail a000290)) [0::Integer ..]
+  in map (p (List.tail_err a000290)) [0::Integer ..]
 
 {- | <https://oeis.org/A001333>
 
@@ -496,7 +496,7 @@ Numerators of continued fraction convergents to sqrt(2).
 True
 -}
 a001333 :: Num n => [n]
-a001333 = 1 : 1 : zipWith (+) a001333 (map (* 2) (tail a001333))
+a001333 = 1 : 1 : zipWith (+) a001333 (map (* 2) (List.tail_err a001333))
 
 {- | <http://oeis.org/A001622>
 
@@ -521,7 +521,7 @@ a(n) = a(n-1) + a(n-2) + a(n-3), a(0)=3, a(1)=1, a(2)=3.
 True
 -}
 a001644 :: Num n => [n]
-a001644 = 3 : 1 : 3 : zipWith3 (((+) .) . (+)) a001644 (tail a001644) (drop 2 a001644)
+a001644 = 3 : 1 : 3 : zipWith3 (((+) .) . (+)) a001644 (List.tail_err a001644) (drop 2 a001644)
 
 {- | <https://oeis.org/A001653>
 
@@ -531,7 +531,7 @@ Numbers k such that 2*k^2 - 1 is a square.
 True
 -}
 a001653 :: [Integer]
-a001653 = 1 : 5 : zipWith (-) (map (* 6) (tail a001653)) a001653
+a001653 = 1 : 5 : zipWith (-) (map (* 6) (List.tail_err a001653)) a001653
 
 {- | <http://oeis.org/A001687>
 
@@ -550,7 +550,7 @@ Centered square numbers: a(n) = 2*n*(n+1)+1. Sums of two consecutive squares. Al
 >>> [1,5,13,25,41,61,85,113,145,181,221,265,313,365,421,481,545,613,685,761,841,925,1013,1105,1201,1301] `isPrefixOf` a001844
 True
 
->>> let k = 999 in take k a001844 == zipWith (+) (take k a000290) (tail a000290)
+>>> let k = 999 in take k a001844 == zipWith (+) (take k a000290) (List.tail_err a000290)
 True
 -}
 a001844 :: Integral n => [n]
@@ -609,7 +609,7 @@ a002487 :: Num n => [n]
 a002487 =
   let f (a:a') (b:b') = a + b : a : f a' b'
       f _ _ = error "a002487"
-      x = 1 : 1 : f (tail x) x
+      x = 1 : 1 : f (List.tail_err x) x
   in 0 : x
 
 {- | <https://oeis.org/A002858>
@@ -645,7 +645,7 @@ a003108 =
   let p _ 0 = 1
       p ks'@(k:ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A003108"
-  in map (p (tail a000578)) [0::Integer ..]
+  in map (p (List.tail_err a000578)) [0::Integer ..]
 
 a003215_n :: Num n => n -> n
 a003215_n n = 3 * n * (n + 1) + 1
@@ -712,8 +712,8 @@ True
 -}
 a003849 :: Num n => [n]
 a003849 =
-  let fws = [1] : [0] : zipWith (++) fws (tail fws)
-  in tail (concat fws)
+  let fws = [1] : [0] : zipWith (++) fws (List.tail_err fws)
+  in List.tail_err (concat fws)
 
 {- | <http://oeis.org/A004001>
 
@@ -747,7 +747,7 @@ True
 
 -}
 a004718 :: Num n => [n]
-a004718 = 0 : concat (transpose [map (+ 1) a004718, map negate (tail a004718)])
+a004718 = 0 : concat (transpose [map (+ 1) a004718, map negate (List.tail_err a004718)])
 
 {- | <http://oeis.org/A005185>
 
@@ -761,7 +761,7 @@ a005185 =
   let ix n = a005185 !! (n - 1)
       zadd = zipWith (+)
       zsub = zipWith (-)
-  in 1 : 1 : zadd (map ix (zsub [3..] a005185)) (map ix (zsub [3..] (tail a005185)))
+  in 1 : 1 : zadd (map ix (zsub [3..] a005185)) (map ix (zsub [3..] (List.tail_err a005185)))
 
 {- | <https://oeis.org/A005448>
 
@@ -930,7 +930,7 @@ a008277 :: (Enum n,Num n) => [n]
 a008277 = concat a008277_tbl
 
 a008277_tbl :: (Enum n,Num n) => [[n]]
-a008277_tbl = map tail a048993_tbl
+a008277_tbl = map List.tail_err a048993_tbl
 
 {- | <http://oeis.org/A008278>
 
@@ -991,7 +991,7 @@ a010060 :: [Integer]
 a010060 =
   let interleave (x:xs) ys = x : interleave ys xs
       interleave [] _ = error "a010060?"
-   in 0 : interleave (map (1 -) a010060) (tail a010060)
+   in 0 : interleave (map (1 -) a010060) (List.tail_err a010060)
 
 {- | <https://oeis.org/A014081>
 
@@ -1034,7 +1034,7 @@ a(n) = a(n-3) + a(n-4), with a(0)=1, a(1)=a(2)=0, a(3)=1
 True
 -}
 a017817 :: Num n => [n]
-a017817 = 1 : 0 : 0 : 1 : zipWith (+) a017817 (tail a017817)
+a017817 = 1 : 0 : 0 : 1 : zipWith (+) a017817 (List.tail_err a017817)
 
 {- | <http://oeis.org/A020639>
 
@@ -1080,7 +1080,7 @@ a020985 :: [Integer]
 a020985 =
   let f (x:xs) w = x : x*w : f xs (0 - w)
       f [] _ = error "a020985?"
-  in 1 : 1 : f (tail a020985) (-1)
+  in 1 : 1 : f (List.tail_err a020985) (-1)
 
 {- | <http://oeis.org/A022095>
 
@@ -1090,7 +1090,7 @@ Fibonacci sequence beginning 1, 5.
 True
 -}
 a022095 :: Num n => [n]
-a022095 = 1 : 5 : zipWith (+) a022095 (tail a022095)
+a022095 = 1 : 5 : zipWith (+) a022095 (List.tail_err a022095)
 
 {- | <http://oeis.org/A022096>
 
@@ -1100,7 +1100,7 @@ Fibonacci sequence beginning 1, 6.
 True
 -}
 a022096 :: Num n => [n]
-a022096 = 1 : 6 : zipWith (+) a022096 (tail a022096)
+a022096 = 1 : 6 : zipWith (+) a022096 (List.tail_err a022096)
 
 {- | A027642
 
@@ -1113,7 +1113,7 @@ True
 True
 -}
 a027642 :: Integral t => [t]
-a027642 = 1 : map (denominator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (tail a000142) a242179_tbl) a106831_tbl)
+a027642 = 1 : map (denominator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
 
 {- | <http://oeis.org/A027748>
 
@@ -1163,7 +1163,7 @@ True
 a027934 :: Num n => [n]
 a027934 =
   let f x y z = 3 * x - y - 2 * z
-  in 0 : 1 : 2 : zipWith3 f (drop 2 a027934) (tail a027934) a027934
+  in 0 : 1 : 2 : zipWith3 f (drop 2 a027934) (List.tail_err a027934) a027934
 
 {- | <http://oeis.org/A029635>
 
@@ -1259,7 +1259,7 @@ a046042 =
   let p _ 0 = 1
       p ks'@(k:ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A046042"
-  in map (p (tail a000583)) [1::Integer ..]
+  in map (p (List.tail_err a000583)) [1::Integer ..]
 
 {- | <http://oeis.org/A047999>
 
@@ -1285,7 +1285,7 @@ a048993 :: (Enum n,Num n) => [n]
 a048993 = concat a048993_tbl
 
 a048993_tbl :: (Enum n,Num n) => [[n]]
-a048993_tbl = iterate (\row -> 0 : zipWith (+) row (zipWith (*) [1..] (tail row)) ++ [1]) [1]
+a048993_tbl = iterate (\row -> 0 : zipWith (+) row (zipWith (*) [1..] (List.tail_err row)) ++ [1]) [1]
 
 {- | <http://oeis.org/A049455>
 
@@ -1355,7 +1355,7 @@ a053121 :: Num n => [n]
 a053121 = concat a053121_tbl
 
 a053121_tbl :: Num n => [[n]]
-a053121_tbl = iterate (\row -> zipWith (+) (0 : row) (tail row ++ [0, 0])) [1]
+a053121_tbl = iterate (\row -> zipWith (+) (0 : row) (List.tail_err row ++ [0, 0])) [1]
 
 {- | <https://oeis.org/A055642>
 
@@ -1838,7 +1838,7 @@ True
 True
 -}
 a164555 :: Integral t => [t]
-a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (tail a000142) a242179_tbl) a106831_tbl)
+a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
 
 {- | <https://oeis.org/A242179>
 
@@ -1890,7 +1890,7 @@ a255723 :: Num n => [n]
 a255723 = 0 : concat (transpose [map (subtract 2) a255723
                                 ,map (-1 -) a255723
                                 ,map (+ 2) a255723
-                                ,tail a255723])
+                                ,List.tail_err a255723])
 
 {- | <http://oeis.org/A256184>
 
@@ -1902,7 +1902,7 @@ True
 a256184 :: Num n => [n]
 a256184 = 0 : concat (transpose [map (subtract 2) a256184
                                 ,map (subtract 1) a256184
-                                ,map negate (tail a256184)])
+                                ,map negate (List.tail_err a256184)])
 
 {- | <http://oeis.org/A256185>
 
@@ -1914,7 +1914,7 @@ True
 a256185 :: Num n => [n]
 a256185 = 0 : concat (transpose [map (subtract 3) a256185
                                 ,map (-2 -) a256185
-                                ,map negate (tail a256185)])
+                                ,map negate (List.tail_err a256185)])
 
 {- | <http://oeis.org/A270876>
 

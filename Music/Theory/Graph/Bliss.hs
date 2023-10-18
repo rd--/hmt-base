@@ -1,7 +1,8 @@
 -- | <http://www.tcs.hut.fi/Software/bliss/fileformat.shtml>
 module Music.Theory.Graph.Bliss where
 
-import qualified Music.Theory.Graph.Type as T {- hmt-base -}
+import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- | Problem is (n-vertices,n-edges)
 bliss_parse_problem :: String -> (Int,Int)
@@ -31,7 +32,7 @@ type Bliss = ((Int,Int), [(Int,Int)], [(Int,Int)])
 -- | Parse 'Bliss'
 bliss_parse :: String -> Bliss
 bliss_parse txt =
-  let c0_is x = (== x) . head
+  let c0_is x = (== x) . List.head_err
       ln = dropWhile (c0_is 'c') (lines txt) -- c = comment
       ([p],r1) = span (c0_is 'p') ln -- p = problem
       (n,r2) = span (c0_is 'n') r1 -- n = vertex colour
@@ -42,6 +43,6 @@ bliss_parse txt =
 bliss_load :: FilePath -> IO Bliss
 bliss_load = fmap bliss_parse . readFile
 
--- | 'Bliss' (one-indexed) to 'T.G' (zero-indexed)
-bliss_to_g :: Bliss -> T.G
+-- | 'Bliss' (one-indexed) to 'Graph.G' (zero-indexed)
+bliss_to_g :: Bliss -> Graph.G
 bliss_to_g ((k,_),_,e) = ([0 .. k - 1],map (\(i,j) -> (i - 1,j - 1)) e)

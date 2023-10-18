@@ -10,6 +10,7 @@ import qualified Data.List.Split as S {- split -}
 
 import qualified Music.Theory.Graph.G6 as G6 {- hmt-base -}
 import qualified Music.Theory.Graph.Type as T {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- | The 15-character header text indicating a Planar-Code file.
 plc_header_txt :: String
@@ -83,7 +84,7 @@ plc_next_elem :: Eq t => [t] -> t -> t
 plc_next_elem x i =
   case dropWhile (/= i) x of
     [] -> error "plc_next_elem?"
-    [_] -> head x
+    [_] -> List.head_err x
     _:j:_ -> j
 
 -- | The next edge in Plc following /e/.
@@ -92,7 +93,7 @@ plc_next_edge (_,e) (i,j) = let k = plc_next_elem (e !! (j - 1)) i in (j,k)
 
 -- | The face of Plc starting at /e/ (one-indexed edges).
 plc_face_from :: Plc -> (Int,Int) -> [(Int,Int)]
-plc_face_from p e = e : takeWhile (/= e) (tail (iterate (plc_next_edge p) e))
+plc_face_from p e = e : takeWhile (/= e) (List.tail_err (iterate (plc_next_edge p) e))
 
 -- | The set of all faces at Plc (one-indexed edges).
 plc_face_set :: Plc -> [[(Int,Int)]]

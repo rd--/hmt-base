@@ -3,6 +3,8 @@ module Music.Theory.Enum where
 
 import Data.List {- base -}
 
+import qualified Music.Theory.List as List {- hmt-base -}
+
 -- | Generic variant of 'fromEnum' (p.263).
 genericFromEnum :: (Integral i,Enum e) => e -> i
 genericFromEnum = fromIntegral . fromEnum
@@ -55,7 +57,7 @@ enum_univ = [minBound .. maxBound]
 -}
 enum_list_gaps :: (Enum t,Eq t) => [t] -> [t]
 enum_list_gaps l =
-  let e0 = head l
+  let e0 = List.head_err l
       eN = last l
       f x = x `notElem` l
   in filter f [e0 .. eN]

@@ -3,6 +3,7 @@ module Music.Theory.Geometry.Bezier where
 
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
+import Music.Theory.List {- hmt-base -}
 
 -- | Given quadratic parameters (q1,q2,q3) generate cubic parameters (c1,c2,c3,c4)
 bezier_quadratic_to_cubic :: Fractional n => V3 (V2 n) -> V4 (V2 n)
@@ -198,8 +199,8 @@ bezier4_seq_y0 dx pt = maybe 0 snd . bezier4_seq_y' dx pt
 -}
 bezier4_seq_wt :: (Ord a, Integral i, Fractional a, Enum a) => a -> [V2 a] -> i -> [a]
 bezier4_seq_wt dx pt n =
-    let (l,_) = head pt
-        (r,_) = last pt
+    let (l,_) = head_err pt
+        (r,_) = last_err pt
         l' = l + ((r - l) / fromIntegral n)
         ix = [l,l' .. r]
     in map (bezier4_seq_y0 dx pt) ix

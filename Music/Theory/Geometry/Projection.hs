@@ -34,7 +34,7 @@ prj_zy (_,y,z) = (z,y)
 prj_stereographic :: Fractional n => V3 n -> V2 n
 prj_stereographic (x,y,z) = (x / (1 - z),y / (1 - z))
 
-{- Stereographic (Inv)
+{- | Stereographic (Inv)
 
 >>> prj_stereographic_inv (0,0)
 (0,0,-1)

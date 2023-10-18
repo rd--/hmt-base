@@ -670,7 +670,7 @@ line_circle_intersection ((lx,ly),(dx,dy)) ((cx,cy),r) =
 {- | Iso convention (r=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
 >>> let c2s = cartesian_to_spherical
->>> c2s (spherical_to_cartesian (1,1,1))
+>>> c2s (spherical_to_cartesian (1,1,1)) -- identity
 (1.0,1.0,1.0)
 
 >>> map c2s [(0,0,1),(0,1,0),(1,0,0)] `v3_list_approx_eq` [(1,0,0),(1,pi/2,pi/2),(1,pi/2,0)]
@@ -684,6 +684,9 @@ True
 
 >>> map c2s [(0,0,-1),(0,-1,0),(-1,0,0)] `v3_list_approx_eq` [(1,pi,0),(1,pi/2,-pi/2),(1,pi/2,pi)]
 True
+
+>>> map c2s [(0,0,-1),(0,0,1)] `v3_list_approx_eq` [(1,pi,0),(1,0,0)]
+True
 -}
 cartesian_to_spherical :: RealFloat n => V3 n -> V3 n
 cartesian_to_spherical (x,y,z) =
@@ -692,7 +695,7 @@ cartesian_to_spherical (x,y,z) =
       phi = atan2 y x -- atan (y / x)
   in (r,theta,phi)
 
-{- | Iso convention (r=radius, theta=θ=inclination, phi=φ=azimuth)
+{- | Iso convention (r=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
 By convention: r ≥ 0, 0 ≤ θ ≤ π, 0 ≤ φ < 2π
 

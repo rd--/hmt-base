@@ -121,7 +121,7 @@ unicode_data_table_read :: FilePath -> IO Unicode_Table
 unicode_data_table_read fn = do
   s <- T.read_file_utf8 fn
   let t = C.fromCSVTable (C.csvTable (C.parseDSV False ';' s))
-      f x = (T.read_hex_err (head x), List.second x)
+      f x = (T.read_hex_err (List.head_err x), List.second x)
   return (map f t)
 
 unicode_table_block :: (Unicode_Index,Unicode_Index) -> Unicode_Table -> Unicode_Table
