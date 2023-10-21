@@ -16,6 +16,38 @@ import qualified Data.Tree as Tree {- containers -}
 
 import qualified Music.Theory.Either as T {- hmt-base -}
 
+-- | Data.List stops at zipWith7.
+zipWith8 :: (a->b->c->d->e->f->g->h->i) -> [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]
+zipWith8 z a b c d e f g h =
+  case (a,b,c,d,e,f,g,h) of
+    (a0:as,b0:bs,c0:cs,d0:ds,e0:es,f0:fs,g0:gs,h0:hs) ->
+      z a0 b0 c0 d0 e0 f0 g0 h0 : zipWith8 z as bs cs ds es fs gs hs
+    _ -> []
+
+{- | Zip eight
+
+>>> zip8 "abc" ['b'..] ['c'..] ['d'..] ['e'..] ['f'..] ['g'..] ['h'..]
+[('a','b','c','d','e','f','g','h'),('b','c','d','e','f','g','h','i'),('c','d','e','f','g','h','i','j')]
+-}
+zip8 :: [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[(a,b,c,d,e,f,g,h)]
+zip8 = zipWith8 (\a b c d e f g h -> (a,b,c,d,e,f,g,h))
+
+-- | Data.List stops at zipWith7.
+zipWith9 :: (a->b->c->d->e->f->g->h->i->j) -> [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]->[j]
+zipWith9 z a b c d e f g h i =
+  case (a,b,c,d,e,f,g,h,i) of
+    (a0:as,b0:bs,c0:cs,d0:ds,e0:es,f0:fs,g0:gs,h0:hs,i0:is) ->
+      z a0 b0 c0 d0 e0 f0 g0 h0 i0 : zipWith9 z as bs cs ds es fs gs hs is
+    _ -> []
+
+{- | Zip nine
+
+>>> zip9 "abc" ['b'..] ['c'..] ['d'..] ['e'..] ['f'..] ['g'..] ['h'..] ['i'..]
+[('a','b','c','d','e','f','g','h','i'),('b','c','d','e','f','g','h','i','j'),('c','d','e','f','g','h','i','j','k')]
+-}
+zip9 :: [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]->[(a,b,c,d,e,f,g,h,i)]
+zip9 = zipWith9 (\a b c d e f g h i -> (a,b,c,d,e,f,g,h,i))
+
 {- | Error checking 'take' variant. -}
 take_err :: Int -> [a] -> [a]
 take_err n e = let r = take n e in if length r /= n then error "take_err?" else r
