@@ -78,6 +78,12 @@ integer_and_fractional_parts = integral_and_fractional_parts
 
 {- | <http://reference.wolfram.com/mathematica/ref/FractionalPart.html>
 
+>>> fractional_part (1.0 :: Double)
+0.0
+
+>>> fractional_part 1.0001 < 0.0001 -- rounding error
+True
+
 > import Sound.Sc3.Plot {- hsc3-plot -}
 > plot_p1_ln [map fractional_part [-2.0,-1.99 .. 2.0]]
 -}
@@ -114,6 +120,9 @@ int_id = id
 
 {- | Is /r/ zero to /k/ decimal places.
 
+>>> zero_to_precision 4 0.0001
+False
+
 >>> map (flip zero_to_precision 0.00009) [4,5]
 [True,False]
 
@@ -124,6 +133,9 @@ zero_to_precision :: Real r => Int -> r -> Bool
 zero_to_precision k r = real_floor_int (r * fromIntegral ((10::Int) ^ k)) == 0
 
 {- | Is /r/ whole to /k/ decimal places.
+
+>>> whole_to_precision 4 1.0001 -- fractional_part answers less than 0.0001
+True
 
 >>> map (flip whole_to_precision 1.00009) [4,5]
 [True,False]
