@@ -41,7 +41,7 @@ powerset = filterM (const [True,False])
 [[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]
 -}
 powerset_sorted :: Ord a => [a] -> [[a]]
-powerset_sorted = tail . List.sort_by_two_stage_on length id . powerset
+powerset_sorted = List.tail_err . List.sort_by_two_stage_on length id . powerset
 
 {- | Two element subsets.
 

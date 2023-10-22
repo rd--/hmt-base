@@ -24,8 +24,8 @@ import Text.Printf {- base -}
 
 import Music.Theory.Colour {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.List {- hmt-base -}
-import Music.Theory.Show {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
+import qualified Music.Theory.Show as Show {- hmt-base -}
 
 -- * Off-Cnt
 
@@ -52,12 +52,12 @@ off_face_from_indices i = (length i,i)
 off_parse_face :: String -> Off_Face
 off_parse_face x =
   case words x of
-    n:ix -> let k = read n in (k,map read (take_err k ix))
+    n:ix -> let k = read n in (k,map read (List.take_err k ix))
     _ -> error "off_parse_face"
 
 -- | Edge list of face.
 off_face_edges :: Off_Face -> [V2 Int]
-off_face_edges = let adjp l = zip l (tail (cycle l)) in adjp . snd
+off_face_edges = let adjp l = zip l (List.tail_err (cycle l)) in adjp . snd
 
 -- | 'v2_sort' of 'off_face_edges'
 off_face_edges_undir :: Off_Face -> [V2 Int]
@@ -124,7 +124,7 @@ type Off_Dat t = ([t], [Off_Face])
 
 -- | Given Off_Cnt split sequence into (V,F)
 off_split_dat :: Off_Cnt -> [x] -> ([x],[x])
-off_split_dat (i,j) e = (take_err i e,take_err j (drop i e))
+off_split_dat (i,j) e = (List.take_err i e,List.take_err j (drop i e))
 
 off_parse_dat :: (String -> t) -> (Int,Int) -> [String] -> Off_Dat t
 off_parse_dat f (nv,nf) = bimap (map f) (map off_parse_face) . off_split_dat (nv,nf)
@@ -135,7 +135,7 @@ off_dat_from_face_vertex_dat :: Ord t => [[t]] -> Off_Dat t
 off_dat_from_face_vertex_dat t =
   let p = nub (sort (concat t))
       v = zip [0..] p
-      f = map (map (flip reverse_lookup_err v)) t
+      f = map (map (flip List.reverse_lookup_err v)) t
       length_prefix x = (length x,x)
   in (p,map length_prefix f)
 
@@ -223,7 +223,7 @@ off_load_txt = fmap (filter (not . off_nil_line) . lines) . readFile
 -- | Given /type/ and a /vertex to list/ function, format Off file. k=precision
 off_fmt :: (RealFloat u,Show u) => Int -> String -> (t -> [u]) -> Off t -> [String]
 off_fmt k ty v_to_list ((nv,nf),(v,f)) =
-  let v_pp = unwords . map (realfloat_pp k) . v_to_list
+  let v_pp = unwords . map (Show.realfloat_pp k) . v_to_list
       pp_int = unwords . map show
       f_pp (n,i) = pp_int (n : i)
   in concat [[ty,pp_int [nv,nf,0]],map v_pp v,map f_pp f]
@@ -351,7 +351,7 @@ off_edge_grp =
   in group . sort . map g . concatMap f
 
 off_edge_set :: [Off_Face] -> [(Int,Int)]
-off_edge_set = map head . off_edge_grp
+off_edge_set = map List.head_err . off_edge_grp
 
 -- | Graph of Off data.  Vertices are labeled with co-ordinates, edges are un-labeled.
 off_graph :: Off t -> Off_Gr t
@@ -359,7 +359,7 @@ off_graph (_,(v,f)) = (zip [0..] v,zip (off_edge_set f) (repeat ()))
 
 -- | Simple histogram function.
 off_hist :: Ord t => [t] -> [(t,Int)]
-off_hist = let f x = (head x,length x) in map f . group . sort
+off_hist = let f x = (List.head_err x,length x) in map f . group . sort
 
 -- | Vertex histogram (VERTEX,N-ENTRIES)
 off_vertex_hist :: [Off_Face] -> [(Int,Int)]
@@ -379,7 +379,7 @@ off_v_not_in_f ((nv,_nf),(_v,f)) =
 -- | Collect duplicate faces (with occurence count)
 off_duplicate_faces :: Off t -> [(Int,Off_Face)]
 off_duplicate_faces (_,(_,f)) =
-  let col x = (length x,head x)
+  let col x = (length x,List.head_err x)
   in filter ((> 1) . fst) (map col (group (sort f)))
 
 -- | Degree of each face at 'Off'
@@ -467,7 +467,7 @@ off_clr_face_set_dat t =
   let p = nub (sort (concat (map fst t)))
       c = map snd t
       v = zip [0..] p
-      f = map (map (flip reverse_lookup_err v)) (map fst t)
+      f = map (map (flip List.reverse_lookup_err v)) (map fst t)
   in (v,nub (zip f c))
 
 off_header :: (Int,Int,Int) -> [String]
@@ -478,7 +478,7 @@ off_header (v,f,e) = ["OFF",unwords (map show [v,f,e])]
 --   Off files are one-indexed.
 off_clr_face_set_fmt :: (RealFloat n,Show n,Ord n,Show i, Eq i) => Int -> [([V3 n],Rgb i)] -> [String]
 off_clr_face_set_fmt k t =
-  let v_f (_,(x,y,z)) = unwords (map (realfloat_pp k) [x,y,z])
+  let v_f (_,(x,y,z)) = unwords (map (Show.realfloat_pp k) [x,y,z])
       f_f (ix,(r,g,b)) = unwords (map show (length ix : ix) ++ map show [r,g,b])
       (v,f) = off_clr_face_set_dat t
   in concat [off_header (length v,length f,0), map v_f v, map f_f f]

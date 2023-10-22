@@ -9,6 +9,8 @@ module Music.Theory.Db.Json where
 import Data.Bifunctor {- base -}
 import Data.Maybe {- base -}
 
+import qualified Music.Theory.List as List {- hmt-base -}
+
 import qualified Data.ByteString as ByteString {- bytestring -}
 import qualified Data.Map as Map {- containers -}
 import qualified Data.Text as Text {- containers -}
@@ -22,7 +24,7 @@ db_load_utf8 :: FilePath -> IO Db.TextDb
 db_load_utf8 fn = do
   let decode_assoc a =
         case a of
-          Json.Object o -> head (map (first Text.unpack) (Map.toList o))
+          Json.Object o -> List.head_err (map (first Text.unpack) (Map.toList o))
           _ -> error "decode_assoc?"
       decode_record r =
         case r of

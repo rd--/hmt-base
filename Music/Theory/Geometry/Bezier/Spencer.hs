@@ -1,6 +1,8 @@
 -- | <http://scaledinnovation.com/analytics/splines/aboutSplines.html>
 module Music.Theory.Geometry.Bezier.Spencer where
 
+import Data.List {- base -}
+
 import Music.Theory.Geometry.Bezier {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
@@ -47,7 +49,12 @@ spencer_control_points_seq t =
 [Left 'a',Right ('b','c'),Right ('d','e'),Left 'f']
 -}
 spencer_open_group :: [a] -> [Either a (a,a)]
-spencer_open_group l = concat [[Left (head l)],map Right (List.adj2 2 (tail l)),[Left (last l)]]
+spencer_open_group l =
+  concat
+  [[Left (List.head_err l)]
+  ,map Right (List.adj2 2 (List.tail_err l))
+  ,[Left (List.last_err l)]
+  ]
 
 {- | Transform input sequence and left-rotate control-point sequence.
 
@@ -56,9 +63,14 @@ spencer_open_group l = concat [[Left (head l)],map Right (List.adj2 2 (tail l)),
 -}
 spencer_control_points_closed :: Floating t => t -> [V2 t] -> [V2 t]
 spencer_control_points_closed t l =
-  let sq = concat [[last l],l,[head l]]
+  let err = error "spencer_control_points_closed"
+      sq = let (l1,lK) = List.firstLast l
+           in concat [[lK],l,[l1]]
       o = spencer_control_points_seq t sq
-      rotate_left x = tail x ++ [head x]
+      rotate_left x =
+        case uncons x of
+          Nothing -> err
+          Just (x1,xN) -> xN ++ [x1]
   in rotate_left o
 
 {- | For loops (ie. closed curves) all arcs are cubic.
@@ -79,7 +91,7 @@ spencer_open_dat t p = zip (List.adj2 1 p) (spencer_open_group (spencer_control_
 -- | Closed curve data.
 spencer_closed_dat :: Floating t => t -> [V2 t] -> [Spencer_Data t]
 spencer_closed_dat t p =
-  let close x = x ++ [head x]
+  let close x = x ++ [List.head_err x]
   in zip (List.adj2 1 (close p)) (spencer_closed_group (spencer_control_points_closed t p))
 
 -- | If /c/ then 'spencer_closed_dat' else 'spencer_open_dat'

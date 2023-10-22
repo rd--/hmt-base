@@ -37,7 +37,7 @@ prj_stereographic (x,y,z) = (x / (1 - z),y / (1 - z))
 {- | Stereographic (Inv)
 
 >>> prj_stereographic_inv (0,0)
-(0,0,-1)
+(0.0,0.0,-1.0)
 -}
 prj_stereographic_inv :: Fractional n => V2 n -> V3 n
 prj_stereographic_inv (x,y) = let i = 1 + x * x + y * y in ((2 * x) / i,(2 * y) / i,(i - 2) / i)

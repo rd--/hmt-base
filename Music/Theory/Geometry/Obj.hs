@@ -51,7 +51,10 @@ obj_parse = partitionEithers . map obj_parse_entry
 
 -- | Empty lines are allowed and ignored, comments are #-prefixed.
 obj_is_nil_line :: String -> Bool
-obj_is_nil_line s = null s || head s == '#'
+obj_is_nil_line s =
+  case uncons s of
+    Nothing -> True
+    Just (s1, _) -> s1 == '#'
 
 -- | 'obj_parse' of 'readFile'
 obj_load :: FilePath -> IO Obj

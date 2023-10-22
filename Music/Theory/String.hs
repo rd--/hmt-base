@@ -84,7 +84,10 @@ unlinesNoTrailingNewline = intercalate "\n"
 "FreqShift"
 -}
 capitalise :: String -> String
-capitalise x = toUpper (head x) : tail x
+capitalise x =
+  case uncons x of
+    Nothing -> error "capitalise"
+    Just (h, t) -> toUpper h : t
 
 {- | Downcase first character of word.
 
@@ -92,7 +95,10 @@ capitalise x = toUpper (head x) : tail x
 "freqShift"
 -}
 unCapitalise :: String -> String
-unCapitalise x = toLower (head x) : tail x
+unCapitalise x =
+  case uncons x of
+    Nothing -> error "unCapitalise"
+    Just (h, t) -> toLower h : t
 
 {- | Apply function at each line of string.
 

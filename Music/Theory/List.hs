@@ -118,6 +118,12 @@ head_err = Safe.headNote "head_err"
 tail_err :: [t] -> [t]
 tail_err = Safe.tailNote "tail_err"
 
+first_err :: [t] -> t
+first_err = flip Safe.at 0
+
+second_err :: [t] -> t
+second_err = flip Safe.at 1
+
 last_err :: [t] -> t
 last_err = Safe.lastNote "last_err"
 
@@ -1270,19 +1276,30 @@ compare_adjacent_by = zip_with_adj
 compare_adjacent :: Ord a => [a] -> [Ordering]
 compare_adjacent = compare_adjacent_by compare
 
-{- | Head and tail of list.  Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list is empty. -}
+{- | Head and tail of list.
+Useful to avoid "incomplete-uni-patterns" warnings.
+It's an error if the list is empty. -}
 headTail :: [a] -> (a, [a])
 headTail l = (head_err l, tail_err l)
 
 {- | Second element of list -}
-second :: [t] -> t
-second l = l !! 1
+second :: [t] -> Maybe t
+second l = l !? 1
 
-{- | First and second elements of list. Useful to avoid "incomplete-uni-patterns" warnings.  It's an error if the list has less than two elements. -}
+{- | First and second elements of list.
+Useful to avoid "incomplete-uni-patterns" warnings.
+It's an error if the list has less than two elements. -}
 firstSecond :: [t] -> (t, t)
 firstSecond l = (l !! 0, l !! 1)
 
-{- | 'Data.List.groupBy' does not make adjacent comparisons, it compares each new element to the start of the group.
+{- | First and last elements of list.
+Useful to avoid "incomplete-uni-patterns" warnings.
+It's an error if the list has less than two elements. -}
+firstLast :: [t] -> (t, t)
+firstLast l = (first_err l, last_err l)
+
+{- | 'Data.List.groupBy' does not make adjacent comparisons,
+it compares each new element to the start of the group.
 This function is the adjacent variant.
 
 >>> groupBy (<) [1,2,3,2,4,1,5,9]

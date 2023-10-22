@@ -208,7 +208,7 @@ lbl_to_udot_wr fn o pp  = writeFile fn . unlines . lbl_to_udot o pp
 -}
 dot_to_ext :: [String] -> FilePath -> FilePath -> IO ()
 dot_to_ext opt dot_fn ext_fn =
-  let arg = opt ++ ["-T",tail (takeExtension ext_fn),"-o",ext_fn,dot_fn]
+  let arg = opt ++ ["-T",List.tail_err (takeExtension ext_fn),"-o",ext_fn,dot_fn]
   in void (rawSystem "dot" arg)
 
 {- | 'dot_to_ext' generating .svg filename by replacing .dot extension with .svg -}

@@ -65,7 +65,7 @@ csv_table_read (hdr,delim,brk,_) f fn = do
   s <- Io.read_file_utf8 fn
   let t = Csv.csvTable (Csv.parseDSV brk delim s)
       p = Csv.fromCSVTable t
-      (h,d) = if hdr then (Just (head p),tail p) else (Nothing,p)
+      (h,d) = if hdr then (Just (List.head_err p),List.tail_err p) else (Nothing,p)
   return (h,map (map f) d)
 
 -- | Read 'Array.Table' only with 'def_csv_opt'.

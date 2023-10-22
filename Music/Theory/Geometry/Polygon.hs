@@ -136,7 +136,7 @@ polygon_degree = length
 [((0,0),(1,0)),((1,0),(0,1)),((0,1),(0,0))]
 -}
 polygon_edges :: Polygon t -> [V2 (V2 t)]
-polygon_edges l = zip l (tail (cycle l))
+polygon_edges l = zip l (List.tail_err (cycle l))
 
 -- | Index /n/th point.
 polygon_pt :: Polygon t -> Int -> V2 t

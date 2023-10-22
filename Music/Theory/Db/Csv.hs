@@ -6,6 +6,7 @@ import Data.Maybe {- base -}
 import qualified Text.CSV.Lazy.String as Csv {- lazy-csv -}
 
 import qualified Music.Theory.Io as Io {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 import qualified Music.Theory.Db.Common as Common {- hmt -}
 
@@ -14,7 +15,7 @@ db_load_utf8 :: FilePath -> IO Common.TextDb
 db_load_utf8 fn = do
   s <- Io.read_file_utf8 fn
   let p = Csv.fromCSVTable (Csv.csvTable (Csv.parseCSV s))
-      (h,d) = (head p,tail p)
+      (h,d) = List.headTail p
       f k v = if null v then Nothing else Just (k,v)
   return (map (catMaybes . zipWith f h) d)
 

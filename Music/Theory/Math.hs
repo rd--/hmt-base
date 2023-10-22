@@ -6,6 +6,7 @@ import Data.List {- base -}
 import Data.Maybe {- base -}
 import Data.Ratio {- base -}
 
+import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math.Convert as Math.Convert {- hmt-base -}
 
 -- | Alias for 'Double'.  (R = Real, not Rational)
@@ -346,7 +347,7 @@ farey_length n = if n == 0 then 1 else farey_length (n - 1) + totient n
 stern_brocot_tree_f :: Num n => [(n,n)] -> [[(n,n)]]
 stern_brocot_tree_f =
    let med_f (n1,d1) (n2,d2) = (n1 + n2,d1 + d2)
-       f x = concat (transpose [x, zipWith med_f x (tail x)])
+       f x = concat (transpose [x, zipWith med_f x (List.tail_err x)])
    in iterate f
 
 {- | The Stern-Brocot tree from (0/1,1/0).

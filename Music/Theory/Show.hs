@@ -104,6 +104,10 @@ show_rational_decimal n = double_pp n . fromRational
 real_pp :: Real t => Int -> t -> String
 real_pp k = realfloat_pp k . Math.Convert.real_to_double
 
+-- | Type-specialised show.
+int_pp :: Int -> String
+int_pp = show
+
 {- | Print as exact integer if whole to indicated precision.
 
 >>> map (real_pp_exact 4) [1.0, 1.0010, 1.00001]
@@ -112,7 +116,7 @@ real_pp k = realfloat_pp k . Math.Convert.real_to_double
 real_pp_exact :: RealFrac t => Int -> t -> String
 real_pp_exact k r =
   if Math.whole_to_precision k r
-  then show (truncate r)
+  then int_pp (truncate r)
   else real_pp k r
 
 {- | Variant that writes `∞` for Infinity.

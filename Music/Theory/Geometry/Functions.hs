@@ -9,9 +9,11 @@ module Music.Theory.Geometry.Functions where
 
 import Data.Complex {- base -}
 
-import Music.Theory.Geometry.Vector {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
 import qualified Music.Theory.Tuple {- hmt-base -}
+
+import Music.Theory.Geometry.Vector {- hmt-base -}
 
 -- * Math
 
@@ -340,7 +342,7 @@ if they are in clockwise order (Beyer 1987).
 -}
 polygon_signed_area :: Fractional t => [V2 t] -> t
 polygon_signed_area p =
-    let q = zip p (tail (cycle p))
+    let q = zip p (List.tail_err (cycle p))
         f ((x1,y1),(x2,y2)) = x1 * y2 - x2 * y1
     in sum (map f q) / 2
 
@@ -454,7 +456,7 @@ Construction of Q3 by connecting pairs of corresponding vertices in two copies o
 cube_graph :: ([Int],[(Int,Int)])
 cube_graph =
   let v = [0,4,6,2, 1,5,7,3]
-      adj2 l = zip l (tail l)
+      adj2 l = zip l (List.tail_err l)
       e = concatMap adj2 [[0,4,6,2,0],[1,5,7,3,1],[0,1],[4,5],[2,3],[6,7]]
   in (v,e)
 
@@ -760,13 +762,13 @@ v3_p3_normal_unit = v3_normalize . v3_p3_normal
 -}
 v3_normal :: Num t => [V3 t] -> V3 t
 v3_normal =
-  let close l = l ++ [head l]
+  let close l = l ++ [List.head_err l]
       recur (nx,ny,nz) p =
         case p of
           (x1,y1,z1):(x2,y2,z2):_ ->
             recur (nx + ((y1 - y2) * (z1 + z2))
                   ,ny + ((z1 - z2) * (x1 + x2))
-                  ,nz + ((x1 - x2) * (y1 + y2))) (tail p)
+                  ,nz + ((x1 - x2) * (y1 + y2))) (List.tail_err p)
           _ ->  (nx,ny,nz)
   in recur (0,0,0) . close
 

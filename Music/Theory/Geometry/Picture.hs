@@ -4,8 +4,9 @@ module Music.Theory.Geometry.Picture where
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
-import Music.Theory.Colour {- hmt-base -}
-import Music.Theory.Math {- hmt-base -}
+import qualified Music.Theory.Colour as Colour {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
+import qualified Music.Theory.Math as Math {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
 -- * Type
@@ -15,20 +16,22 @@ type Line_Width r = r
 -- | (dash,no-dash)
 type Dash r = ([r],r)
 
+type Colour = Colour.Rgba Double
+
 no_dash :: Num r => Dash r
 no_dash = ([],0)
 
 -- | (line-width,colour,dash-pattern)
-data Pen r = Pen (Line_Width r) (Rgba R) (Dash r) deriving (Eq,Show)
+data Pen r = Pen (Line_Width r) (Colour) (Dash r) deriving (Eq,Show)
 
 -- | (centre,radius)
 type Centre_Radius t = (V2 t,t)
 
 data Mark r =
   Line (Pen r) (V2 (V2 r))
-  | Polygon (Either (Pen r) (Rgba R)) [V2 r]
-  | Circle (Either (Pen r) (Rgba R)) (Centre_Radius r)
-  | Dot (Rgba R) (Centre_Radius r)
+  | Polygon (Either (Pen r) (Colour)) [V2 r]
+  | Circle (Either (Pen r) (Colour)) (Centre_Radius r)
+  | Dot (Colour) (Centre_Radius r)
   deriving (Eq,Show)
 
 type Picture r = [Mark r]
@@ -37,19 +40,19 @@ type Picture r = [Mark r]
 
 line_seq :: Num r => Pen r -> [V2 r] -> [Mark r]
 line_seq pen =
-    let adj l = zip l (tail l)
+    let adj l = zip l (List.tail_err l)
     in map (Line pen) . adj
 
 polygon_l :: Pen r -> [V2 r] -> Mark r
 polygon_l pen = Polygon (Left pen)
 
-polygon_f :: Rgba R -> [V2 r] -> Mark r
+polygon_f :: Colour -> [V2 r] -> Mark r
 polygon_f clr = Polygon (Right clr)
 
 circle_l :: Pen r -> Centre_Radius r -> Mark r
 circle_l pen = Circle (Left pen)
 
-circle_f :: Rgba R -> Centre_Radius r -> Mark r
+circle_f :: Colour -> Centre_Radius r -> Mark r
 circle_f clr = Circle (Right clr)
 
 -- * Analysis
@@ -110,14 +113,14 @@ picture_wn = foldl1 v2_bounds_join . map mark_wn
 {- | Extract coloured vertex-sequences from a picture.
      Dots and circles generate 1-element sequences, lines 2-element sequences, n-polygons generate n+1-element sequences.
 -}
-picture_ln :: Picture t -> [(Rgba R,[V2 t])]
+picture_ln :: Picture t -> [(Colour,[V2 t])]
 picture_ln mk =
   let get_c x = case x of
                   Left (Pen _ c _) -> c
                   Right c -> c
       f m = case m of
               Line (Pen _ c _) (p1, p2) -> (c,[p1,p2])
-              Polygon c p -> (get_c c,p ++ [head p])
+              Polygon c p -> (get_c c,p ++ [List.head_err p])
               Circle c (p1,_) -> (get_c c,[p1])
               Dot c (p1,_) -> (c,[p1])
   in map f mk
@@ -131,13 +134,13 @@ picture_ln_gr eq_f ln =
   let v = nubBy eq_f (sort (concatMap snd ln))
       v_ix x = fromMaybe (error "picture_ln_gr?") (findIndex (eq_f x) v)
       o (i,j) = (min i j,max i j)
-      adj2 x = zip x (tail x)
+      adj2 x = zip x (List.tail_err x)
       mk_e (c,p) = map (\(i,j) -> (o (v_ix i,v_ix j),c)) (adj2 p)
       e = nub (sort (concatMap mk_e ln))
   in (zip [0..] v,e)
 
 -- | 'picture_ln_gr' of 'picture_ln' of '~='
-picture_gr :: (Floating n,Ord n) => Picture n -> ([(Int,V2 n)],[(V2 Int, Rgba R)])
+picture_gr :: (Floating n,Ord n) => Picture n -> ([(Int,V2 n)],[(V2 Int, Colour)])
 picture_gr =
-  let eq (i,j) (p,q) = i ~= p && j ~= q
+  let eq (i,j) (p,q) = i Math.~= p && j Math.~= q
   in picture_ln_gr eq . picture_ln
