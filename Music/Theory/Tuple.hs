@@ -76,6 +76,14 @@ t2_sort (p,q) = (min p q,max p q)
 t2_sum :: Num n => (n,n) -> n
 t2_sum (i,j) = i + j
 
+-- | 'product'
+t2_product :: Num a => (a, a) -> a
+t2_product (i,j) = i * j
+
+-- | 'elem'
+t2_elem :: Eq a => a -> (a, a) -> Bool
+t2_elem i (x,y) = i == x || i == y
+
 -- | 'mapM'
 t2_mapM :: Monad m => (t -> m u) -> (t,t) -> m (u,u)
 t2_mapM f (i,j) = f i >>= \p -> f j >>= \q -> return (p,q)
