@@ -97,7 +97,7 @@ opt_set_parse =
   let f s = maybe (Right s) Left (opt_parse s)
   in Either.partition_eithers . map f
 
--- | Left-biased Opt merge.
+-- | Left-biased Opt merge.  Append options at right only if key is not present at left.
 opt_merge :: [Opt] -> [Opt] -> [Opt]
 opt_merge p q =
   let x = map fst p
