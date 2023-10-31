@@ -62,10 +62,14 @@ reads_exact s =
       [(r,"")] -> Just r
       _ -> Nothing
 
--- | Variant of 'reads_exact' that errors on failure.
+{- | Variant of 'reads_exact' that errors on failure.
+
+>>> (reads_exact_err "?" "0.0000") :: Double
+0.0
+-}
 reads_exact_err :: Read a => String -> String -> a
 reads_exact_err err_txt str =
-    let err = error ("reads: " ++ err_txt ++ ": " ++ str)
+    let err = error ("reads_exact: " ++ err_txt ++ ": " ++ str)
     in fromMaybe err (reads_exact str)
 
 -- * Type specific variants

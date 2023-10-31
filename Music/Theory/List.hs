@@ -9,12 +9,40 @@ import Data.Ord {- base -}
 
 import qualified Safe {- safe -}
 
-import qualified Data.IntMap as Map {- containers -}
-import qualified Data.List.Ordered as O {- data-ordlist -}
+import qualified Data.IntMap as IntMap {- containers -}
+import qualified Data.List.Ordered as List.Ordered {- data-ordlist -}
 import qualified Data.List.Split as Split {- split -}
 import qualified Data.Tree as Tree {- containers -}
 
-import qualified Music.Theory.Either as T {- hmt-base -}
+import qualified Music.Theory.Either as Either {- hmt-base -}
+
+-- * Ghc
+
+-- | Ghc prints spurious warnings for head, which signals an error for empty lists, as it is defined to do.
+head_err :: [t] -> t
+head_err = Safe.headNote "head_err"
+
+-- | Ghc prints spurious warnings for tail, which signals an error for empty lists, as it is defined to do.
+tail_err :: [t] -> [t]
+tail_err = Safe.tailNote "tail_err"
+
+-- | Ghc may one day print spurious warnings for last, which raises an error for empty lists, as it is defined to do.
+last_err :: [t] -> t
+last_err = Safe.lastNote "last_err"
+
+-- | Ghc may one day print spurious warnings for init, which raises an error for empty lists, as it is defined to do.
+init_err :: [t] -> [t]
+init_err = Safe.initNote "init_err"
+
+-- | First element of list, else error.
+first_err :: [t] -> t
+first_err = flip Safe.at 0
+
+-- | Second element of list, else error.
+second_err :: [t] -> t
+second_err = flip Safe.at 1
+
+-- * Zip
 
 -- | Data.List stops at zipWith7.
 zipWith8 :: (a->b->c->d->e->f->g->h->i) -> [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]
@@ -111,21 +139,6 @@ unbracket_err :: [t] -> (t,[t],t)
 unbracket_err = fromMaybe (error "unbracket") . unbracket
 
 -- * Split
-
-head_err :: [t] -> t
-head_err = Safe.headNote "head_err"
-
-tail_err :: [t] -> [t]
-tail_err = Safe.tailNote "tail_err"
-
-first_err :: [t] -> t
-first_err = flip Safe.at 0
-
-second_err :: [t] -> t
-second_err = flip Safe.at 1
-
-last_err :: [t] -> t
-last_err = Safe.lastNote "last_err"
 
 {- | Relative of 'Split.splitOn', but only makes first separation.
 
@@ -1462,27 +1475,27 @@ sort_by_two_stage_on f g = sortBy (two_stage_compare_on f g)
 sort_by_n_stage_on :: Ord b => [a -> b] -> [a] -> [a]
 sort_by_n_stage_on f = sortBy (n_stage_compare_on f)
 
-{- | Given a comparison function, merge two ascending lists. Alias for 'O.mergeBy'
+{- | Given a comparison function, merge two ascending lists. Alias for 'List.Ordered.mergeBy'
 
 >>> merge_by compare [1,3,5] [2,4] == [1..5]
 True
 -}
 merge_by :: Compare_F a -> [a] -> [a] -> [a]
-merge_by = O.mergeBy
+merge_by = List.Ordered.mergeBy
 
 {- | 'merge_by' 'compare' 'on'. -}
 merge_on :: Ord x => (a -> x) -> [a] -> [a] -> [a]
 merge_on f = merge_by (compare `on` f)
 
-{- | 'O.mergeBy' of 'two_stage_compare'. -}
+{- | 'List.Ordered.mergeBy' of 'two_stage_compare'. -}
 merge_by_two_stage :: Ord b => (a -> b) -> Compare_F c -> (a -> c) -> [a] -> [a] -> [a]
-merge_by_two_stage f cmp g = O.mergeBy (two_stage_compare (compare `on` f) (cmp `on` g))
+merge_by_two_stage f cmp g = List.Ordered.mergeBy (two_stage_compare (compare `on` f) (cmp `on` g))
 
-{- | Alias for 'O.merge' -}
+{- | Alias for 'List.Ordered.merge' -}
 merge :: Ord a => [a] -> [a] -> [a]
-merge = O.merge
+merge = List.Ordered.merge
 
-{- | Merge list of sorted lists given comparison function.  Note that this is not equal to 'O.mergeAll'.
+{- | Merge list of sorted lists given comparison function.  Note that this is not equal to 'List.Ordered.mergeAll'.
 -}
 merge_set_by :: (a -> a -> Ordering) -> [[a]] -> [a]
 merge_set_by f = foldr (merge_by f) []
@@ -1560,7 +1573,7 @@ is_non_descending :: Ord a => [a] -> Bool
 is_non_descending = isNothing . find_adj (>)
 
 {- | Variant of `elem` that operates on a sorted list, halting.
-This is 'O.member'.
+This is 'List.Ordered.member'.
 
 >>> 16 `elem_ordered` [1,3 ..]
 False
@@ -1568,7 +1581,7 @@ False
 > 16 `elem` [1,3 ..] == undefined
 -}
 elem_ordered :: Ord t => t -> [t] -> Bool
-elem_ordered = O.member
+elem_ordered = List.Ordered.member
 
 {- | Variant of `elemIndex` that operates on a sorted list, halting.
 
@@ -1791,7 +1804,7 @@ True
 False
 -}
 is_embedding :: Eq t => [t] -> [t] -> Bool
-is_embedding p q = T.is_right (embedding (p,q))
+is_embedding p q = Either.is_right (embedding (p,q))
 
 -- * Un-list
 
@@ -1956,10 +1969,10 @@ list_set_ix k v = list_set_indices [(k,v)]
 -}
 at_cyclic :: [a] -> Int -> a
 at_cyclic l n =
-    let m = Map.fromList (zip [0..] l)
-        k = Map.size m
+    let m = IntMap.fromList (zip [0..] l)
+        k = IntMap.size m
         n' = n `mod` k
-    in fromMaybe (error "cyc_at") (Map.lookup n' m)
+    in fromMaybe (error "cyc_at") (IntMap.lookup n' m)
 
 {- | Index list from the end, assuming the list is longer than n + 1.
 
