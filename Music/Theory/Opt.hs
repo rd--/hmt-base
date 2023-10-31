@@ -5,6 +5,7 @@ Only allows options of the form --key=value, with the form --key equal to --key=
 A list of OptUsr describes the options and provides default values.
 
 'get_opt_arg' merges user and default values into a table with values for all options.
+It also consults the environment.
 
 To fetch options use 'opt_get' and 'opt_read'.
 
@@ -34,9 +35,10 @@ type OptUsr = (String,String,String,String)
 -- | Re-write default values at OptUsr.
 opt_usr_rw_def :: [Opt] -> [OptUsr] -> [OptUsr]
 opt_usr_rw_def rw =
-  let f (k,v,ty,dsc) = case lookup k rw of
-                         Just v' -> (k,v',ty,dsc)
-                         Nothing -> (k,v,ty,dsc)
+  let f (k,v,ty,dsc) =
+        case lookup k rw of
+          Just v' -> (k,v',ty,dsc)
+          Nothing -> (k,v,ty,dsc)
   in map f
 
 -- | OptUsr to Opt.
@@ -131,15 +133,39 @@ opt_verify usg def =
                 else putStrLn ("Unknown Key: " ++ k ++ "\n") >> opt_usage usg def
   in mapM_ f
 
+{- | Process arguments consulting environment.
+Options are selected over environment values, which are selected over default values.
+
+>>> opt_proc_arg [("x","0","number","X")] ["--x=1","y"] []
+([("x","1")],[("x","1")],["y"])
+
+>>> opt_proc_arg [("x","0","number","X")] ["y"] [("x","1")]
+([],[("x","1")],["y"])
+
+>>> opt_proc_arg [("x","0","number","X")] ["y"] []
+([],[("x","0")],["y"])
+
+>>> opt_proc_arg [("x","0","number","X")] ["--x=a","y"] [("x","e")]
+([("x","a")],[("x","a")],["y"])
+-}
+opt_proc_arg :: [OptUsr] -> [String] -> [(String,String)] -> ([Opt],[Opt],[String])
+opt_proc_arg def arg env =
+  let u = map (\(k,_,_,_) -> k) def
+      env' = filter (\(k,_) -> k `elem` u) env
+      (o,p) = opt_set_parse arg
+      o' = opt_merge (opt_merge o env') (map opt_plain def)
+  in (o,o',p)
+
 -- | 'opt_set_parse' and maybe 'opt_verify' and 'opt_merge' of 'getArgs'.
 --   If arguments include -h or --help run 'opt_usage'
 opt_get_arg :: Bool -> OptHelp -> [OptUsr] -> IO ([Opt],[String])
 opt_get_arg chk usg def = do
-  a <- getArgs
-  when ("-h" `elem` a || "--help" `elem` a) (opt_usage usg def)
-  let (o,p) = opt_set_parse a
+  arg <- getArgs
+  env <- getEnvironment
+  when ("-h" `elem` arg || "--help" `elem` arg) (opt_usage usg def)
+  let (o,o',p) = opt_proc_arg def arg env
   when chk (opt_verify usg def o)
-  return (opt_merge o (map opt_plain def),p)
+  return (o',p)
 
 {- | Parse param set, one parameter per line.
 
