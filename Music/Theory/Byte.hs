@@ -10,19 +10,19 @@ import Numeric {- base -}
 import Data.Array.ST {- array -}
 import Data.Array.Unsafe {- array -}
 
-import qualified Data.ByteString as B {- bytestring -}
+import qualified Data.ByteString as ByteString {- bytestring -}
 import qualified Data.List.Split as Split {- split -}
 
-import qualified Music.Theory.Math.Convert as T {- hmt-base -}
-import qualified Music.Theory.Read as T {- hmt-base -}
+import qualified Music.Theory.Math.Convert as Convert {- hmt-base -}
+import qualified Music.Theory.Read as Read {- hmt-base -}
 
 {-
 import Data.Int {- base -}
 import qualified Data.ByteString.Lazy as L {- bytestring -}
 
--- * LBS
+-- * Lbs
 
--- | Section function for 'L.ByteString', ie. from (n,m).
+-- | Section function for ByteString, ie. from (n,m).
 --
 -- > lbs_slice 4 5 (L.pack [1..10]) == L.pack [5,6,7,8,9]
 lbs_slice :: Int64 -> Int64 -> L.ByteString -> L.ByteString
@@ -37,37 +37,39 @@ lbs_section l r = L.take (r - l + 1) . L.drop l
 
 -- * Enumerations & Char
 
--- | 'toEnum' of 'T.word8_to_int'
+-- | U8 to Enum.
 word8_to_enum :: Enum e => Word8 -> e
-word8_to_enum = toEnum . T.word8_to_int
+word8_to_enum = toEnum . Convert.word8_to_int
 
--- | 'T.int_to_word8_maybe' of 'fromEnum'
+-- | Enum to U8.
 enum_to_word8 :: Enum e => e -> Maybe Word8
-enum_to_word8 = T.int_to_word8_maybe . fromEnum
+enum_to_word8 = Convert.int_to_word8_maybe . fromEnum
 
--- | Type-specialised 'word8_to_enum'
---
--- > map word8_to_char [60,62] == "<>"
+{- | Type-specialised 'toEnum'
+
+>>> map word8_to_char [60,62]
+"<>"
+-}
 word8_to_char :: Word8 -> Char
 word8_to_char = word8_to_enum
 
--- | 'T.int_to_word8' of 'fromEnum'
+-- | Type-specialised 'fromEnum'
 char_to_word8 :: Char -> Word8
-char_to_word8 = T.int_to_word8 . fromEnum
+char_to_word8 = Convert.int_to_word8 . fromEnum
 
--- | 'T.int_to_word8' of 'digitToInt'
+-- | Type-specialised 'digitToInt'
 digit_to_word8 :: Char -> Word8
-digit_to_word8 = T.int_to_word8 . digitToInt
+digit_to_word8 = Convert.int_to_word8 . digitToInt
 
--- | 'intToDigit' of 'T.word8_to_int'
+-- | Type-specialised 'intToDigit'.
 word8_to_digit :: Word8 -> Char
-word8_to_digit = intToDigit . T.word8_to_int
+word8_to_digit = intToDigit . Convert.word8_to_int
 
 -- * Indexing
 
--- | 'at' of 'T.word8_to_int'
+-- | Type-specialised '!!'
 word8_at :: [t] -> Word8 -> t
-word8_at l = (!!) l . T.word8_to_int
+word8_at l = (!!) l . Convert.word8_to_int
 
 -- * Text
 
@@ -104,7 +106,7 @@ True
 read_hex_byte :: (Eq t, Integral t) => String -> Maybe t
 read_hex_byte s =
     case s of
-      [_,_] -> T.reads_to_read_precise readHex s
+      [_,_] -> Read.reads_to_read_precise readHex s
       _ -> Nothing
 
 -- | Erroring variant.
@@ -131,11 +133,11 @@ read_hex_byte_seq_ws = read_hex_byte_seq . filter (not . isSpace)
 
 -- | Load binary 'U8' sequence from file.
 load_byte_seq :: Integral i => FilePath -> IO [i]
-load_byte_seq = fmap (map fromIntegral . B.unpack) . B.readFile
+load_byte_seq = fmap (map fromIntegral . ByteString.unpack) . ByteString.readFile
 
 -- | Store binary 'U8' sequence to file.
 store_byte_seq :: Integral i => FilePath -> [i] -> IO ()
-store_byte_seq fn = B.writeFile fn . B.pack . map fromIntegral
+store_byte_seq fn = ByteString.writeFile fn . ByteString.pack . map fromIntegral
 
 -- | Load hexadecimal text 'U8' sequences from file.
 load_hex_byte_seq :: Integral i => FilePath -> IO [[i]]
@@ -150,8 +152,8 @@ store_hex_byte_seq fn = writeFile fn . unlines . map (byte_seq_hex_pp False)
 import qualified Data.ByteString.Base64 as Base64 {- base64-bytestring -}
 let fn = "/home/rohan/sw/hsc3-data/data/yamaha/dx7/rom/ROM1A.syx"
 b <- load_byte_seq fn :: IO [Word8]
-let e = B.unpack (Base64.encode (B.pack b))
-let r = B.unpack (Base64.decodeLenient (B.pack e))
+let e = ByteString.unpack (Base64.encode (ByteString.pack b))
+let r = ByteString.unpack (Base64.decodeLenient (ByteString.pack e))
 (length b,length e,length r,b == r) == (4104,5472,4104,True)
 map word8_to_char e
 

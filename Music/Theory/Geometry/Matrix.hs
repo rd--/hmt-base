@@ -1,6 +1,8 @@
 -- | 2x2, 3x3 and 4x3 matrices.
 module Music.Theory.Geometry.Matrix where
 
+import Data.Maybe {- base -}
+
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
 -- * M22
@@ -77,6 +79,18 @@ m22_rotation n = ((cos n,sin n),(negate (sin n),cos n))
 
 -- | 3×3 matrix (R=3,C=3) ROW-ORDER ((11 12 13) (21 22 23) (31 32 33)
 type M33 n = V3 (V3 n)
+
+m33_to_list :: M33 n -> [n]
+m33_to_list ((a,b,c),(d,e,f),(g,h,i)) = [a,b,c,d,e,f,g,h,i]
+
+m33_from_list :: [n] -> Maybe (M33 n)
+m33_from_list list =
+  case list of
+    [a,b,c,d,e,f,g,h,i] -> Just ((a,b,c),(d,e,f),(g,h,i))
+    _ -> Nothing
+
+m33_from_list_err :: [n] -> M33 n
+m33_from_list_err = fromMaybe (error "m33_from_list") . m33_from_list
 
 m33_determinant :: Num t => M33 t -> t
 m33_determinant ((a,b,c),(d,e,f),(g,h,i)) = a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h

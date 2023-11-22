@@ -697,7 +697,7 @@ cartesian_to_spherical (x,y,z) =
       phi = atan2 y x -- atan (y / x)
   in (r,theta,phi)
 
-{- | Iso convention (r=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
+{- | Iso convention (r=𝑟=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
 By convention: r ≥ 0, 0 ≤ θ ≤ π, 0 ≤ φ < 2π
 
