@@ -54,17 +54,18 @@ Stop once a file is located, do not traverse any sub-directory structure.
 -}
 path_scan :: [FilePath] -> FilePath -> IO (Maybe FilePath)
 path_scan p fn =
-    case p of
-      [] -> return Nothing
-      dir:p' -> let nm = dir </> fn
-                    f x = if x then return (Just nm) else path_scan p' fn
-                in doesFileExist nm >>= f
+  case p of
+    [] -> return Nothing
+    dir : p' ->
+      let nm = dir </> fn
+          f x = if x then return (Just nm) else path_scan p' fn
+      in doesFileExist nm >>= f
 
 -- | Erroring variant.
 path_scan_err :: [FilePath] -> FilePath -> IO FilePath
 path_scan_err p x =
-    let err = error (concat ["path_scan: ",show p,": ",x])
-    in fmap (fromMaybe err) (path_scan p x)
+  let err = error (concat ["path_scan: ", show p, ": ", x])
+  in fmap (fromMaybe err) (path_scan p x)
 
 {- | Scan a list of directories and return all located files.
 Do not traverse any sub-directory structure.
@@ -80,33 +81,37 @@ path_search p fn = do
       chk q = doesFileExist q >>= \x -> return (if x then Just q else Nothing)
   fmap catMaybes (mapM chk fq)
 
--- | Get sorted list of files at /dir/ with /ext/, ie. ls dir/*.ext
---
--- > dir_list_ext "/home/rohan/rd/j/" ".hs"
+{- | Get sorted list of files at /dir/ with /ext/, ie. ls dir/*.ext
+
+> dir_list_ext "/home/rohan/rd/j/" ".hs"
+-}
 dir_list_ext :: FilePath -> String -> IO [FilePath]
 dir_list_ext dir ext = do
   l <- listDirectory dir
   let fn = filter ((==) ext . takeExtension) l
   return (sort fn)
 
--- | Post-process 'dir_list_ext' to gives file-names with /dir/ prefix.
---
--- > dir_list_ext_path "/home/rohan/rd/j/" ".hs"
+{- | Post-process 'dir_list_ext' to gives file-names with /dir/ prefix.
+
+> dir_list_ext_path "/home/rohan/rd/j/" ".hs"
+-}
 dir_list_ext_path :: FilePath -> String -> IO [FilePath]
 dir_list_ext_path dir ext = fmap (map (dir </>)) (dir_list_ext dir ext)
 
--- | Subset of files in /dir/ with an extension in /ext/.
---   Extensions include the leading dot and are case-sensitive.
---   Results are relative to /dir/.
+{- | Subset of files in /dir/ with an extension in /ext/.
+  Extensions include the leading dot and are case-sensitive.
+  Results are relative to /dir/.
+-}
 dir_subset_rel :: [String] -> FilePath -> IO [FilePath]
 dir_subset_rel ext dir = do
   let f nm = takeExtension nm `elem` ext
   c <- getDirectoryContents dir
   return (sort (filter f c))
 
--- | Variant of dir_subset_rel where results have dir/ prefix.
---
--- > dir_subset [".hs"] "/home/rohan/sw/hmt/cmd"
+{- | Variant of dir_subset_rel where results have dir/ prefix.
+
+> dir_subset [".hs"] "/home/rohan/sw/hmt/cmd"
+-}
 dir_subset :: [String] -> FilePath -> IO [FilePath]
 dir_subset ext dir = fmap (map (dir </>)) (dir_subset_rel ext dir)
 
@@ -133,18 +138,19 @@ dir_subdirs_recursively dir = do
       subdirs' <- mapM dir_subdirs_recursively subdirs
       return (subdirs ++ concat subdirs')
 
--- | If path is not absolute, prepend current working directory.
---
--- > to_absolute_cwd "x"
+{- | If path is not absolute, prepend current working directory.
+
+> to_absolute_cwd "x"
+-}
 to_absolute_cwd :: FilePath -> IO FilePath
 to_absolute_cwd x =
-    if isAbsolute x
+  if isAbsolute x
     then return x
     else fmap (</> x) getCurrentDirectory
 
 -- | If /i/ is an existing file then /j/ else /k/.
-if_file_exists :: (FilePath,IO t,IO t) -> IO t
-if_file_exists (i,j,k) = Music.Theory.Monad.m_if (doesFileExist i,j,k)
+if_file_exists :: (FilePath, IO t, IO t) -> IO t
+if_file_exists (i, j, k) = Music.Theory.Monad.m_if (doesFileExist i, j, k)
 
 -- | 'createDirectoryIfMissing' (including parents) and then 'writeFile'
 writeFile_mkdir :: FilePath -> String -> IO ()
@@ -155,4 +161,4 @@ writeFile_mkdir fn s = do
 
 -- | 'writeFile_mkdir' only if file does not exist.
 writeFile_mkdir_x :: FilePath -> String -> IO ()
-writeFile_mkdir_x fn txt = if_file_exists (fn,return (),writeFile_mkdir fn txt)
+writeFile_mkdir_x fn txt = if_file_exists (fn, return (), writeFile_mkdir fn txt)

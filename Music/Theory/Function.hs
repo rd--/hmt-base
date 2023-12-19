@@ -45,7 +45,8 @@ predicate_and f g x = f x && g x
 -}
 predicate_all :: [t -> Bool] -> t -> Bool
 predicate_all = foldr1 predicate_and
---predicate_all p x = all id (map ($ x) p)
+
+-- predicate_all p x = all id (map ($ x) p)
 
 -- | '||' of predicates.
 predicate_or :: (t -> Bool) -> (t -> Bool) -> t -> Bool
@@ -97,15 +98,15 @@ infixr 8 .:, .::, .:::, .::::, .:::::
 (.::) = fmap3
 
 -- | Operator name for fmap4.
-(.:::) :: (Functor f, Functor g, Functor h,Functor i) => (a -> b) -> f (g (h (i a))) -> f (g (h (i b)))
+(.:::) :: (Functor f, Functor g, Functor h, Functor i) => (a -> b) -> f (g (h (i a))) -> f (g (h (i b)))
 (.:::) = fmap4
 
 -- | Operator name for fmap5.
-(.::::) :: (Functor f, Functor g, Functor h,Functor i,Functor j) => (a -> b) -> f (g (h (i (j a)))) -> f (g (h (i (j b))))
+(.::::) :: (Functor f, Functor g, Functor h, Functor i, Functor j) => (a -> b) -> f (g (h (i (j a)))) -> f (g (h (i (j b))))
 (.::::) = fmap5
 
 -- | Operator name for fmap6.
-(.:::::) :: (Functor f, Functor g, Functor h,Functor i,Functor j,Functor k) => (a -> b) -> f (g (h (i (j (k a))))) -> f (g (h (i (j (k b)))))
+(.:::::) :: (Functor f, Functor g, Functor h, Functor i, Functor j, Functor k) => (a -> b) -> f (g (h (i (j (k a))))) -> f (g (h (i (j (k b)))))
 (.:::::) = fmap6
 
 -- * Bimap
@@ -115,5 +116,5 @@ bimap1f :: Bifunctor p => (a -> b) -> p a a -> p b b
 bimap1f f = bimap f f
 
 -- | Apply /f/ to both elements of a two-tuple.  Type-specialised bimap1f.
-bimap1 :: (t -> u) -> (t,t) -> (u,u)
+bimap1 :: (t -> u) -> (t, t) -> (u, u)
 bimap1 = bimap1f

@@ -25,54 +25,54 @@ plc_data :: B.ByteString -> [Int]
 plc_data = map fromIntegral . B.unpack . B.drop 15
 
 -- | Calculate length of Plc data given (n-vertices,n-edges).
-plc_length :: (Int,Int) -> Int
-plc_length (v,e) = v + 1 + 2 * e
+plc_length :: (Int, Int) -> Int
+plc_length (v, e) = v + 1 + 2 * e
 
 -- | Scan Plc data and segment after /k/ zeros.
-plc_scanner :: Int -> [Int] -> ([Int],[Int])
+plc_scanner :: Int -> [Int] -> ([Int], [Int])
 plc_scanner =
   let f r k i = case i of
-                  0:j -> if k == 1 then (reverse (0 : r),j) else f (0 : r) (k - 1) j
-                  e:j -> f (e : r) k j
-                  _ -> error "plc_scanner?"
+        0 : j -> if k == 1 then (reverse (0 : r), j) else f (0 : r) (k - 1) j
+        e : j -> f (e : r) k j
+        _ -> error "plc_scanner?"
   in f []
 
 -- | (n-vertices,clockwise-edge-sequences)
-type Plc = (Int,[[Int]])
+type Plc = (Int, [[Int]])
 
 plc_n_vertices :: Plc -> Int
-plc_n_vertices (k,_) = k
+plc_n_vertices (k, _) = k
 
 -- | Group Plc data into Plc structure.
 plc_group :: Int -> [Int] -> Plc
 plc_group k i =
   let c = S.endBy [0] i
-  in if length c == k then (k,c) else error "plc_group?"
+  in if length c == k then (k, c) else error "plc_group?"
 
 -- | Segment input data into sequence of Plc.
 plc_segment :: [Int] -> [Plc]
 plc_segment i =
   case i of
     [] -> []
-    k:j -> case plc_scanner k j of
-             (r,[]) -> [plc_group k r]
-             (r,l) -> plc_group k r : plc_segment l
+    k : j -> case plc_scanner k j of
+      (r, []) -> [plc_group k r]
+      (r, l) -> plc_group k r : plc_segment l
 
 plc_parse :: B.ByteString -> [Plc]
 plc_parse b =
   if plc_header b == plc_header_txt
-  then plc_segment (plc_data b)
-  else error "plc_load?"
+    then plc_segment (plc_data b)
+    else error "plc_load?"
 
 -- | Load sequence of Plc from binary Planar-Code file.
 plc_load :: FilePath -> IO [Plc]
 plc_load = fmap plc_parse . B.readFile
 
 -- | All edges (one-indexed) at Plc
-plc_edge_set :: Plc -> [(Int,Int)]
-plc_edge_set (k,n) =
+plc_edge_set :: Plc -> [(Int, Int)]
+plc_edge_set (k, n) =
   let v = [1 .. k]
-      f (i,j) = map (\x -> (i,x)) j
+      f (i, j) = map (\x -> (i, x)) j
   in concatMap f (zip v n)
 
 {- | Element in /x/ after /i/, the element after the last is the first.
@@ -85,47 +85,48 @@ plc_next_elem x i =
   case dropWhile (/= i) x of
     [] -> error "plc_next_elem?"
     [_] -> List.head_err x
-    _:j:_ -> j
+    _ : j : _ -> j
 
 -- | The next edge in Plc following /e/.
-plc_next_edge :: Plc -> (Int,Int) -> (Int,Int)
-plc_next_edge (_,e) (i,j) = let k = plc_next_elem (e !! (j - 1)) i in (j,k)
+plc_next_edge :: Plc -> (Int, Int) -> (Int, Int)
+plc_next_edge (_, e) (i, j) = let k = plc_next_elem (e !! (j - 1)) i in (j, k)
 
 -- | The face of Plc starting at /e/ (one-indexed edges).
-plc_face_from :: Plc -> (Int,Int) -> [(Int,Int)]
+plc_face_from :: Plc -> (Int, Int) -> [(Int, Int)]
 plc_face_from p e = e : takeWhile (/= e) (List.tail_err (iterate (plc_next_edge p) e))
 
 -- | The set of all faces at Plc (one-indexed edges).
-plc_face_set :: Plc -> [[(Int,Int)]]
+plc_face_set :: Plc -> [[(Int, Int)]]
 plc_face_set p =
   let f r e =
         case e of
           [] -> reverse r
-          e0:eN -> if any (e0 `elem`) r
-                   then f r eN
-                   else f (plc_face_from p e0 : r) eN
+          e0 : eN ->
+            if any (e0 `elem`) r
+              then f r eN
+              else f (plc_face_from p e0 : r) eN
   in f [] (plc_edge_set p)
 
 -- | Translate 'Plc' into un-directed 'T.G'.  Plc is one-indexed, G is zero-indexed.
 plc_to_g :: Plc -> T.G
 plc_to_g p =
-  let (k,_) = p
+  let (k, _) = p
       v = [0 .. k - 1]
-      f (i,j) = (i - 1,j - 1)
-      g (i,j) = i <= j
-  in (v,filter g (map f (plc_edge_set p)))
+      f (i, j) = (i - 1, j - 1)
+      g (i, j) = i <= j
+  in (v, filter g (map f (plc_edge_set p)))
 
 plc_stat :: FilePath -> IO (Int, [(Int, Int, Int)])
 plc_stat plc_fn = do
   p_seq <- plc_load plc_fn
-  let f p = (plc_n_vertices p,length (plc_edge_set p) `div` 2,length (plc_face_set p))
-  return (length p_seq,map f p_seq)
+  let f p = (plc_n_vertices p, length (plc_edge_set p) `div` 2, length (plc_face_set p))
+  return (length p_seq, map f p_seq)
 
 plc_stat_txt :: FilePath -> (Int, [(Int, Int, Int)]) -> [String]
-plc_stat_txt fn (k,g) =
+plc_stat_txt fn (k, g) =
   let hdr = printf "%s G=%d" (takeBaseName fn) k
-      gr ix (v,e,f) = printf " %d: V=%d E=%d F=%d" ix v e f
-  in hdr : zipWith gr [1::Int ..] g
+      gr ix (v, e, f) = printf " %d: V=%d E=%d F=%d" ix v e f
+  in hdr : zipWith gr [1 :: Int ..] g
 
 -- | Run "nauty-planarg" to convert (if possible) a set of G6 graphs to Planar-Code.
 g6_planarg :: [String] -> IO B.ByteString
@@ -141,4 +142,4 @@ g_to_plc g = fmap plc_parse (G6.g_to_g6 g >>= g6_planarg)
 
 -- | Run "nauty-planarg" to translate named G6 file to named PL file.
 g6_to_pl_wr :: FilePath -> FilePath -> IO ()
-g6_to_pl_wr g6_fn pl_fn = callProcess "nauty-planarg" ["-q","-p",g6_fn,pl_fn]
+g6_to_pl_wr g6_fn pl_fn = callProcess "nauty-planarg" ["-q", "-p", g6_fn, pl_fn]

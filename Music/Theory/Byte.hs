@@ -80,10 +80,10 @@ word8_at l = (!!) l . Convert.word8_to_int
 -}
 byte_hex_pp :: (Integral i, Show i) => i -> Maybe String
 byte_hex_pp n =
-    case showHex n "" of
-      [c] -> Just ['0',toUpper c]
-      [c,d] -> Just (map toUpper [c,d])
-      _ -> Nothing
+  case showHex n "" of
+    [c] -> Just ['0', toUpper c]
+    [c, d] -> Just (map toUpper [c, d])
+    _ -> Nothing
 
 -- | Erroring variant.
 byte_hex_pp_err :: (Integral i, Show i) => i -> String
@@ -105,9 +105,9 @@ True
 -}
 read_hex_byte :: (Eq t, Integral t) => String -> Maybe t
 read_hex_byte s =
-    case s of
-      [_,_] -> Read.reads_to_read_precise readHex s
-      _ -> Nothing
+  case s of
+    [_, _] -> Read.reads_to_read_precise readHex s
+    _ -> Nothing
 
 -- | Erroring variant.
 read_hex_byte_err :: (Eq t, Integral t) => String -> t
@@ -144,7 +144,7 @@ load_hex_byte_seq :: Integral i => FilePath -> IO [[i]]
 load_hex_byte_seq = fmap (map read_hex_byte_seq . lines) . readFile
 
 -- | Store 'U8' sequences as hexadecimal text, one sequence per line.
-store_hex_byte_seq :: (Integral i,Show i) => FilePath -> [[i]] -> IO ()
+store_hex_byte_seq :: (Integral i, Show i) => FilePath -> [[i]] -> IO ()
 store_hex_byte_seq fn = writeFile fn . unlines . map (byte_seq_hex_pp False)
 
 {-
@@ -167,7 +167,7 @@ map word8_to_char e
 1078527525
 -}
 castFloatToWord32 :: Float -> Word32
-castFloatToWord32 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word32)
+castFloatToWord32 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0 :: Int) d) :: ST s Word32)
 
 {- | Case Word32 to Float
 
@@ -175,7 +175,7 @@ castFloatToWord32 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0,
 3.141
 -}
 castWord32ToFloat :: Word32 -> Float
-castWord32ToFloat d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Float)
+castWord32ToFloat d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0 :: Int) d) :: ST s Float)
 
 {- | Cast Double to Word64
 
@@ -183,7 +183,7 @@ castWord32ToFloat d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0,
 4614255322014802772
 -}
 castDoubleToWord64 :: Double -> Word64
-castDoubleToWord64 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Word64)
+castDoubleToWord64 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0 :: Int) d) :: ST s Word64)
 
 {- | Case Word64 to Double
 
@@ -191,4 +191,4 @@ castDoubleToWord64 d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0
 3.141
 -}
 castWord64ToDouble :: Word64 -> Double
-castWord64ToDouble d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0::Int) d) :: ST s Double)
+castWord64ToDouble d = runST ((flip readArray 0 =<< castSTUArray =<< newArray (0, 0 :: Int) d) :: ST s Double)

@@ -26,8 +26,8 @@ isSafeIntegral i = i >= -9007199254740991 && i <= 9007199254740991
 safeIntegral :: Integral i => i -> Maybe Value
 safeIntegral i =
   if isSafeIntegral i
-  then Just (Json.Number (fromIntegral i))
-  else Nothing
+    then Just (Json.Number (fromIntegral i))
+    else Nothing
 
 unsafeIntegral :: Integral i => i -> Value
 unsafeIntegral = fromMaybe (error "Json.unsafeIntegral") . safeIntegral

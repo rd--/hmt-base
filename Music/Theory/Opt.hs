@@ -8,7 +8,6 @@ A list of OptUsr describes the options and provides default values.
 It also consults the environment.
 
 To fetch options use 'opt_get' and 'opt_read'.
-
 -}
 module Music.Theory.Opt where
 
@@ -21,33 +20,33 @@ import System.Exit {- base -}
 import qualified Data.List.Split as Split {- split -}
 
 import qualified Music.Theory.Either as Either {- hmt-base -}
-import qualified Music.Theory.Read as Read{- hmt-base -}
+import qualified Music.Theory.Read as Read {- hmt-base -}
 
 {- | (Key,Value)
 
 Key does not include leading '--'.
 -}
-type Opt = (String,String)
+type Opt = (String, String)
 
 -- | (Key,Default-Value,Type,Note)
-type OptUsr = (String,String,String,String)
+type OptUsr = (String, String, String, String)
 
 -- | Re-write default values at OptUsr.
 opt_usr_rw_def :: [Opt] -> [OptUsr] -> [OptUsr]
 opt_usr_rw_def rw =
-  let f (k,v,ty,dsc) =
+  let f (k, v, ty, dsc) =
         case lookup k rw of
-          Just v' -> (k,v',ty,dsc)
-          Nothing -> (k,v,ty,dsc)
+          Just v' -> (k, v', ty, dsc)
+          Nothing -> (k, v, ty, dsc)
   in map f
 
 -- | OptUsr to Opt.
 opt_plain :: OptUsr -> Opt
-opt_plain (k,v,_,_) = (k,v)
+opt_plain (k, v, _, _) = (k, v)
 
 -- | OptUsr to help string, indent is two spaces.
 opt_usr_help :: OptUsr -> String
-opt_usr_help (k,v,t,n) = concat ["  ",k,":",t," -- ",n,"; default=",if null v then "Nil" else v]
+opt_usr_help (k, v, t, n) = concat ["  ", k, ":", t, " -- ", n, "; default=", if null v then "Nil" else v]
 
 -- | 'unlines' of 'opt_usr_help'
 opt_help :: [OptUsr] -> String
@@ -69,8 +68,8 @@ opt_read o = Read.read_err . opt_get o
 opt_param_parse :: String -> Opt
 opt_param_parse p =
   case Split.splitOn "=" p of
-    [lhs] -> (lhs,"True")
-    [lhs,rhs] -> (lhs,rhs)
+    [lhs] -> (lhs, "True")
+    [lhs, rhs] -> (lhs, rhs)
     _ -> error ("opt_param_parse: " ++ p)
 
 {- | Parse option string of form "--opt" or "--key=value".
@@ -84,7 +83,7 @@ Just ("key","value")
 opt_parse :: String -> Maybe Opt
 opt_parse s =
   case s of
-    '-':'-':p -> Just (opt_param_parse p)
+    '-' : '-' : p -> Just (opt_param_parse p)
     _ -> Nothing
 
 {- | Parse option sequence, collating options and non-options.
@@ -92,7 +91,7 @@ opt_parse s =
 >>> opt_set_parse (words "--a --b=c d")
 ([("a","True"),("b","c")],["d"])
 -}
-opt_set_parse :: [String] -> ([Opt],[String])
+opt_set_parse :: [String] -> ([Opt], [String])
 opt_set_parse =
   let f s = maybe (Right s) Left (opt_parse s)
   in Either.partition_eithers . map f
@@ -101,24 +100,24 @@ opt_set_parse =
 opt_merge :: [Opt] -> [Opt] -> [Opt]
 opt_merge p q =
   let x = map fst p
-  in p ++ filter (\(k,_) -> k `notElem` x) q
+  in p ++ filter (\(k, _) -> k `notElem` x) q
 
 -- | Process argument list.
 opt_proc :: [OptUsr] -> [String] -> ([Opt], [String])
 opt_proc def arg =
-  let (o,a) = opt_set_parse arg
-  in (opt_merge o (map opt_plain def),a)
+  let (o, a) = opt_set_parse arg
+  in (opt_merge o (map opt_plain def), a)
 
 -- | Usage text
 type OptHelp = [String]
 
 -- | Format usage pre-amble and 'opt_help'.
 opt_help_pp :: OptHelp -> [OptUsr] -> String
-opt_help_pp usg def = unlines (usg ++ ["",opt_help def])
+opt_help_pp usg def = unlines (usg ++ ["", opt_help def])
 
 -- | Print help and exit.
 opt_usage :: OptHelp -> [OptUsr] -> IO ()
-opt_usage usg def = putStrLn (opt_help_pp usg def)  >> exitSuccess
+opt_usage usg def = putStrLn (opt_help_pp usg def) >> exitSuccess
 
 -- | Print help and error.
 opt_error :: OptHelp -> [OptUsr] -> t
@@ -128,9 +127,10 @@ opt_error usg def = error (opt_help_pp usg def)
 opt_verify :: OptHelp -> [OptUsr] -> [Opt] -> IO ()
 opt_verify usg def =
   let k_set = map (fst . opt_plain) def
-      f (k,_) = if k `elem` k_set
-                then return ()
-                else putStrLn ("Unknown Key: " ++ k ++ "\n") >> opt_usage usg def
+      f (k, _) =
+        if k `elem` k_set
+          then return ()
+          else putStrLn ("Unknown Key: " ++ k ++ "\n") >> opt_usage usg def
   in mapM_ f
 
 {- | Process arguments consulting environment.
@@ -148,24 +148,25 @@ Options are selected over environment values, which are selected over default va
 >>> opt_proc_arg [("x","0","number","X")] ["--x=a","y"] [("x","e")]
 ([("x","a")],[("x","a")],["y"])
 -}
-opt_proc_arg :: [OptUsr] -> [String] -> [(String,String)] -> ([Opt],[Opt],[String])
+opt_proc_arg :: [OptUsr] -> [String] -> [(String, String)] -> ([Opt], [Opt], [String])
 opt_proc_arg def arg env =
-  let u = map (\(k,_,_,_) -> k) def
-      env' = filter (\(k,_) -> k `elem` u) env
-      (o,p) = opt_set_parse arg
+  let u = map (\(k, _, _, _) -> k) def
+      env' = filter (\(k, _) -> k `elem` u) env
+      (o, p) = opt_set_parse arg
       o' = opt_merge (opt_merge o env') (map opt_plain def)
-  in (o,o',p)
+  in (o, o', p)
 
--- | 'opt_set_parse' and maybe 'opt_verify' and 'opt_merge' of 'getArgs'.
---   If arguments include -h or --help run 'opt_usage'
-opt_get_arg :: Bool -> OptHelp -> [OptUsr] -> IO ([Opt],[String])
+{- | 'opt_set_parse' and maybe 'opt_verify' and 'opt_merge' of 'getArgs'.
+  If arguments include -h or --help run 'opt_usage'
+-}
+opt_get_arg :: Bool -> OptHelp -> [OptUsr] -> IO ([Opt], [String])
 opt_get_arg chk usg def = do
   arg <- getArgs
   env <- getEnvironment
   when ("-h" `elem` arg || "--help" `elem` arg) (opt_usage usg def)
-  let (o,o',p) = opt_proc_arg def arg env
+  let (o, o', p) = opt_proc_arg def arg env
   when chk (opt_verify usg def o)
-  return (o',p)
+  return (o', p)
 
 {- | Parse param set, one parameter per line.
 
@@ -178,13 +179,13 @@ opt_param_set_parse = map opt_param_parse . lines
 -- | Simple scanner over argument list.
 opt_scan :: [String] -> String -> Maybe String
 opt_scan a k =
-  let (o,_) = opt_set_parse a
+  let (o, _) = opt_set_parse a
   in fmap snd (find ((== k) . fst) o)
 
 -- | Scanner with default value.
-opt_scan_def :: [String] -> (String,String) -> String
-opt_scan_def a (k,v) = fromMaybe v (opt_scan a k)
+opt_scan_def :: [String] -> (String, String) -> String
+opt_scan_def a (k, v) = fromMaybe v (opt_scan a k)
 
 -- | Reading scanner with default value.
-opt_scan_read :: Read t => [String] -> (String,t) -> t
-opt_scan_read a (k,v) = maybe v read (opt_scan a k)
+opt_scan_read :: Read t => [String] -> (String, t) -> t
+opt_scan_read a (k, v) = maybe v read (opt_scan a k)

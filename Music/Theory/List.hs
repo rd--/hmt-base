@@ -45,10 +45,10 @@ second_err = flip Safe.at 1
 -- * Zip
 
 -- | Data.List stops at zipWith7.
-zipWith8 :: (a->b->c->d->e->f->g->h->i) -> [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]
+zipWith8 :: (a -> b -> c -> d -> e -> f -> g -> h -> i) -> [a] -> [b] -> [c] -> [d] -> [e] -> [f] -> [g] -> [h] -> [i]
 zipWith8 z a b c d e f g h =
-  case (a,b,c,d,e,f,g,h) of
-    (a0:as,b0:bs,c0:cs,d0:ds,e0:es,f0:fs,g0:gs,h0:hs) ->
+  case (a, b, c, d, e, f, g, h) of
+    (a0 : as, b0 : bs, c0 : cs, d0 : ds, e0 : es, f0 : fs, g0 : gs, h0 : hs) ->
       z a0 b0 c0 d0 e0 f0 g0 h0 : zipWith8 z as bs cs ds es fs gs hs
     _ -> []
 
@@ -57,14 +57,14 @@ zipWith8 z a b c d e f g h =
 >>> zip8 "abc" ['b'..] ['c'..] ['d'..] ['e'..] ['f'..] ['g'..] ['h'..]
 [('a','b','c','d','e','f','g','h'),('b','c','d','e','f','g','h','i'),('c','d','e','f','g','h','i','j')]
 -}
-zip8 :: [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[(a,b,c,d,e,f,g,h)]
-zip8 = zipWith8 (\a b c d e f g h -> (a,b,c,d,e,f,g,h))
+zip8 :: [a] -> [b] -> [c] -> [d] -> [e] -> [f] -> [g] -> [h] -> [(a, b, c, d, e, f, g, h)]
+zip8 = zipWith8 (\a b c d e f g h -> (a, b, c, d, e, f, g, h))
 
 -- | Data.List stops at zipWith7.
-zipWith9 :: (a->b->c->d->e->f->g->h->i->j) -> [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]->[j]
+zipWith9 :: (a -> b -> c -> d -> e -> f -> g -> h -> i -> j) -> [a] -> [b] -> [c] -> [d] -> [e] -> [f] -> [g] -> [h] -> [i] -> [j]
 zipWith9 z a b c d e f g h i =
-  case (a,b,c,d,e,f,g,h,i) of
-    (a0:as,b0:bs,c0:cs,d0:ds,e0:es,f0:fs,g0:gs,h0:hs,i0:is) ->
+  case (a, b, c, d, e, f, g, h, i) of
+    (a0 : as, b0 : bs, c0 : cs, d0 : ds, e0 : es, f0 : fs, g0 : gs, h0 : hs, i0 : is) ->
       z a0 b0 c0 d0 e0 f0 g0 h0 i0 : zipWith9 z as bs cs ds es fs gs hs is
     _ -> []
 
@@ -73,10 +73,10 @@ zipWith9 z a b c d e f g h i =
 >>> zip9 "abc" ['b'..] ['c'..] ['d'..] ['e'..] ['f'..] ['g'..] ['h'..] ['i'..]
 [('a','b','c','d','e','f','g','h','i'),('b','c','d','e','f','g','h','i','j'),('c','d','e','f','g','h','i','j','k')]
 -}
-zip9 :: [a]->[b]->[c]->[d]->[e]->[f]->[g]->[h]->[i]->[(a,b,c,d,e,f,g,h,i)]
-zip9 = zipWith9 (\a b c d e f g h i -> (a,b,c,d,e,f,g,h,i))
+zip9 :: [a] -> [b] -> [c] -> [d] -> [e] -> [f] -> [g] -> [h] -> [i] -> [(a, b, c, d, e, f, g, h, i)]
+zip9 = zipWith9 (\a b c d e f g h i -> (a, b, c, d, e, f, g, h, i))
 
-{- | Error checking 'take' variant. -}
+-- | Error checking 'take' variant.
 take_err :: Int -> [a] -> [a]
 take_err n e = let r = take n e in if length r /= n then error "take_err?" else r
 
@@ -101,41 +101,41 @@ section l r = take (r - l + 1) . drop l
 >>> bracket ('<','>') "1,2,3"
 "<1,2,3>"
 -}
-bracket :: (a,a) -> [a] -> [a]
-bracket (l,r) x = l : x ++ [r]
+bracket :: (a, a) -> [a] -> [a]
+bracket (l, r) x = l : x ++ [r]
 
 {- | Variant where brackets are sequences.
 
 >>> bracket_l ("<:",":>") "1,2,3"
 "<:1,2,3:>"
 -}
-bracket_l :: ([a],[a]) -> [a] -> [a]
-bracket_l (l,r) s = l ++ s ++ r
+bracket_l :: ([a], [a]) -> [a] -> [a]
+bracket_l (l, r) s = l ++ s ++ r
 
 {- | The first & middle & last elements of a list.
 
 >>> map unbracket_el ["","{12}"]
 [(Nothing,"",Nothing),(Just '{',"12",Just '}')]
 -}
-unbracket_el :: [a] -> (Maybe a,[a],Maybe a)
+unbracket_el :: [a] -> (Maybe a, [a], Maybe a)
 unbracket_el x =
-    case x of
-      [] -> (Nothing,[],Nothing)
-      l:x' -> let (m,r) = separate_last' x' in (Just l,m,r)
+  case x of
+    [] -> (Nothing, [], Nothing)
+    l : x' -> let (m, r) = separate_last' x' in (Just l, m, r)
 
 {- | The first & middle & last elements of a list.
 
 >>> map unbracket ["","{12}"]
 [Nothing,Just ('{',"12",'}')]
 -}
-unbracket :: [t] -> Maybe (t,[t],t)
+unbracket :: [t] -> Maybe (t, [t], t)
 unbracket x =
-    case unbracket_el x of
-      (Just l,m,Just r) -> Just (l,m,r)
-      _ -> Nothing
+  case unbracket_el x of
+    (Just l, m, Just r) -> Just (l, m, r)
+    _ -> Nothing
 
-{- | Erroring variant. -}
-unbracket_err :: [t] -> (t,[t],t)
+-- | Erroring variant.
+unbracket_err :: [t] -> (t, [t], t)
 unbracket_err = fromMaybe (error "unbracket") . unbracket
 
 -- * Split
@@ -148,16 +148,17 @@ unbracket_err = fromMaybe (error "unbracket") . unbracket
 >>> separate_at "//" "lhs//rhs//rem"
 Just ("lhs","rhs//rem")
 -}
-separate_at :: Eq a => [a] -> [a] -> Maybe ([a],[a])
+separate_at :: Eq a => [a] -> [a] -> Maybe ([a], [a])
 separate_at x =
-    let n = length x
-        f lhs rhs =
-            if null rhs
-            then Nothing
-            else if x == take n rhs
-                 then Just (reverse lhs,drop n rhs)
-                 else f (head_err rhs : lhs) (tail_err rhs)
-    in f []
+  let n = length x
+      f lhs rhs =
+        if null rhs
+          then Nothing
+          else
+            if x == take n rhs
+              then Just (reverse lhs, drop n rhs)
+              else f (head_err rhs : lhs) (tail_err rhs)
+  in f []
 
 {- | Variant of 'Split.splitWhen' that keeps delimiters at left.
 
@@ -201,14 +202,14 @@ split_before_any = Split.split . Split.keepDelimsL . Split.oneOf
 >>> split_on_1 ":" "graph:layout"
 Just ("graph","layout")
 -}
-split_on_1 :: Eq t => [t] -> [t] -> Maybe ([t],[t])
+split_on_1 :: Eq t => [t] -> [t] -> Maybe ([t], [t])
 split_on_1 e l =
-    case Split.splitOn e l of
-      [p,q] -> Just (p,q)
-      _ -> Nothing
+  case Split.splitOn e l of
+    [p, q] -> Just (p, q)
+    _ -> Nothing
 
-{- | Erroring variant. -}
-split_on_1_err :: Eq t => [t] -> [t] -> ([t],[t])
+-- | Erroring variant.
+split_on_1_err :: Eq t => [t] -> [t] -> ([t], [t])
 split_on_1_err e = fromMaybe (error "split_on_1") . split_on_1 e
 
 {- | Split function that splits only once, ie. a variant of 'break'.
@@ -216,15 +217,15 @@ split_on_1_err e = fromMaybe (error "split_on_1") . split_on_1 e
 >>> split1 ' ' "three word sentence"
 Just ("three","word sentence")
 -}
-split1 :: Eq a => a -> [a] -> Maybe ([a],[a])
+split1 :: Eq a => a -> [a] -> Maybe ([a], [a])
 split1 c l =
-    case break (== c) l of
-      (lhs,_:rhs) -> Just (lhs,rhs)
-      _ -> Nothing
+  case break (== c) l of
+    (lhs, _ : rhs) -> Just (lhs, rhs)
+    _ -> Nothing
 
-{- | Erroring variant. -}
+-- | Erroring variant.
 split1_err :: (Eq a, Show a) => a -> [a] -> ([a], [a])
-split1_err e s = fromMaybe (error (show ("split1",e,s))) (split1 e s)
+split1_err e s = fromMaybe (error (show ("split1", e, s))) (split1 e s)
 
 {- | If length is not even the second "half" is longer.
 
@@ -251,11 +252,11 @@ split_into_halves l =
 
 -- * Rotate
 
-{- | Generic form of 'rotate_left'. -}
+-- | Generic form of 'rotate_left'.
 genericRotate_left :: Integral i => i -> [a] -> [a]
 genericRotate_left n =
-    let f (p,q) = q ++ p
-    in f . genericSplitAt n
+  let f (p, q) = q ++ p
+  in f . genericSplitAt n
 
 {- | Left rotation.
 
@@ -268,7 +269,7 @@ genericRotate_left n =
 rotate_left :: Int -> [a] -> [a]
 rotate_left = genericRotate_left
 
-{- | Generic form of 'rotate_right'. -}
+-- | Generic form of 'rotate_right'.
 genericRotate_right :: Integral n => n -> [a] -> [a]
 genericRotate_right n = reverse . genericRotate_left n . reverse
 
@@ -294,8 +295,8 @@ rotate_right = genericRotate_right
 -}
 rotate :: (Integral n) => n -> [a] -> [a]
 rotate n p =
-    let m = n `mod` genericLength p
-    in genericRotate_left m p
+  let m = n `mod` genericLength p
+  in genericRotate_left m p
 
 {- | Rotate right by /n/ places.
 
@@ -323,15 +324,15 @@ Nothing
 -}
 rotate_starting_from :: Eq a => a -> [a] -> Maybe [a]
 rotate_starting_from x l =
-    case break (== x) l of
-      (_,[]) -> Nothing
-      (lhs,rhs) -> Just (rhs ++ lhs)
+  case break (== x) l of
+    (_, []) -> Nothing
+    (lhs, rhs) -> Just (rhs ++ lhs)
 
-{- | Erroring variant. -}
+-- | Erroring variant.
 rotate_starting_from_err :: Eq a => a -> [a] -> [a]
 rotate_starting_from_err x =
-    fromMaybe (error "rotate_starting_from: non-element") .
-    rotate_starting_from x
+  fromMaybe (error "rotate_starting_from: non-element")
+    . rotate_starting_from x
 
 {- | Sequence of /n/ adjacent elements, moving forward by /k/ places.
 The last element may have fewer than /n/ places, but will reach the end of the input sequence.
@@ -341,9 +342,9 @@ The last element may have fewer than /n/ places, but will reach the end of the i
 -}
 adj :: Int -> Int -> [a] -> [[a]]
 adj n k l =
-    case take n l of
-      [] -> []
-      r -> r : adj n k (drop k l)
+  case take n l of
+    [] -> []
+    r -> r : adj n k (drop k l)
 
 {- | Variant of 'adj' where the last element has /n/ places but may not reach the end of the input sequence.
 
@@ -355,8 +356,8 @@ adj n k l =
 -}
 adj_trunc :: Int -> Int -> [a] -> [[a]]
 adj_trunc n k l =
-    let r = take n l
-    in if length r == n then r : adj_trunc n k (drop k l) else []
+  let r = take n l
+  in if length r == n then r : adj_trunc n k (drop k l) else []
 
 {- | 'adj_trunc' of 'close' by /n/-1.
 
@@ -366,12 +367,12 @@ adj_trunc n k l =
 adj_cyclic_trunc :: Int -> Int -> [a] -> [[a]]
 adj_cyclic_trunc n k = adj_trunc n k . close (n - 1)
 
-{- | Generic form of 'adj2'. -}
-genericAdj2 :: (Integral n) => n -> [t] -> [(t,t)]
+-- | Generic form of 'adj2'.
+genericAdj2 :: (Integral n) => n -> [t] -> [(t, t)]
 genericAdj2 n l =
-    case l of
-      p:q:_ -> (p,q) : genericAdj2 n (genericDrop n l)
-      _ -> []
+  case l of
+    p : q : _ -> (p, q) : genericAdj2 n (genericDrop n l)
+    _ -> []
 
 {- | Adjacent elements of list, at indicated distance, as pairs.
 
@@ -387,7 +388,7 @@ True
 >>> adj2 3 [1..5]
 [(1,2),(4,5)]
 -}
-adj2 :: Int -> [t] -> [(t,t)]
+adj2 :: Int -> [t] -> [(t, t)]
 adj2 = genericAdj2
 
 {- | Append first /n/-elements to end of list.
@@ -403,7 +404,7 @@ close k x = x ++ take k x
 >>> adj2_cyclic 1 [1..3]
 [(1,2),(2,3),(3,1)]
 -}
-adj2_cyclic :: Int -> [t] -> [(t,t)]
+adj2_cyclic :: Int -> [t] -> [(t, t)]
 adj2_cyclic n = adj2 n . close 1
 
 {- | Adjacent triples.
@@ -411,18 +412,18 @@ adj2_cyclic n = adj2 n . close 1
 >>> adj3 3 [1..6]
 [(1,2,3),(4,5,6)]
 -}
-adj3 :: Int -> [t] -> [(t,t,t)]
+adj3 :: Int -> [t] -> [(t, t, t)]
 adj3 n l =
   case l of
-      p:q:r:_ -> (p,q,r) : adj3 n (drop n l)
-      _ -> []
+    p : q : r : _ -> (p, q, r) : adj3 n (drop n l)
+    _ -> []
 
 {- | 'adj3' '.' 'close' 2.
 
 >>> adj3_cyclic 1 [1..4]
 [(1,2,3),(2,3,4),(3,4,1),(4,1,2)]
 -}
-adj3_cyclic :: Int -> [t] -> [(t,t,t)]
+adj3_cyclic :: Int -> [t] -> [(t, t, t)]
 adj3_cyclic n = adj3 n . close 2
 
 {- | Adjacent quadruples.
@@ -433,11 +434,11 @@ adj3_cyclic n = adj3 n . close 2
 >>> adj4 4 [1..8]
 [(1,2,3,4),(5,6,7,8)]
 -}
-adj4 :: Int -> [t] -> [(t,t,t,t)]
+adj4 :: Int -> [t] -> [(t, t, t, t)]
 adj4 n l =
   case l of
-      p:q:r:s:_ -> (p,q,r,s) : adj4 n (drop n l)
-      _ -> []
+    p : q : r : s : _ -> (p, q, r, s) : adj4 n (drop n l)
+    _ -> []
 
 {- | Interleave elements of /p/ and /q/.  If not of equal length elements are discarded.
 
@@ -477,7 +478,7 @@ interleave_set_folding p =
   let f xs ys =
         case xs of
           [] -> ys
-          x:xs' -> x : f ys xs'
+          x : xs' -> x : f ys xs'
   in foldr f [] p
 
 {-
@@ -507,11 +508,11 @@ deinterleave n = transpose . Split.chunksOf n
 -}
 deinterleave2 :: [t] -> ([t], [t])
 deinterleave2 =
-    let f l =
-            case l of
-              p:q:l' -> (p,q) : f l'
-              _ -> []
-    in unzip . f
+  let f l =
+        case l of
+          p : q : l' -> (p, q) : f l'
+          _ -> []
+  in unzip . f
 
 {-
 deinterleave2 =
@@ -536,10 +537,10 @@ deinterleave2 =
 -}
 interleave_continue :: [a] -> [a] -> [a]
 interleave_continue p q =
-    case (p,q) of
-      ([],_) -> q
-      (_,[]) -> p
-      (i:p',j:q') -> i : j : interleave_continue p' q'
+  case (p, q) of
+    ([], _) -> q
+    (_, []) -> p
+    (i : p', j : q') -> i : j : interleave_continue p' q'
 
 {- | 'interleave' of 'rotate_left' by /i/ and /j/.
 
@@ -549,22 +550,22 @@ interleave_continue p q =
 interleave_rotations :: Int -> Int -> [b] -> [b]
 interleave_rotations i j s = interleave (rotate_left i s) (rotate_left j s)
 
-{- | 'unzip', apply /f1/ and /f2/ and 'zip'. -}
-rezip :: ([t] -> [u]) -> ([v] -> [w]) -> [(t,v)] -> [(u,w)]
-rezip f1 f2 l = let (p,q) = unzip l in zip (f1 p) (f2 q)
+-- | 'unzip', apply /f1/ and /f2/ and 'zip'.
+rezip :: ([t] -> [u]) -> ([v] -> [w]) -> [(t, v)] -> [(u, w)]
+rezip f1 f2 l = let (p, q) = unzip l in zip (f1 p) (f2 q)
 
-{- | Generalised histogram, with equality function for grouping and comparison function for sorting. -}
-generic_histogram_by :: Integral i => (a -> a-> Bool) -> Maybe (a -> a-> Ordering) -> [a] -> [(a,i)]
+-- | Generalised histogram, with equality function for grouping and comparison function for sorting.
+generic_histogram_by :: Integral i => (a -> a -> Bool) -> Maybe (a -> a -> Ordering) -> [a] -> [(a, i)]
 generic_histogram_by eq_f cmp_f x =
-    let g = groupBy eq_f (maybe x (`sortBy` x) cmp_f)
-    in zip (map head_err g) (map genericLength g)
+  let g = groupBy eq_f (maybe x (`sortBy` x) cmp_f)
+  in zip (map head_err g) (map genericLength g)
 
-{- | Type specialised 'generic_histogram_by'. -}
-histogram_by :: (a -> a-> Bool) -> Maybe (a -> a-> Ordering) -> [a] -> [(a,Int)]
+-- | Type specialised 'generic_histogram_by'.
+histogram_by :: (a -> a -> Bool) -> Maybe (a -> a -> Ordering) -> [a] -> [(a, Int)]
 histogram_by = generic_histogram_by
 
-{- | Count occurences of elements in list, 'histogram_by' of '==' and 'compare'. -}
-generic_histogram :: (Ord a,Integral i) => [a] -> [(a,i)]
+-- | Count occurences of elements in list, 'histogram_by' of '==' and 'compare'.
+generic_histogram :: (Ord a, Integral i) => [a] -> [(a, i)]
 generic_histogram = generic_histogram_by (==) (Just compare)
 
 {- | Type specialised 'generic_histogram'.  Elements will be in ascending order.
@@ -572,7 +573,7 @@ generic_histogram = generic_histogram_by (==) (Just compare)
 >>> map histogram ["","hohoh","yxx"]
 [[],[('h',3),('o',2)],[('x',2),('y',1)]]
 -}
-histogram :: Ord a => [a] -> [(a,Int)]
+histogram :: Ord a => [a] -> [(a, Int)]
 histogram = generic_histogram
 
 {- | Join two histograms, which must be sorted.
@@ -580,24 +581,25 @@ histogram = generic_histogram
 >>> histogram_join (zip "ab" [1,1]) (zip "bc" [1,1])
 [('a',1),('b',2),('c',1)]
 -}
-histogram_join :: Ord a => [(a,Int)] -> [(a,Int)] -> [(a,Int)]
+histogram_join :: Ord a => [(a, Int)] -> [(a, Int)] -> [(a, Int)]
 histogram_join p q =
-  let f (e1,n1) (e2,n2) = if e1 == e2 then Just (e1,n1 + n2) else Nothing
-  in case (p,q) of
-       (_,[]) -> p
-       ([],_) -> q
-       (p1:p',q1:q') -> case f p1 q1 of
-                          Just r -> r : histogram_join p' q'
-                          Nothing -> if p1 < q1
-                                     then p1 : histogram_join p' q
-                                     else q1 : histogram_join p q'
+  let f (e1, n1) (e2, n2) = if e1 == e2 then Just (e1, n1 + n2) else Nothing
+  in case (p, q) of
+      (_, []) -> p
+      ([], _) -> q
+      (p1 : p', q1 : q') -> case f p1 q1 of
+        Just r -> r : histogram_join p' q'
+        Nothing ->
+          if p1 < q1
+            then p1 : histogram_join p' q
+            else q1 : histogram_join p q'
 
 {- | 'foldr' of 'histogram_join'.
 
 >>> let f x = zip x (repeat 1) in histogram_merge (map f ["ab","bcd","de"])
 [('a',1),('b',2),('c',1),('d',2),('e',1)]
 -}
-histogram_merge :: Ord a => [[(a,Int)]] -> [(a,Int)]
+histogram_merge :: Ord a => [[(a, Int)]] -> [(a, Int)]
 histogram_merge = foldr histogram_join []
 
 {- | Given (k,#) histogram where k is enumerable generate filled histogram with 0 for empty k.
@@ -605,7 +607,7 @@ histogram_merge = foldr histogram_join []
 >>> histogram_fill (histogram "histogram") == zip ['a'..'t'] [1,0,0,0,0,0,1,1,1,0,0,0,1,0,1,0,0,1,1,1]
 True
 -}
-histogram_fill :: (Ord a, Enum a) => [(a,Int)] -> [(a,Int)]
+histogram_fill :: (Ord a, Enum a) => [(a, Int)] -> [(a, Int)]
 histogram_fill h =
   let k = map fst h
       e = [minimum k .. maximum k]
@@ -617,17 +619,16 @@ histogram giving for all keys the counts for (p,q).
 
 >>> histogram_composite (zip "ABCD" [4,3,2,1]) (zip "ABCE" [2,3,4,5])
 [('A',(4,2)),('B',(3,3)),('C',(2,4)),('D',(1,0)),('E',(0,5))]
-
 -}
-histogram_composite :: Ord a => [(a,Int)] -> [(a,Int)] -> [(a,(Int,Int))]
+histogram_composite :: Ord a => [(a, Int)] -> [(a, Int)] -> [(a, (Int, Int))]
 histogram_composite p q =
-  case (p,q) of
-    ([],_) -> map (\(k,n) -> (k,(0,n))) q
-    (_,[]) -> map (\(k,n) -> (k,(n,0))) p
-    ((k1,n1):p',(k2,n2):q') -> case compare k1 k2 of
-                                 LT -> (k1,(n1,0)) : histogram_composite p' q
-                                 EQ -> (k1,(n1,n2)) : histogram_composite p' q'
-                                 GT -> (k2,(0,n2)) : histogram_composite p q'
+  case (p, q) of
+    ([], _) -> map (\(k, n) -> (k, (0, n))) q
+    (_, []) -> map (\(k, n) -> (k, (n, 0))) p
+    ((k1, n1) : p', (k2, n2) : q') -> case compare k1 k2 of
+      LT -> (k1, (n1, 0)) : histogram_composite p' q
+      EQ -> (k1, (n1, n2)) : histogram_composite p' q'
+      GT -> (k2, (0, n2)) : histogram_composite p q'
 
 {- | Apply '-' at count of 'histogram_composite', ie. 0 indicates
 equal number at p and q, negative indicates more elements at p than
@@ -636,12 +637,12 @@ q and positive more elements at q than p.
 >>> histogram_diff (zip "ABCD" [4,3,2,1]) (zip "ABCE" [2,3,4,5]) == zip "ABCDE" [-2,0,2,-1,5]
 True
 -}
-histogram_diff :: Ord a => [(a,Int)] -> [(a,Int)] -> [(a,Int)]
-histogram_diff p = map (\(k,(n,m)) -> (k,m - n)) . histogram_composite p
+histogram_diff :: Ord a => [(a, Int)] -> [(a, Int)] -> [(a, Int)]
+histogram_diff p = map (\(k, (n, m)) -> (k, m - n)) . histogram_composite p
 
-{- | Elements that appear more than once in the input given equality predicate. -}
+-- | Elements that appear more than once in the input given equality predicate.
 duplicates_by :: Ord a => (a -> a -> Bool) -> [a] -> [a]
-duplicates_by f = map fst . filter (\(_,n) -> n > 1) . histogram_by f (Just compare)
+duplicates_by f = map fst . filter (\(_, n) -> n > 1) . histogram_by f (Just compare)
 
 {- | 'duplicates_by' of '=='.
 
@@ -661,9 +662,9 @@ duplicates = duplicates_by (==)
 -}
 segments :: Int -> Int -> [a] -> [[a]]
 segments i j p =
-    let q = take i p
-        p' = drop j p
-    in if length q /= i then [] else q : segments i j p'
+  let q = take i p
+      p' = drop j p
+  in if length q /= i then [] else q : segments i j p'
 
 {- | 'foldl1' 'intersect'.
 
@@ -737,12 +738,13 @@ filterInRange (lhs, rhs) = filter (\n -> n >= lhs && n < rhs)
 -}
 replace :: Eq a => [a] -> [a] -> [a] -> [a]
 replace p q s =
-    let n = length p
-    in case s of
-         [] -> []
-         c:s' -> if p `isPrefixOf` s
-                 then q ++ replace p q (drop n s)
-                 else c : replace p q s'
+  let n = length p
+  in case s of
+      [] -> []
+      c : s' ->
+        if p `isPrefixOf` s
+          then q ++ replace p q (drop n s)
+          else c : replace p q s'
 
 {- | Replace the /i/th value at /ns/ with /x/.
 
@@ -751,18 +753,18 @@ replace p q s =
 -}
 replace_at :: Integral i => [a] -> i -> a -> [a]
 replace_at ns i x =
-    let f j y = if i == j then x else y
-    in zipWith f [0..] ns
+  let f j y = if i == j then x else y
+  in zipWith f [0 ..] ns
 
-{- | Data.List.stripPrefix, which however hugs doesn't know of. -}
+-- | Data.List.stripPrefix, which however hugs doesn't know of.
 strip_prefix :: Eq a => [a] -> [a] -> Maybe [a]
 strip_prefix lhs rhs =
-  case (lhs,rhs) of
+  case (lhs, rhs) of
     ([], ys) -> Just ys
     (_, []) -> Nothing
-    (x:xs, y:ys) -> if x == y then strip_prefix xs ys else Nothing
+    (x : xs, y : ys) -> if x == y then strip_prefix xs ys else Nothing
 
-{- | 'error' of 'stripPrefix' -}
+-- | 'error' of 'stripPrefix'
 strip_prefix_err :: Eq t => [t] -> [t] -> [t]
 strip_prefix_err pfx = fromMaybe (error "strip_prefix") . strip_prefix pfx
 
@@ -784,16 +786,16 @@ group_by_on eq f = groupBy (eq `on` f)
 group_on :: Eq x => (a -> x) -> [a] -> [[a]]
 group_on = group_by_on (==)
 
-{- | Given an equality predicate and accesors for /key/ and /value/ collate adjacent values. -}
-collate_by_on_adjacent :: (k -> k -> Bool) -> (a -> k) -> (a -> v) -> [a] -> [(k,[v])]
+-- | Given an equality predicate and accesors for /key/ and /value/ collate adjacent values.
+collate_by_on_adjacent :: (k -> k -> Bool) -> (a -> k) -> (a -> v) -> [a] -> [(k, [v])]
 collate_by_on_adjacent eq f g =
-    let h l = case l of
-                [] -> error "collate_by_on_adjacent"
-                l0:_ -> (f l0,map g l)
-    in map h . group_by_on eq f
+  let h l = case l of
+        [] -> error "collate_by_on_adjacent"
+        l0 : _ -> (f l0, map g l)
+  in map h . group_by_on eq f
 
-{- | 'collate_by_on_adjacent' of '==' -}
-collate_on_adjacent :: Eq k => (a -> k) -> (a -> v) -> [a] -> [(k,[v])]
+-- | 'collate_by_on_adjacent' of '=='
+collate_on_adjacent :: Eq k => (a -> k) -> (a -> v) -> [a] -> [(k, [v])]
 collate_on_adjacent = collate_by_on_adjacent (==)
 
 {- | 'collate_on_adjacent' of 'fst' and 'snd'.
@@ -801,10 +803,10 @@ collate_on_adjacent = collate_by_on_adjacent (==)
 >>> collate_adjacent (zip "TDD" "xyz")
 [('T',"x"),('D',"yz")]
 -}
-collate_adjacent :: Eq a => [(a,b)] -> [(a,[b])]
+collate_adjacent :: Eq a => [(a, b)] -> [(a, [b])]
 collate_adjacent = collate_on_adjacent fst snd
 
-{- | Data.List.sortOn, which however hugs doesn't know of. -}
+-- | Data.List.sortOn, which however hugs doesn't know of.
 sort_on :: Ord b => (a -> b) -> [a] -> [a]
 sort_on f = map snd . sortBy (comparing fst) . map (\x -> let y = f x in y `seq` (y, x))
 
@@ -813,7 +815,7 @@ sort_on f = map snd . sortBy (comparing fst) . map (\x -> let y = f x in y `seq`
 >>> collate_on fst snd (zip "ABCBCD" "abcdef")
 [('A',"a"),('B',"bd"),('C',"ce"),('D',"f")]
 -}
-collate_on :: Ord k => (a -> k) -> (a -> v) -> [a] -> [(k,[v])]
+collate_on :: Ord k => (a -> k) -> (a -> v) -> [a] -> [(k, [v])]
 collate_on f g = collate_on_adjacent f g . sort_on f
 
 {- | 'collate_on' of 'fst' and 'snd'.
@@ -824,7 +826,7 @@ collate_on f g = collate_on_adjacent f g . sort_on f
 >>> collate (zip [1,2,1] "abc")
 [(1,"ac"),(2,"b")]
 -}
-collate :: Ord a => [(a,b)] -> [(a,[b])]
+collate :: Ord a => [(a, b)] -> [(a, [b])]
 collate = collate_on fst snd
 
 {- | Reverse of 'collate', inverse if order is not considered.
@@ -832,15 +834,15 @@ collate = collate_on fst snd
 >>> uncollate [(1,"ac"),(2,"b")]
 [(1,'a'),(1,'c'),(2,'b')]
 -}
-uncollate :: [(k,[v])] -> [(k,v)]
-uncollate = concatMap (\(k,v) -> zip (repeat k) v)
+uncollate :: [(k, [v])] -> [(k, v)]
+uncollate = concatMap (\(k, v) -> zip (repeat k) v)
 
 {- | Make /assoc/ list with given /key/.
 
 >>> with_key 'a' [1..3]
 [('a',1),('a',2),('a',3)]
 -}
-with_key :: k -> [v] -> [(k,v)]
+with_key :: k -> [v] -> [(k, v)]
 with_key h = zip (repeat h)
 
 {- | Left biased merge of association lists /p/ and /q/.
@@ -848,11 +850,11 @@ with_key h = zip (repeat h)
 >>> assoc_merge [(5,"a"),(3,"b")] [(5,"A"),(7,"C")]
 [(5,"a"),(3,"b"),(7,"C")]
 -}
-assoc_merge :: Eq k => [(k,v)] -> [(k,v)] -> [(k,v)]
+assoc_merge :: Eq k => [(k, v)] -> [(k, v)] -> [(k, v)]
 assoc_merge p q =
-    let p_k = map fst p
-        q' = filter ((`notElem` p_k) . fst) q
-    in p ++ q'
+  let p_k = map fst p
+      q' = filter ((`notElem` p_k) . fst) q
+  in p ++ q'
 
 {- | Keys are in ascending order, the entry retrieved is the rightmose with a key less than or equal to the key requested.
 If the key requested is less than the initial key, or the list is empty, returns 'Nothing'.
@@ -864,15 +866,15 @@ If the key requested is less than the initial key, or the list is empty, returns
 >>> ord_map_locate m 0
 Nothing
 -}
-ord_map_locate :: Ord k => [(k,v)] -> k -> Maybe (k,v)
+ord_map_locate :: Ord k => [(k, v)] -> k -> Maybe (k, v)
 ord_map_locate mp i =
-    let f (k0,v0) xs =
-          case xs of
-            [] -> if i >= k0 then Just (k0,v0) else error "ord_map_locate?"
-            ((k1,v1):xs') -> if i >= k0 && i < k1 then Just (k0,v0) else f (k1,v1) xs'
-    in case mp of
-         [] -> Nothing
-         (k0,v0):mp' -> if i < k0 then Nothing else f (k0,v0) mp'
+  let f (k0, v0) xs =
+        case xs of
+          [] -> if i >= k0 then Just (k0, v0) else error "ord_map_locate?"
+          ((k1, v1) : xs') -> if i >= k0 && i < k1 then Just (k0, v0) else f (k1, v1) xs'
+  in case mp of
+      [] -> Nothing
+      (k0, v0) : mp' -> if i < k0 then Nothing else f (k0, v0) mp'
 
 -- * Δ
 
@@ -893,11 +895,11 @@ This is an appropriate function for 'mapAccumL'.
 >>> dx_d' 0 [1,1,1]
 (3,[0,1,2])
 -}
-dx_d' :: Num t => t -> [t] -> (t,[t])
+dx_d' :: Num t => t -> [t] -> (t, [t])
 dx_d' n l =
-    case reverse (scanl (+) n l) of
-      e:r -> (e,reverse r)
-      _ -> error "dx_d'"
+  case reverse (scanl (+) n l) of
+    e : r -> (e, reverse r)
+    _ -> error "dx_d'"
 
 {- | Integration with /f/, ie. apply flip of /f/ between elements of /l/.
 
@@ -972,11 +974,11 @@ True
 subsequence :: Eq a => [a] -> [a] -> Bool
 subsequence = isInfixOf
 
-{- | Erroring variant of 'findIndex'. -}
+-- | Erroring variant of 'findIndex'.
 findIndex_err :: (a -> Bool) -> [a] -> Int
 findIndex_err f = fromMaybe (error "findIndex?") . findIndex f
 
-{- | Erroring variant of 'elemIndex'. -}
+-- | Erroring variant of 'elemIndex'.
 elemIndex_err :: Eq a => a -> [a] -> Int
 elemIndex_err x = fromMaybe (error "ix_of") . elemIndex x
 
@@ -986,23 +988,23 @@ elemIndex_err x = fromMaybe (error "ix_of") . elemIndex x
 -}
 elem_index_unique :: Eq a => a -> [a] -> Int
 elem_index_unique e p =
-    case elemIndices e p of
-      [i] -> i
-      _ -> error "elem_index_unique"
+  case elemIndices e p of
+    [i] -> i
+    _ -> error "elem_index_unique"
 
-{- | Lookup that errors and prints message and key. -}
-lookup_err_msg :: (Eq k,Show k) => String -> k -> [(k,v)] -> v
+-- | Lookup that errors and prints message and key.
+lookup_err_msg :: (Eq k, Show k) => String -> k -> [(k, v)] -> v
 lookup_err_msg err k = fromMaybe (error (err ++ ": " ++ show k)) . lookup k
 
-{- | Error variant. -}
-lookup_err :: Eq k => k -> [(k,v)] -> v
+-- | Error variant.
+lookup_err :: Eq k => k -> [(k, v)] -> v
 lookup_err n = fromMaybe (error "lookup") . lookup n
 
-{- | 'lookup' variant with default value. -}
-lookup_def :: Eq k => k -> v -> [(k,v)] -> v
+-- | 'lookup' variant with default value.
+lookup_def :: Eq k => k -> v -> [(k, v)] -> v
 lookup_def k d = fromMaybe d . lookup k
 
-{- | If /l/ is empty 'Nothing', else 'Just' /l/. -}
+-- | If /l/ is empty 'Nothing', else 'Just' /l/.
 non_empty :: [t] -> Maybe [t]
 non_empty l = if null l then Nothing else Just l
 
@@ -1011,11 +1013,11 @@ non_empty l = if null l then Nothing else Just l
 >>> lookup_set 1 (zip [1,2,3,4,1] "abcde")
 Just "ae"
 -}
-lookup_set :: Eq k => k -> [(k,v)] -> Maybe [v]
+lookup_set :: Eq k => k -> [(k, v)] -> Maybe [v]
 lookup_set k = non_empty . map snd . filter ((== k) . fst)
 
-{- | Erroring variant. -}
-lookup_set_err :: Eq k => k -> [(k,v)] -> [v]
+-- | Erroring variant.
+lookup_set_err :: Eq k => k -> [(k, v)] -> [v]
 lookup_set_err k = fromMaybe (error "lookup_set?") . lookup_set k
 
 {- | Reverse lookup.
@@ -1029,11 +1031,11 @@ Just 2
 >>> lookup 2 (zip [1..] ['a'..])
 Just 'b'
 -}
-reverse_lookup :: Eq v => v -> [(k,v)] -> Maybe k
+reverse_lookup :: Eq v => v -> [(k, v)] -> Maybe k
 reverse_lookup k = fmap fst . find ((== k) . snd)
 
-{- | Erroring variant. -}
-reverse_lookup_err :: Eq v => v -> [(k,v)] -> k
+-- | Erroring variant.
+reverse_lookup_err :: Eq v => v -> [(k, v)] -> k
 reverse_lookup_err k = fromMaybe (error "reverse_lookup") . reverse_lookup k
 
 {-
@@ -1044,7 +1046,7 @@ reverse_lookup key ls =
       (x,y):ls' -> if key == y then Just x else reverse_lookup key ls'
 -}
 
-{- | Erroring variant of 'find'. -}
+-- | Erroring variant of 'find'.
 find_err :: (t -> Bool) -> [t] -> t
 find_err f = fromMaybe (error "find") . find f
 
@@ -1054,19 +1056,20 @@ find_err f = fromMaybe (error "find") . find f
 >>> map (find_bounds_cmp compare [(0,1),(1,2)]) [-1,0,1,2,3]
 [Left ((0,1),GT),Right (0,1),Right (1,2),Left ((1,2),EQ),Left ((1,2),LT)]
 -}
-find_bounds_cmp :: (t -> s -> Ordering) -> [(t,t)] -> s -> Either ((t,t),Ordering) (t,t)
+find_bounds_cmp :: (t -> s -> Ordering) -> [(t, t)] -> s -> Either ((t, t), Ordering) (t, t)
 find_bounds_cmp f l x =
-    let g (p,q) = f p x /= GT && f q x == GT
-    in case l of
-         [] -> error "find_bounds_cmp: nil"
-         [(p,q)] -> if g (p,q) then Right (p,q) else Left ((p,q),f q x)
-         (p,q):l' -> if f p x == GT
-                     then Left ((p,q),GT)
-                     else if g (p,q) then Right (p,q) else find_bounds_cmp f l' x
+  let g (p, q) = f p x /= GT && f q x == GT
+  in case l of
+      [] -> error "find_bounds_cmp: nil"
+      [(p, q)] -> if g (p, q) then Right (p, q) else Left ((p, q), f q x)
+      (p, q) : l' ->
+        if f p x == GT
+          then Left ((p, q), GT)
+          else if g (p, q) then Right (p, q) else find_bounds_cmp f l' x
 
-{- | Decide if value is nearer the left or right value of a range, return 'fst' or 'snd'. -}
-decide_nearest_f :: Ord o => Bool -> (p -> o) -> (p,p) -> ((x,x) -> x)
-decide_nearest_f bias_left f (p,q) =
+-- | Decide if value is nearer the left or right value of a range, return 'fst' or 'snd'.
+decide_nearest_f :: Ord o => Bool -> (p -> o) -> (p, p) -> ((x, x) -> x)
+decide_nearest_f bias_left f (p, q) =
   case compare (f p) (f q) of
     LT -> fst
     EQ -> if bias_left then fst else snd
@@ -1077,47 +1080,47 @@ decide_nearest_f bias_left f (p,q) =
 >>> (decide_nearest True 2 (1,3)) ("left","right")
 "left"
 -}
-decide_nearest :: (Num o,Ord o) => Bool -> o -> (o,o) -> ((x,x) -> x)
+decide_nearest :: (Num o, Ord o) => Bool -> o -> (o, o) -> ((x, x) -> x)
 decide_nearest bias_left x = decide_nearest_f bias_left (abs . (x -))
 
-{- | /sel_f/ gets comparison key from /t/. -}
-find_nearest_by :: (Ord n,Num n) => (t -> n) -> Bool -> [t] -> n -> t
+-- | /sel_f/ gets comparison key from /t/.
+find_nearest_by :: (Ord n, Num n) => (t -> n) -> Bool -> [t] -> n -> t
 find_nearest_by sel_f bias_left l x =
   let cmp_f i j = compare (sel_f i) j
   in case find_bounds_cmp cmp_f (adj2 1 l) x of
-       Left ((p,_),GT) -> p
-       Left ((_,q),_) -> q
-       Right (p,q) -> decide_nearest bias_left x (sel_f p,sel_f q) (p,q)
+      Left ((p, _), GT) -> p
+      Left ((_, q), _) -> q
+      Right (p, q) -> decide_nearest bias_left x (sel_f p, sel_f q) (p, q)
 
 {- | Find the number that is nearest the requested value in an ascending list of numbers.
 
 >>> map (find_nearest_err True [0,3.5,4,7]) [-1,1,3,5,7,9]
 [0.0,0.0,3.5,4.0,7.0,7.0]
 -}
-find_nearest_err :: (Num n,Ord n) => Bool -> [n] -> n -> n
+find_nearest_err :: (Num n, Ord n) => Bool -> [n] -> n -> n
 find_nearest_err = find_nearest_by id
 
-{- | 'find_nearest_err' allowing 'null' input list (which returns 'Nothing') -}
-find_nearest :: (Num n,Ord n) => Bool -> [n] -> n -> Maybe n
+-- | 'find_nearest_err' allowing 'null' input list (which returns 'Nothing')
+find_nearest :: (Num n, Ord n) => Bool -> [n] -> n -> Maybe n
 find_nearest bias_left l x = if null l then Nothing else Just (find_nearest_err bias_left l x)
 
 {- | Basis of 'find_bounds'.
 There is an option to consider the last element specially, and if equal to the last span is given.
 scl=special-case-last
 -}
-find_bounds_scl :: Bool -> (t -> s -> Ordering) -> [(t,t)] -> s -> Maybe (t,t)
+find_bounds_scl :: Bool -> (t -> s -> Ordering) -> [(t, t)] -> s -> Maybe (t, t)
 find_bounds_scl scl f l x =
-    case find_bounds_cmp f l x of
-         Right r -> Just r
-         Left (r,EQ) -> if scl then Just r else Nothing
-         _ -> Nothing
+  case find_bounds_cmp f l x of
+    Right r -> Just r
+    Left (r, EQ) -> if scl then Just r else Nothing
+    _ -> Nothing
 
 {- | Find adjacent elements of list that bound element under given comparator.
 
 >>> map (find_bounds True compare [1..5]) [0,1,3.5,5]
 [Nothing,Just (1.0,2.0),Just (3.0,4.0),Just (4.0,5.0)]
 -}
-find_bounds :: Bool -> (t -> s -> Ordering) -> [t] -> s -> Maybe (t,t)
+find_bounds :: Bool -> (t -> s -> Ordering) -> [t] -> s -> Maybe (t, t)
 find_bounds scl f l = find_bounds_scl scl f (adj2 1 l)
 
 {- | Special case of 'dropRight'.
@@ -1127,10 +1130,10 @@ find_bounds scl f l = find_bounds_scl scl f (adj2 1 l)
 -}
 drop_last :: [t] -> [t]
 drop_last l =
-    case l of
-      [] -> []
-      [_] -> []
-      e:l' -> e : drop_last l'
+  case l of
+    [] -> []
+    [_] -> []
+    e : l' -> e : drop_last l'
 
 {- | Variant of 'drop' from right of list.
 
@@ -1148,7 +1151,7 @@ dropRight n = reverse . drop n . reverse
 dropWhileRight :: (a -> Bool) -> [a] -> [a]
 dropWhileRight p = reverse . dropWhile p . reverse
 
-{- | Data.List.dropWhileEnd, which however hugs doesn't know of. -}
+-- | Data.List.dropWhileEnd, which however hugs doesn't know of.
 drop_while_end :: (a -> Bool) -> [a] -> [a]
 drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 
@@ -1158,7 +1161,7 @@ drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 "A"
 -}
 drop_while_right :: (a -> Bool) -> [a] -> [a]
-drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x:xs) []
+drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 
 {- | 'take' from right.
 
@@ -1183,8 +1186,8 @@ takeWhileRight p = reverse . takeWhile p . reverse
 -}
 take_while_right :: (a -> Bool) -> [a] -> [a]
 take_while_right p =
-  snd .
-  foldr (\x xys -> (if p x && fst xys then bimap id (x:) else bimap (const False) id) xys) (True, [])
+  snd
+    . foldr (\x xys -> (if p x && fst xys then bimap id (x :) else bimap (const False) id) xys) (True, [])
 
 {- | Variant of 'take' that allows 'Nothing' to indicate the complete list.
 
@@ -1213,7 +1216,7 @@ take_until :: (a -> Bool) -> [a] -> [a]
 take_until f l =
   case l of
     [] -> error "take_until?"
-    e:l' -> if f e then [e] else e : take_until f l'
+    e : l' -> if f e then [e] else e : take_until f l'
 
 {- | Apply /f/ at first element, and /g/ at all other elements.
 
@@ -1222,9 +1225,9 @@ take_until f l =
 -}
 at_head :: (a -> b) -> (a -> b) -> [a] -> [b]
 at_head f g x =
-    case x of
-      [] -> []
-      e:x' -> f e : map g x'
+  case x of
+    [] -> []
+    e : x' -> f e : map g x'
 
 {- | Apply /f/ at all but last element, and /g/ at last element.
 
@@ -1233,28 +1236,28 @@ at_head f g x =
 -}
 at_last :: (a -> b) -> (a -> b) -> [a] -> [b]
 at_last f g x =
-    case x of
-      [] -> []
-      [i] -> [g i]
-      i:x' -> f i : at_last f g x'
+  case x of
+    [] -> []
+    [i] -> [g i]
+    i : x' -> f i : at_last f g x'
 
 {- | Separate list into an initial list and perhaps the last element tuple.
 
 >>> separate_last' []
 ([],Nothing)
 -}
-separate_last' :: [a] -> ([a],Maybe a)
+separate_last' :: [a] -> ([a], Maybe a)
 separate_last' x =
-    case reverse x of
-      [] -> ([],Nothing)
-      e:x' -> (reverse x',Just e)
+  case reverse x of
+    [] -> ([], Nothing)
+    e : x' -> (reverse x', Just e)
 
 {- | Error on null input.
 
 >>> separate_last [1..5] == ([1..4],5)
 True
 -}
-separate_last :: [a] -> ([a],a)
+separate_last :: [a] -> ([a], a)
 separate_last = fmap (fromMaybe (error "separate_last")) . separate_last'
 
 {- | Replace directly repeated elements with 'Nothing'.
@@ -1264,10 +1267,10 @@ separate_last = fmap (fromMaybe (error "separate_last")) . separate_last'
 -}
 indicate_repetitions :: Eq a => [a] -> [Maybe a]
 indicate_repetitions =
-    let f l = case l of
-                [] -> []
-                e:l' -> Just e : map (const Nothing) l'
-    in concatMap f . group
+  let f l = case l of
+        [] -> []
+        e : l' -> Just e : map (const Nothing) l'
+  in concatMap f . group
 
 {- | 'zipWith' of list and it's own tail.
 
@@ -1277,7 +1280,7 @@ indicate_repetitions =
 zip_with_adj :: (a -> a -> b) -> [a] -> [b]
 zip_with_adj f xs = zipWith f xs (tail_err xs)
 
-{- | Type-specialised 'zip_with_adj'. -}
+-- | Type-specialised 'zip_with_adj'.
 compare_adjacent_by :: (a -> a -> Ordering) -> [a] -> [Ordering]
 compare_adjacent_by = zip_with_adj
 
@@ -1291,23 +1294,26 @@ compare_adjacent = compare_adjacent_by compare
 
 {- | Head and tail of list.
 Useful to avoid "incomplete-uni-patterns" warnings.
-It's an error if the list is empty. -}
+It's an error if the list is empty.
+-}
 headTail :: [a] -> (a, [a])
 headTail l = (head_err l, tail_err l)
 
-{- | Second element of list -}
+-- | Second element of list
 second :: [t] -> Maybe t
 second l = l !? 1
 
 {- | First and second elements of list.
 Useful to avoid "incomplete-uni-patterns" warnings.
-It's an error if the list has less than two elements. -}
+It's an error if the list has less than two elements.
+-}
 firstSecond :: [t] -> (t, t)
 firstSecond l = (l !! 0, l !! 1)
 
 {- | First and last elements of list.
 Useful to avoid "incomplete-uni-patterns" warnings.
-It's an error if the list has less than two elements. -}
+It's an error if the list has less than two elements.
+-}
 firstLast :: [t] -> (t, t)
 firstLast l = (first_err l, last_err l)
 
@@ -1323,14 +1329,15 @@ This function is the adjacent variant.
 -}
 adjacent_groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
 adjacent_groupBy f p =
-    case p of
-      [] -> []
-      [x] -> [[x]]
-      x:y:p' -> let r = adjacent_groupBy f (y:p')
-                    (r0, r') = headTail r
-                in if f x y
-                   then (x:r0) : r'
-                   else [x] : r
+  case p of
+    [] -> []
+    [x] -> [[x]]
+    x : y : p' ->
+      let r = adjacent_groupBy f (y : p')
+          (r0, r') = headTail r
+      in if f x y
+          then (x : r0) : r'
+          else [x] : r
 
 {- | Reduce sequences of consecutive values to ranges.
 
@@ -1340,10 +1347,10 @@ adjacent_groupBy f p =
 >>> group_ranges [3,2,3,4,3]
 [(3,3),(2,4),(3,3)]
 -}
-group_ranges :: (Num t, Eq t) => [t] -> [(t,t)]
+group_ranges :: (Num t, Eq t) => [t] -> [(t, t)]
 group_ranges =
-    let f l = (head_err l,last_err l)
-    in map f . adjacent_groupBy (\p q -> p + 1 == q)
+  let f l = (head_err l, last_err l)
+  in map f . adjacent_groupBy (\p q -> p + 1 == q)
 
 {- | 'groupBy' on /structure/ of 'Maybe', ie. all 'Just' compare equal.
 
@@ -1360,12 +1367,12 @@ True
 -}
 all_equal :: Eq a => [a] -> Bool
 all_equal l =
-    case l of
-      [] -> True
-      [_] -> True
-      x:xs -> all (== x) xs
+  case l of
+    [] -> True
+    [_] -> True
+    x : xs -> all (== x) xs
 
-{- | Variant using 'nub'. -}
+-- | Variant using 'nub'.
 all_eq :: Eq n => [n] -> Bool
 all_eq = (== 1) . length . nub
 
@@ -1394,7 +1401,7 @@ sort_group_on f = group_on f . sort_on f
 "something"
 -}
 mcons :: Maybe a -> [a] -> [a]
-mcons e l = maybe l (:l) e
+mcons e l = maybe l (: l) e
 
 {- | Cons onto end of list.
 
@@ -1406,17 +1413,17 @@ snoc e l = l ++ [e]
 
 -- * Ordering
 
-{- | Comparison function type. -}
+-- | Comparison function type.
 type Compare_F a = a -> a -> Ordering
 
-{- | If /f/ compares 'EQ', defer to /g/. -}
+-- | If /f/ compares 'EQ', defer to /g/.
 two_stage_compare :: Compare_F a -> Compare_F a -> Compare_F a
 two_stage_compare f g p q =
-    case f p q of
-      EQ -> g p q
-      r -> r
+  case f p q of
+    EQ -> g p q
+    r -> r
 
-{- | 'compare' 'on' of 'two_stage_compare' -}
+-- | 'compare' 'on' of 'two_stage_compare'
 two_stage_compare_on :: (Ord i, Ord j) => (t -> i) -> (t -> j) -> t -> t -> Ordering
 two_stage_compare_on f g = two_stage_compare (compare `on` f) (compare `on` g)
 
@@ -1430,13 +1437,13 @@ LT
 -}
 n_stage_compare :: [Compare_F a] -> Compare_F a
 n_stage_compare l p q =
-    case l of
-      [] -> EQ
-      f:l' -> case f p q of
-                EQ -> n_stage_compare l' p q
-                r -> r
+  case l of
+    [] -> EQ
+    f : l' -> case f p q of
+      EQ -> n_stage_compare l' p q
+      r -> r
 
-{- | 'compare' 'on' of 'two_stage_compare' -}
+-- | 'compare' 'on' of 'two_stage_compare'
 n_stage_compare_on :: Ord i => [t -> i] -> t -> t -> Ordering
 n_stage_compare_on l = n_stage_compare (map (compare `on`) l)
 
@@ -1459,19 +1466,19 @@ sort_to e = map fst . sort_on snd . zip e
 sort_to_rev :: Ord i => [i] -> [e] -> [e]
 sort_to_rev = flip sort_to
 
-{- | 'sortBy' of 'two_stage_compare'. -}
+-- | 'sortBy' of 'two_stage_compare'.
 sort_by_two_stage :: Compare_F a -> Compare_F a -> [a] -> [a]
 sort_by_two_stage f g = sortBy (two_stage_compare f g)
 
-{- | 'sortBy' of 'n_stage_compare'. -}
+-- | 'sortBy' of 'n_stage_compare'.
 sort_by_n_stage :: [Compare_F a] -> [a] -> [a]
 sort_by_n_stage f = sortBy (n_stage_compare f)
 
-{- | 'sortBy' of 'two_stage_compare_on'. -}
-sort_by_two_stage_on :: (Ord b,Ord c) => (a -> b) -> (a -> c) -> [a] -> [a]
+-- | 'sortBy' of 'two_stage_compare_on'.
+sort_by_two_stage_on :: (Ord b, Ord c) => (a -> b) -> (a -> c) -> [a] -> [a]
 sort_by_two_stage_on f g = sortBy (two_stage_compare_on f g)
 
-{- | 'sortBy' of 'n_stage_compare_on'. -}
+-- | 'sortBy' of 'n_stage_compare_on'.
 sort_by_n_stage_on :: Ord b => [a -> b] -> [a] -> [a]
 sort_by_n_stage_on f = sortBy (n_stage_compare_on f)
 
@@ -1483,20 +1490,19 @@ True
 merge_by :: Compare_F a -> [a] -> [a] -> [a]
 merge_by = List.Ordered.mergeBy
 
-{- | 'merge_by' 'compare' 'on'. -}
+-- | 'merge_by' 'compare' 'on'.
 merge_on :: Ord x => (a -> x) -> [a] -> [a] -> [a]
 merge_on f = merge_by (compare `on` f)
 
-{- | 'List.Ordered.mergeBy' of 'two_stage_compare'. -}
+-- | 'List.Ordered.mergeBy' of 'two_stage_compare'.
 merge_by_two_stage :: Ord b => (a -> b) -> Compare_F c -> (a -> c) -> [a] -> [a] -> [a]
 merge_by_two_stage f cmp g = List.Ordered.mergeBy (two_stage_compare (compare `on` f) (cmp `on` g))
 
-{- | Alias for 'List.Ordered.merge' -}
+-- | Alias for 'List.Ordered.merge'
 merge :: Ord a => [a] -> [a] -> [a]
 merge = List.Ordered.merge
 
-{- | Merge list of sorted lists given comparison function.  Note that this is not equal to 'List.Ordered.mergeAll'.
--}
+-- | Merge list of sorted lists given comparison function.  Note that this is not equal to 'List.Ordered.mergeAll'.
 merge_set_by :: (a -> a -> Ordering) -> [[a]] -> [a]
 merge_set_by f = foldr (merge_by f) []
 
@@ -1508,7 +1514,7 @@ True
 merge_set :: Ord a => [[a]] -> [a]
 merge_set = merge_set_by compare
 
-{-| 'merge_by' variant that joins (resolves) equal elements.
+{- | 'merge_by' variant that joins (resolves) equal elements.
 
 >>> let left p _ = p
 >>> let right _ q = q
@@ -1523,15 +1529,15 @@ merge_set = merge_set_by compare
 -}
 merge_by_resolve :: (a -> a -> a) -> Compare_F a -> [a] -> [a] -> [a]
 merge_by_resolve jn cmp =
-    let recur p q =
-            case (p,q) of
-              ([],_) -> q
-              (_,[]) -> p
-              (l:p',r:q') -> case cmp l r of
-                               LT -> l : recur p' q
-                               EQ -> jn l r : recur p' q'
-                               GT -> r : recur p q'
-    in recur
+  let recur p q =
+        case (p, q) of
+          ([], _) -> q
+          (_, []) -> p
+          (l : p', r : q') -> case cmp l r of
+            LT -> l : recur p' q
+            EQ -> jn l r : recur p' q'
+            GT -> r : recur p q'
+  in recur
 
 {- | Merge two sorted (ascending) sequences.
 Where elements compare equal, select element from left input.
@@ -1550,11 +1556,11 @@ Just (3,2)
 >>> find_adj (>=) [1,2,3,3,2,1]
 Just (3,3)
 -}
-find_adj :: (a -> a -> Bool) -> [a] -> Maybe (a,a)
+find_adj :: (a -> a -> Bool) -> [a] -> Maybe (a, a)
 find_adj f xs =
-    case xs of
-      p:q:xs' -> if f p q then Just (p,q) else find_adj f (q:xs')
-      _ -> Nothing
+  case xs of
+    p : q : xs' -> if f p q then Just (p, q) else find_adj f (q : xs')
+    _ -> Nothing
 
 {- | 'find_adj' of '>='
 
@@ -1593,27 +1599,29 @@ Just 4
 -}
 elemIndex_ordered :: Ord t => t -> [t] -> Maybe Int
 elemIndex_ordered e =
-    let recur k l =
-            case l of
-              [] -> Nothing
-              x:l' -> if e == x
-                      then Just k
-                      else if x > e
-                           then Nothing
-                           else recur (k + 1) l'
-    in recur 0
+  let recur k l =
+        case l of
+          [] -> Nothing
+          x : l' ->
+            if e == x
+              then Just k
+              else
+                if x > e
+                  then Nothing
+                  else recur (k + 1) l'
+  in recur 0
 
-{- | 'zipWith' variant equivalent to 'mapMaybe' (ie. 'catMaybes' of 'zipWith') -}
+-- | 'zipWith' variant equivalent to 'mapMaybe' (ie. 'catMaybes' of 'zipWith')
 zip_with_maybe :: (a -> b -> Maybe c) -> [a] -> [b] -> [c]
 zip_with_maybe f lhs = catMaybes . zipWith f lhs
 
-{- | 'zipWith' variant that extends shorter side using given value. -}
+-- | 'zipWith' variant that extends shorter side using given value.
 zip_with_ext :: t -> u -> (t -> u -> v) -> [t] -> [u] -> [v]
 zip_with_ext i j f p q =
-  case (p,q) of
-    ([],_) -> map (f i) q
-    (_,[]) -> map (`f` j) p
-    (x:p',y:q') -> f x y : zip_with_ext i j f p' q'
+  case (p, q) of
+    ([], _) -> map (f i) q
+    (_, []) -> map (`f` j) p
+    (x : p', y : q') -> f x y : zip_with_ext i j f p' q'
 
 {- | 'zip_with_ext' of ','
 
@@ -1633,7 +1641,7 @@ zip_with_ext i j f p q =
 >>> f "p" "qq"
 [('p','q'),('i','q')]
 -}
-zip_ext :: t -> u -> [t] -> [u] -> [(t,u)]
+zip_ext :: t -> u -> [t] -> [u] -> [(t, u)]
 zip_ext i j = zip_with_ext i j (,)
 
 {- | Keep right variant of 'zipWith', where unused rhs values are returned.
@@ -1641,13 +1649,13 @@ zip_ext i j = zip_with_ext i j (,)
 >>> zip_with_kr (,) [1..3] ['a'..'e']
 ([(1,'a'),(2,'b'),(3,'c')],"de")
 -}
-zip_with_kr :: (a -> b -> c) -> [a] -> [b] -> ([c],[b])
+zip_with_kr :: (a -> b -> c) -> [a] -> [b] -> ([c], [b])
 zip_with_kr f =
-    let go r p q =
-            case (p,q) of
-              (i:p',j:q') -> go (f i j : r) p' q'
-              _ -> (reverse r,q)
-    in go []
+  let go r p q =
+        case (p, q) of
+          (i : p', j : q') -> go (f i j : r) p' q'
+          _ -> (reverse r, q)
+  in go []
 
 {- | A 'zipWith' variant that always consumes an element from the left
 hand side (lhs), but only consumes an element from the right hand
@@ -1657,12 +1665,12 @@ before the lhs.
 -}
 zip_with_perhaps_rhs :: (a -> b -> Either c c) -> (a -> c) -> [a] -> [b] -> [c]
 zip_with_perhaps_rhs f g lhs rhs =
-    case (lhs,rhs) of
-      ([],_) -> []
-      (_,[]) -> map g lhs
-      (p:lhs',q:rhs') -> case f p q of
-                           Left r -> r : zip_with_perhaps_rhs f g lhs' rhs
-                           Right r -> r : zip_with_perhaps_rhs f g lhs' rhs'
+  case (lhs, rhs) of
+    ([], _) -> []
+    (_, []) -> map g lhs
+    (p : lhs', q : rhs') -> case f p q of
+      Left r -> r : zip_with_perhaps_rhs f g lhs' rhs
+      Right r -> r : zip_with_perhaps_rhs f g lhs' rhs'
 
 {- | Zip a list with a list of lists.
 Ordinarily the list has at least as many elements as there are elements at the list of lists.
@@ -1678,7 +1686,7 @@ zip_list_with_list_of_list :: [p] -> [[q]] -> [[(p, q)]]
 zip_list_with_list_of_list s l =
   case l of
     [] -> []
-    e:l' ->
+    e : l' ->
       let n = length e
       in zip (take n s) e : zip_list_with_list_of_list (drop n s) l'
 
@@ -1687,26 +1695,27 @@ zip_list_with_list_of_list s l =
 >>> fill_gaps_ascending' 'x' (1,9) (zip [1,5,7] "abc")
 [(1,'a'),(2,'x'),(3,'x'),(4,'x'),(5,'b'),(6,'x'),(7,'c'),(8,'x'),(9,'x')]
 -}
-fill_gaps_ascending :: (Enum n, Ord n) => t -> (n,n) -> [(n,t)] -> [(n,t)]
-fill_gaps_ascending def_e (l,r) =
-    let f i (j,e) = if j > i then Left (i,def_e) else Right (j,e)
-        g i = (i,def_e)
-    in zip_with_perhaps_rhs f g [l .. r]
+fill_gaps_ascending :: (Enum n, Ord n) => t -> (n, n) -> [(n, t)] -> [(n, t)]
+fill_gaps_ascending def_e (l, r) =
+  let f i (j, e) = if j > i then Left (i, def_e) else Right (j, e)
+      g i = (i, def_e)
+  in zip_with_perhaps_rhs f g [l .. r]
 
-{- | Direct definition. -}
-fill_gaps_ascending' :: (Num n,Enum n, Ord n) => t -> (n,n) -> [(n,t)] -> [(n,t)]
-fill_gaps_ascending' def (l,r) =
-    let recur n x =
-            if n > r
-            then []
-            else case x of
-                   [] -> zip [n .. r] (repeat def)
-                   (m,e):x' -> if n < m
-                               then (n,def) : recur (n + 1) x
-                               else (m,e) : recur (n + 1) x'
-    in recur l
+-- | Direct definition.
+fill_gaps_ascending' :: (Num n, Enum n, Ord n) => t -> (n, n) -> [(n, t)] -> [(n, t)]
+fill_gaps_ascending' def (l, r) =
+  let recur n x =
+        if n > r
+          then []
+          else case x of
+            [] -> zip [n .. r] (repeat def)
+            (m, e) : x' ->
+              if n < m
+                then (n, def) : recur (n + 1) x
+                else (m, e) : recur (n + 1) x'
+  in recur l
 
-{- | Variant with default value for empty input list case. -}
+-- | Variant with default value for empty input list case.
 minimumBy_or :: t -> (t -> t -> Ordering) -> [t] -> t
 minimumBy_or p f q = if null q then p else minimumBy f q
 
@@ -1715,11 +1724,11 @@ minimumBy_or p f q = if null q then p else minimumBy f q
 >>> minmax "minmax"
 ('a','x')
 -}
-minmax :: Ord t => [t] -> (t,t)
+minmax :: Ord t => [t] -> (t, t)
 minmax inp =
-    case inp of
-      [] -> error "minmax: null"
-      x:xs -> let mm p (l,r) = (min p l,max p r) in foldr mm (x,x) xs
+  case inp of
+    [] -> error "minmax: null"
+    x : xs -> let mm p (l, r) = (min p l, max p r) in foldr mm (x, x) xs
 
 {- | Append /k/ to the right of /l/ until result has /n/ places.
 Truncates long input lists.
@@ -1776,20 +1785,20 @@ Right [1,6,7,8]
 >>> embedding ("embedding","mind")
 Left [1,6,7]
 -}
-embedding :: Eq t => ([t],[t]) -> Either [Int] [Int]
+embedding :: Eq t => ([t], [t]) -> Either [Int] [Int]
 embedding =
-    let recur n r (p,q) =
-            case (p,q) of
-              (_,[]) -> Right (reverse r)
-              ([],_) -> Left (reverse r)
-              (x:p',y:q') ->
-                  let n' = n + 1
-                      r' = if x == y then n : r else r
-                  in recur n' r' (p',if x == y then q' else q)
-    in recur 0 []
+  let recur n r (p, q) =
+        case (p, q) of
+          (_, []) -> Right (reverse r)
+          ([], _) -> Left (reverse r)
+          (x : p', y : q') ->
+            let n' = n + 1
+                r' = if x == y then n : r else r
+            in recur n' r' (p', if x == y then q' else q)
+  in recur 0 []
 
-{- | 'fromRight' of 'embedding' -}
-embedding_err :: Eq t => ([t],[t]) -> [Int]
+-- | 'fromRight' of 'embedding'
+embedding_err :: Eq t => ([t], [t]) -> [Int]
 embedding_err = either (error "embedding_err") id . embedding
 
 {- | Does /q/ occur in sequence, though not necessarily adjacently, in /p/.
@@ -1804,18 +1813,18 @@ True
 False
 -}
 is_embedding :: Eq t => [t] -> [t] -> Bool
-is_embedding p q = Either.is_right (embedding (p,q))
+is_embedding p q = Either.is_right (embedding (p, q))
 
 -- * Un-list
 
-{- | Unpack one element list. -}
+-- | Unpack one element list.
 unlist1 :: [t] -> Maybe t
 unlist1 l =
-    case l of
-      [e] -> Just e
-      _ -> Nothing
+  case l of
+    [e] -> Just e
+    _ -> Nothing
 
-{- | Erroring variant. -}
+-- | Erroring variant.
 unlist1_err :: [t] -> t
 unlist1_err = fromMaybe (error "unlist1") . unlist1
 
@@ -1833,31 +1842,33 @@ True
 > let d = putStrLn . Tree.drawTree . fmap show
 > d (group_tree ((==) '(',(==) ')') "a(b(cd)ef)ghi")
 -}
-group_tree :: (a -> Bool,a -> Bool) -> [a] -> Tree.Tree (Maybe a)
-group_tree (open_f,close_f) =
-    let unit e = Tree.Node (Just e) []
-        nil = Tree.Node Nothing []
-        insert_e (Tree.Node t l) e = Tree.Node t (e:l)
-        reverse_n (Tree.Node t l) = Tree.Node t (reverse l)
-        do_push (r,z) e =
-            case z of
-              h:z' -> (r,insert_e h (unit e) : z')
-              [] -> (unit e : r,[])
-        do_open (r,z) = (r,nil:z)
-        do_close (r,z) =
-            case z of
-              h0:h1:z' -> (r,insert_e h1 (reverse_n h0) : z')
-              h:z' -> (reverse_n h : r,z')
-              [] -> (r,z)
-        go st x =
-            case x of
-              [] -> Tree.Node Nothing (reverse (fst st))
-              e:x' -> if open_f e
-                      then go (do_push (do_open st) e) x'
-                      else if close_f e
-                           then go (do_close (do_push st e)) x'
-                           else go (do_push st e) x'
-    in go ([],[])
+group_tree :: (a -> Bool, a -> Bool) -> [a] -> Tree.Tree (Maybe a)
+group_tree (open_f, close_f) =
+  let unit e = Tree.Node (Just e) []
+      nil = Tree.Node Nothing []
+      insert_e (Tree.Node t l) e = Tree.Node t (e : l)
+      reverse_n (Tree.Node t l) = Tree.Node t (reverse l)
+      do_push (r, z) e =
+        case z of
+          h : z' -> (r, insert_e h (unit e) : z')
+          [] -> (unit e : r, [])
+      do_open (r, z) = (r, nil : z)
+      do_close (r, z) =
+        case z of
+          h0 : h1 : z' -> (r, insert_e h1 (reverse_n h0) : z')
+          h : z' -> (reverse_n h : r, z')
+          [] -> (r, z)
+      go st x =
+        case x of
+          [] -> Tree.Node Nothing (reverse (fst st))
+          e : x' ->
+            if open_f e
+              then go (do_push (do_open st) e) x'
+              else
+                if close_f e
+                  then go (do_close (do_push st e)) x'
+                  else go (do_push st e) x'
+  in go ([], [])
 
 -- * Indexing
 
@@ -1869,7 +1880,7 @@ group_tree (open_f,close_f) =
 > remove_ix 5 "short" -- error
 -}
 remove_ix :: Int -> [a] -> [a]
-remove_ix k l = let (p,q) = splitAt k l in p ++ tail_err q
+remove_ix k l = let (p, q) = splitAt k l in p ++ tail_err q
 
 {- | Delete element at ix from list (c.f. remove_ix, this has a more specific error if index does not exist).
 
@@ -1880,17 +1891,17 @@ remove_ix k l = let (p,q) = splitAt k l in p ++ tail_err q
 -}
 delete_at :: (Eq t, Num t) => t -> [a] -> [a]
 delete_at ix l =
-  case (ix,l) of
-    (_,[]) -> error "delete_at: index does not exist"
-    (0,_:l') -> l'
-    (_,e:l') -> e : delete_at (ix - 1) l'
+  case (ix, l) of
+    (_, []) -> error "delete_at: index does not exist"
+    (0, _ : l') -> l'
+    (_, e : l') -> e : delete_at (ix - 1) l'
 
-{- | Select or remove elements at set of indices. -}
+-- | Select or remove elements at set of indices.
 operate_ixs :: Bool -> [Int] -> [a] -> [a]
 operate_ixs mode k =
-    let sel = if mode then notElem else elem
-        f (n,e) = if n `sel` k then Nothing else Just e
-    in mapMaybe f . zip [0..]
+  let sel = if mode then notElem else elem
+      f (n, e) = if n `sel` k then Nothing else Just e
+  in mapMaybe f . zip [0 ..]
 
 {- | Select elements at set of indices.
 
@@ -1915,24 +1926,25 @@ remove_ixs = operate_ixs False
 -}
 replace_ix :: (a -> a) -> Int -> [a] -> [a]
 replace_ix f i p =
-    let (q,r) = splitAt i p
-        (s,t) = headTail r
-    in q ++ (f s : t)
+  let (q, r) = splitAt i p
+      (s, t) = headTail r
+  in q ++ (f s : t)
 
 {- | List equality, ignoring indicated indices.
 
 >>> list_eq_ignoring_indices [3,5] "abcdefg" "abc.e.g"
 True
 -}
-list_eq_ignoring_indices :: (Eq t,Integral i) => [i] -> [t] -> [t] -> Bool
+list_eq_ignoring_indices :: (Eq t, Integral i) => [i] -> [t] -> [t] -> Bool
 list_eq_ignoring_indices x =
   let f n p q =
-        case (p,q) of
-          ([],[]) -> True
-          ([],_) -> False
-          (_,[]) -> False
-          (p1:p',q1:q') -> (n `elem` x || p1 == q1) &&
-                           f (n + 1) p' q'
+        case (p, q) of
+          ([], []) -> True
+          ([], _) -> False
+          (_, []) -> False
+          (p1 : p', q1 : q') ->
+            (n `elem` x || p1 == q1)
+              && f (n + 1) p' q'
   in f 0
 
 {- | Edit list to have /v/ at indices /k/.
@@ -1947,20 +1959,21 @@ All replacements must be in range.
 
 > list_set_indices [(9,'I')] "abcdefg" == undefined
 -}
-list_set_indices :: (Eq ix, Num ix) => [(ix,t)] -> [t] -> [t]
+list_set_indices :: (Eq ix, Num ix) => [(ix, t)] -> [t] -> [t]
 list_set_indices =
   let f n r l =
-        case (r,l) of
-          ([],_) -> l
-          (_,[]) -> error "list_set_indices: out of range?"
-          ((k,v):r',l0:l') -> if n == k
-                              then v : f (n + 1) r' l'
-                              else l0 : f (n + 1) r l'
+        case (r, l) of
+          ([], _) -> l
+          (_, []) -> error "list_set_indices: out of range?"
+          ((k, v) : r', l0 : l') ->
+            if n == k
+              then v : f (n + 1) r' l'
+              else l0 : f (n + 1) r l'
   in f 0
 
-{- | Variant of 'list_set_indices' with one replacement. -}
+-- | Variant of 'list_set_indices' with one replacement.
 list_set_ix :: (Eq t, Num t) => t -> a -> [a] -> [a]
-list_set_ix k v = list_set_indices [(k,v)]
+list_set_ix k v = list_set_indices [(k, v)]
 
 {- | Cyclic indexing function.
 
@@ -1969,10 +1982,10 @@ list_set_ix k v = list_set_indices [(k,v)]
 -}
 at_cyclic :: [a] -> Int -> a
 at_cyclic l n =
-    let m = IntMap.fromList (zip [0..] l)
-        k = IntMap.size m
-        n' = n `mod` k
-    in fromMaybe (error "cyc_at") (IntMap.lookup n' m)
+  let m = IntMap.fromList (zip [0 ..] l)
+      k = IntMap.size m
+      n' = n `mod` k
+  in fromMaybe (error "cyc_at") (IntMap.lookup n' m)
 
 {- | Index list from the end, assuming the list is longer than n + 1.
 
@@ -2002,7 +2015,7 @@ merge_left_first :: [a] -> [a] -> [a]
 merge_left_first p q =
   case (p, q) of
     ([], _) -> q
-    (x:xs, _) -> x : merge_left_first q xs
+    (x : xs, _) -> x : merge_left_first q xs
 
 {- | All pairs of p and q, allows inifite lists and lists that terminate.  (Norman Ramsey)
 ml = merge-left
@@ -2018,10 +2031,13 @@ all_pairs_ml p q =
   case (p, q) of
     (_, []) -> []
     ([], _) -> []
-    (a:as, b:bs) ->
-      (a, b) : (([(a, b') | b' <- bs] `merge_left_first`
-                 [(a', b) | a' <- as]) `merge_left_first`
-                 all_pairs_ml as bs)
+    (a : as, b : bs) ->
+      (a, b)
+        : ( ( [(a, b') | b' <- bs]
+                `merge_left_first` [(a', b) | a' <- as]
+            )
+              `merge_left_first` all_pairs_ml as bs
+          )
 
 {- | All possible pairs of elements (/x/,/y/) where /x/ is from /p/ and /y/ from /q/.
 Enumerated in the ordinary sequence.
@@ -2030,5 +2046,5 @@ lc = list-comprehension
 >>> all_pairs_lc "ab" "cde"
 [('a','c'),('a','d'),('a','e'),('b','c'),('b','d'),('b','e')]
 -}
-all_pairs_lc :: [t] -> [u] -> [(t,u)]
-all_pairs_lc p q = [(x,y) | x <- p, y <- q]
+all_pairs_lc :: [t] -> [u] -> [(t, u)]
+all_pairs_lc p q = [(x, y) | x <- p, y <- q]

@@ -14,7 +14,6 @@
 
 >>> map int16_to_float [-1,0,1]
 [-1.0,0.0,1.0]
-
 -}
 module Music.Theory.Math.Convert where
 
@@ -96,7 +95,6 @@ word8_to_int32 = fromIntegral
 -- | Type specialised 'fromIntegral'
 word8_to_int64 :: Word8 -> Int64
 word8_to_int64 = fromIntegral
-
 
 -- | Type specialised 'fromIntegral'
 word8_to_int :: Word8 -> Int
@@ -517,647 +515,647 @@ integer_to_double = fromIntegral
 -- | Type specialised 'fromIntegral'
 word8_to_word16_maybe :: Word8 -> Maybe Word16
 word8_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_word32_maybe :: Word8 -> Maybe Word32
 word8_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_word64_maybe :: Word8 -> Maybe Word64
 word8_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_int8_maybe :: Word8 -> Maybe Int8
 word8_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_int16_maybe :: Word8 -> Maybe Int16
 word8_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_int32_maybe :: Word8 -> Maybe Int32
 word8_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_int64_maybe :: Word8 -> Maybe Int64
 word8_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word8_to_int_maybe :: Word8 -> Maybe Int
 word8_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_word8_maybe :: Word16 -> Maybe Word8
 word16_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_word32_maybe :: Word16 -> Maybe Word32
 word16_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_word64_maybe :: Word16 -> Maybe Word64
 word16_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_int8_maybe :: Word16 -> Maybe Int8
 word16_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_int16_maybe :: Word16 -> Maybe Int16
 word16_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_int32_maybe :: Word16 -> Maybe Int32
 word16_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_int64_maybe :: Word16 -> Maybe Int64
 word16_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word16_to_int_maybe :: Word16 -> Maybe Int
 word16_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_word8_maybe :: Word32 -> Maybe Word8
 word32_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_word16_maybe :: Word32 -> Maybe Word16
 word32_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_word64_maybe :: Word32 -> Maybe Word64
 word32_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_int8_maybe :: Word32 -> Maybe Int8
 word32_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_int16_maybe :: Word32 -> Maybe Int16
 word32_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_int32_maybe :: Word32 -> Maybe Int32
 word32_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_int64_maybe :: Word32 -> Maybe Int64
 word32_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word32_to_int_maybe :: Word32 -> Maybe Int
 word32_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_word8_maybe :: Word64 -> Maybe Word8
 word64_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_word16_maybe :: Word64 -> Maybe Word16
 word64_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_word32_maybe :: Word64 -> Maybe Word32
 word64_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_int8_maybe :: Word64 -> Maybe Int8
 word64_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_int16_maybe :: Word64 -> Maybe Int16
 word64_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_int32_maybe :: Word64 -> Maybe Int32
 word64_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_int64_maybe :: Word64 -> Maybe Int64
 word64_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 word64_to_int_maybe :: Word64 -> Maybe Int
 word64_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_word8_maybe :: Int8 -> Maybe Word8
 int8_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_word16_maybe :: Int8 -> Maybe Word16
 int8_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_word32_maybe :: Int8 -> Maybe Word32
 int8_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_word64_maybe :: Int8 -> Maybe Word64
 int8_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_int16_maybe :: Int8 -> Maybe Int16
 int8_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_int32_maybe :: Int8 -> Maybe Int32
 int8_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_int64_maybe :: Int8 -> Maybe Int64
 int8_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int8_to_int_maybe :: Int8 -> Maybe Int
 int8_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_word8_maybe :: Int16 -> Maybe Word8
 int16_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_word16_maybe :: Int16 -> Maybe Word16
 int16_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_word32_maybe :: Int16 -> Maybe Word32
 int16_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_word64_maybe :: Int16 -> Maybe Word64
 int16_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_int8_maybe :: Int16 -> Maybe Int8
 int16_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_int32_maybe :: Int16 -> Maybe Int32
 int16_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_int64_maybe :: Int16 -> Maybe Int64
 int16_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int16_to_int_maybe :: Int16 -> Maybe Int
 int16_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_word8_maybe :: Int32 -> Maybe Word8
 int32_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_word16_maybe :: Int32 -> Maybe Word16
 int32_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_word32_maybe :: Int32 -> Maybe Word32
 int32_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_word64_maybe :: Int32 -> Maybe Word64
 int32_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_int8_maybe :: Int32 -> Maybe Int8
 int32_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_int16_maybe :: Int32 -> Maybe Int16
 int32_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_int64_maybe :: Int32 -> Maybe Int64
 int32_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int32_to_int_maybe :: Int32 -> Maybe Int
 int32_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_word8_maybe :: Int64 -> Maybe Word8
 int64_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_word16_maybe :: Int64 -> Maybe Word16
 int64_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_word32_maybe :: Int64 -> Maybe Word32
 int64_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_word64_maybe :: Int64 -> Maybe Word64
 int64_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_int8_maybe :: Int64 -> Maybe Int8
 int64_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_int16_maybe :: Int64 -> Maybe Int16
 int64_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_int32_maybe :: Int64 -> Maybe Int32
 int64_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int64_to_int_maybe :: Int64 -> Maybe Int
 int64_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_word8_maybe :: Int -> Maybe Word8
 int_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_word16_maybe :: Int -> Maybe Word16
 int_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_word32_maybe :: Int -> Maybe Word32
 int_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_word64_maybe :: Int -> Maybe Word64
 int_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_int8_maybe :: Int -> Maybe Int8
 int_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_int16_maybe :: Int -> Maybe Int16
 int_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_int32_maybe :: Int -> Maybe Int32
 int_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 int_to_int64_maybe :: Int -> Maybe Int64
 int_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_word8_maybe :: Integer -> Maybe Word8
 integer_to_word8_maybe n =
-    if n < fromIntegral (minBound::Word8) ||
-       n > fromIntegral (maxBound::Word8)
+  if n < fromIntegral (minBound :: Word8)
+    || n > fromIntegral (maxBound :: Word8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_word16_maybe :: Integer -> Maybe Word16
 integer_to_word16_maybe n =
-    if n < fromIntegral (minBound::Word16) ||
-       n > fromIntegral (maxBound::Word16)
+  if n < fromIntegral (minBound :: Word16)
+    || n > fromIntegral (maxBound :: Word16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_word32_maybe :: Integer -> Maybe Word32
 integer_to_word32_maybe n =
-    if n < fromIntegral (minBound::Word32) ||
-       n > fromIntegral (maxBound::Word32)
+  if n < fromIntegral (minBound :: Word32)
+    || n > fromIntegral (maxBound :: Word32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_word64_maybe :: Integer -> Maybe Word64
 integer_to_word64_maybe n =
-    if n < fromIntegral (minBound::Word64) ||
-       n > fromIntegral (maxBound::Word64)
+  if n < fromIntegral (minBound :: Word64)
+    || n > fromIntegral (maxBound :: Word64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_int8_maybe :: Integer -> Maybe Int8
 integer_to_int8_maybe n =
-    if n < fromIntegral (minBound::Int8) ||
-       n > fromIntegral (maxBound::Int8)
+  if n < fromIntegral (minBound :: Int8)
+    || n > fromIntegral (maxBound :: Int8)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_int16_maybe :: Integer -> Maybe Int16
 integer_to_int16_maybe n =
-    if n < fromIntegral (minBound::Int16) ||
-       n > fromIntegral (maxBound::Int16)
+  if n < fromIntegral (minBound :: Int16)
+    || n > fromIntegral (maxBound :: Int16)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_int32_maybe :: Integer -> Maybe Int32
 integer_to_int32_maybe n =
-    if n < fromIntegral (minBound::Int32) ||
-       n > fromIntegral (maxBound::Int32)
+  if n < fromIntegral (minBound :: Int32)
+    || n > fromIntegral (maxBound :: Int32)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_int64_maybe :: Integer -> Maybe Int64
 integer_to_int64_maybe n =
-    if n < fromIntegral (minBound::Int64) ||
-       n > fromIntegral (maxBound::Int64)
+  if n < fromIntegral (minBound :: Int64)
+    || n > fromIntegral (maxBound :: Int64)
     then Nothing
     else Just (fromIntegral n)
 
 -- | Type specialised 'fromIntegral'
 integer_to_int_maybe :: Integer -> Maybe Int
 integer_to_int_maybe n =
-    if n < fromIntegral (minBound::Int) ||
-       n > fromIntegral (maxBound::Int)
+  if n < fromIntegral (minBound :: Int)
+    || n > fromIntegral (maxBound :: Int)
     then Nothing
     else Just (fromIntegral n)

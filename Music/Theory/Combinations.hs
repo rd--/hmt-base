@@ -27,10 +27,10 @@ True
 -}
 combinations :: Int -> [a] -> [[a]]
 combinations k s =
-    case (k,s) of
-      (0,_) -> [[]]
-      (_,[]) -> []
-      (_,e:s') -> map (e :) (combinations (k - 1) s') ++ combinations k s'
+  case (k, s) of
+    (0, _) -> [[]]
+    (_, []) -> []
+    (_, e : s') -> map (e :) (combinations (k - 1) s') ++ combinations k s'
 
 -- * Dyck
 
@@ -45,15 +45,18 @@ dyck_words_lex n =
         let d0 = gen (x ++ [0]) (i + 1) (n0 + 1) n1
             d1 = gen (x ++ [1]) (i + 1) n0 (n1 + 1)
         in if (n0 < n) && (n1 < n) && (n0 > n1)
-        then d0 ++ d1
-        else if ((n0 < n) && (n1 < n) && (n0 == n1)) || ((n0 < n) && (n1 == n))
-             then d0
-             else if (n0 == n) && (n1 < n)
-                  then d1
-                  else if (n0 == n1) && (n1 == n)
-                       then [x]
-                       else error "?"
-  in gen [0] (1::Int) 1 0
+            then d0 ++ d1
+            else
+              if ((n0 < n) && (n1 < n) && (n0 == n1)) || ((n0 < n) && (n1 == n))
+                then d0
+                else
+                  if (n0 == n) && (n1 < n)
+                    then d1
+                    else
+                      if (n0 == n1) && (n1 == n)
+                        then [x]
+                        else error "?"
+  in gen [0] (1 :: Int) 1 0
 
 {- | Translate 01 to [].
 
@@ -71,9 +74,9 @@ dyck_word_from_str = map (\x -> if x == '[' then 0 else if x == ']' then 1 else 
 is_lattice_segment :: Integral n => [n] -> Bool
 is_lattice_segment x =
   let h = List.histogram x
-      f (i,j) = case lookup (i + 1) h of
-                  Nothing -> True
-                  Just k -> j >= k
+      f (i, j) = case lookup (i + 1) h of
+        Nothing -> True
+        Just k -> j >= k
   in all f h
 
 {- | Is /x/ a lattice word.

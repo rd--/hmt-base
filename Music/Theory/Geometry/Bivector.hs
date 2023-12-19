@@ -4,7 +4,7 @@ module Music.Theory.Geometry.Bivector where
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
-import Music.Theory.Math (sqr) {- hmt-base -}
+import Music.Theory.Math (sqr {- hmt-base -})
 
 -- * 2-Bivector (Bv2)
 
@@ -24,9 +24,10 @@ type Bv3 n = (n, n, n)
 -- | Outer product, a ∧ b (also called exterior, or wedge product)
 bv3_outer_product :: Num n => V3 n -> V3 n -> Bv3 n
 bv3_outer_product (x1, y1, z1) (x2, y2, z2) =
-  ((x1 * y2) - (y1 * x2) -- xy
-  ,(x1 * z2) - (z1 * x2) -- xz
-  ,(y1 * z2) - (z1 * y2)) -- yz
+  ( (x1 * y2) - (y1 * x2) -- xy
+  , (x1 * z2) - (z1 * x2) -- xz
+  , (y1 * z2) - (z1 * y2) -- yz
+  )
 
 -- * 3-Rotor (Rt3) (https://marctenbosch.com/quaternions/)
 
@@ -53,21 +54,25 @@ rt3_plane (b01, b02, b12) angleRadian =
 -- | Rotor product (non-optimised).
 rt3_product :: Num n => Rt3 n -> Rt3 n -> Rt3 n
 rt3_product (p_a, p_b01, p_b02, p_b12) (q_a, q_b01, q_b02, q_b12) =
-  (p_a * q_a - p_b01 * q_b01 - p_b02 * q_b02 - p_b12 * q_b12
-  ,p_b01 * q_a + p_a * q_b01 + p_b12 * q_b02 - p_b02 * q_b12
-  ,p_b02 * q_a + p_a * q_b02 - p_b12 * q_b01 + p_b01 * q_b12
-  ,p_b12 * q_a + p_a * q_b12 + p_b02 * q_b01 - p_b01 * q_b02)
+  ( p_a * q_a - p_b01 * q_b01 - p_b02 * q_b02 - p_b12 * q_b12
+  , p_b01 * q_a + p_a * q_b01 + p_b12 * q_b02 - p_b02 * q_b12
+  , p_b02 * q_a + p_a * q_b02 - p_b12 * q_b01 + p_b01 * q_b12
+  , p_b12 * q_a + p_a * q_b12 + p_b02 * q_b01 - p_b01 * q_b02
+  )
 
 -- | R x R* (non-optimized). Trivector part of the result is always zero.
 rt3_rotate_v3 :: Num n => Rt3 n -> V3 n -> V3 n
 rt3_rotate_v3 (a, b01, b02, b12) (x, y, z) =
-  let (q_x, q_y, q_z) = (a * x + y * b01 + z * b02
-                        ,a * y - x * b01 + z * b12
-                        ,a * z - x * b02 - y * b12)
+  let (q_x, q_y, q_z) =
+        ( a * x + y * b01 + z * b02
+        , a * y - x * b01 + z * b12
+        , a * z - x * b02 - y * b12
+        )
       q012 = x * b12 - y * b02 + z * b01
-  in (a * q_x + q_y * b01 + q_z * b02 + q012 * b12
-     ,a * q_y - q_x * b01 - q012 * b02 + q_z * b12
-     ,a * q_z + q012 * b01 - q_x * b02 - q_y * b12)
+  in ( a * q_x + q_y * b01 + q_z * b02 + q012 * b12
+     , a * q_y - q_x * b01 - q012 * b02 + q_z * b12
+     , a * q_z + q012 * b01 - q_x * b02 - q_y * b12
+     )
 
 -- | Rotate a rotor by another.
 rt3_rotate :: Num n => Rt3 n -> Rt3 n -> Rt3 n
@@ -96,9 +101,10 @@ rt3_normalize r =
 -- | Convert to matrix (non-optimized).
 rt3_to_m33 :: Num n => Rt3 n -> M33 n
 rt3_to_m33 r =
-  (rt3_rotate_v3 r (1,0,0)
-  ,rt3_rotate_v3 r (0,1,0)
-  ,rt3_rotate_v3 r (0,0,1))
+  ( rt3_rotate_v3 r (1, 0, 0)
+  , rt3_rotate_v3 r (0, 1, 0)
+  , rt3_rotate_v3 r (0, 0, 1)
+  )
 
 -- | Geometric product (for reference), produces twice the angle, negative direction.
 rt3_geometric_product :: Num n => V3 n -> V3 n -> Rt3 n

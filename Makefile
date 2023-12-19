@@ -21,3 +21,6 @@ update-rd:
 
 push-all:
 	make push-gl update-rd
+
+indent:
+	fourmolu -i Music

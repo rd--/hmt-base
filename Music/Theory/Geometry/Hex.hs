@@ -1,9 +1,11 @@
 -- | <https://www.redblobgames.com/grids/hexagons/implementation.html>
 module Music.Theory.Geometry.Hex where
 
-import Music.Theory.Geometry.Matrix {- hmt-base -}
-import Music.Theory.Geometry.Vector {- hmt-base -}
+{- hmt-base -}
+{- hmt-base -}
 import qualified Music.Theory.Geometry.Functions as Geometry {- hmt-base -}
+import Music.Theory.Geometry.Matrix
+import Music.Theory.Geometry.Vector
 
 {- | Hex (q,r) co-ordinate to (q,r,s) co-ordinate.
 
@@ -11,11 +13,11 @@ import qualified Music.Theory.Geometry.Functions as Geometry {- hmt-base -}
 [(0,0,0),(7,-2,-5)]
 -}
 hex_qrs :: Num n => V2 n -> V3 n
-hex_qrs (q,r) = (q,r,-q - r)
+hex_qrs (q, r) = (q, r, -q - r)
 
 -- | Hex (q,r,s) co-ordinate to (q,r) co-ordinate.
 hex_qr :: Num n => V3 n -> V2 n
-hex_qr (q,r,_) = (q,r)
+hex_qr (q, r, _) = (q, r)
 
 {- | Given unit size and initial angle return axis vectors for hex_qr co-ordinates.
 (sqrt 3) is twice the inradius of a hexagon with unit size length and unit circumradius.
@@ -24,7 +26,7 @@ hex_qr (q,r,_) = (q,r)
 ((1.7320508075688772,0.0),(0.8660254037844388,1.4999999999999998))
 -}
 hex_axis_vectors :: Floating n => n -> n -> V2 (V2 n)
-hex_axis_vectors u a = (v2_rotate a (u,0),v2_rotate (a + (pi / 3)) (u,0))
+hex_axis_vectors u a = (v2_rotate a (u, 0), v2_rotate (a + (pi / 3)) (u, 0))
 
 -- | Given unit size and initial angle calculate translation vector for (q,r) index to pixel.
 hex_m22 :: Floating t => t -> t -> M22 t
@@ -36,8 +38,8 @@ hex_m22_inv u = m22_inverse . hex_m22 u
 
 -- | Given origin, scaling factor and and matrix translate a (q,r) hex co-ordinate to pixel co-ordinate.
 hex_to_pixel :: Num n => V2 n -> n -> M22 n -> V2 Int -> V2 n
-hex_to_pixel o u m (q,r) =
-  let c = m22_apply m (fromIntegral q,fromIntegral r)
+hex_to_pixel o u m (q, r) =
+  let c = m22_apply m (fromIntegral q, fromIntegral r)
   in v2_add o (v2_scale u c)
 
 -- | (x,y) pixel co-ordinate to fractional (q,r) hex co-ordinate.
@@ -48,7 +50,7 @@ pixel_to_fhex o u m c =
 
 -- | Fraction (q,r,s) co-ordinate rounded to Int (q,r,s) co-ordinate.
 fhex_round :: RealFrac n => V3 n -> V3 Int
-fhex_round (qf,rf,sf) =
+fhex_round (qf, rf, sf) =
   let q = round qf
       r = round rf
       s = round sf
@@ -56,22 +58,23 @@ fhex_round (qf,rf,sf) =
       r_diff = abs (fromIntegral r - rf)
       s_diff = abs (fromIntegral s - sf)
   in if (q_diff > r_diff && q_diff > s_diff)
-     then (-r - s,r,s)
-     else if (r_diff > s_diff)
-          then (q,-q - s,s)
-          else (q,r,-q - r)
+      then (-r - s, r, s)
+      else
+        if (r_diff > s_diff)
+          then (q, -q - s, s)
+          else (q, r, -q - r)
 
 -- * Standard grids
 
 pointy_mtx :: (M22 Double, M22 Double)
 pointy_mtx =
   let m = hex_m22 (sqrt 3) 0
-  in (m,m22_inverse m)
+  in (m, m22_inverse m)
 
 flat_mtx :: (M22 Double, M22 Double)
 flat_mtx =
   let m = hex_m22 (sqrt 3) (pi / 6)
-  in (m,m22_inverse m)
+  in (m, m22_inverse m)
 
 -- * Mz-U648
 
@@ -110,7 +113,7 @@ mz_u648_mtx = flip hex_m22 mz_u648_angle
 >>> map (v2_map round) (hex_face 0 100 (50,50))
 [(93,75),(50,100),(7,75),(7,25),(50,0),(93,25)]
 -}
-hex_face :: (RealFloat n,Enum n) => n -> n -> V2 n -> [V2 n]
+hex_face :: (RealFloat n, Enum n) => n -> n -> V2 n -> [V2 n]
 hex_face a u c =
-  let p = map (\x -> Geometry.polar_to_rectangular (u * 0.5,a + x)) (take 6 [pi/6, pi/2 ..])
+  let p = map (\x -> Geometry.polar_to_rectangular (u * 0.5, a + x)) (take 6 [pi / 6, pi / 2 ..])
   in map (v2_add c) p

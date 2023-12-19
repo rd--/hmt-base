@@ -38,8 +38,10 @@ bHistogramRange numBins xs =
   let d = if numBins == 1 then 0 else (hi - lo) / ((fromIntegral numBins - 1) * 2)
       (lo, hi) = List.minmax xs
   in if numBins < 1 || null xs
-     then error "bHistogramRange: empty sample"
-     else if lo == hi
-          then let a = abs lo / 10
-               in if a < Math.Constant.smallestNormalizedValue then (-1,1) else (lo - a, lo + a)
-          else (lo-d, hi+d)
+      then error "bHistogramRange: empty sample"
+      else
+        if lo == hi
+          then
+            let a = abs lo / 10
+            in if a < Math.Constant.smallestNormalizedValue then (-1, 1) else (lo - a, lo + a)
+          else (lo - d, hi + d)

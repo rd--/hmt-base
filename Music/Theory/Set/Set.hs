@@ -16,5 +16,5 @@ fromList [fromList [],fromList [1],fromList [1,2],fromList [2]]
 setPowerset :: Ord a => Set.Set a -> Set.Set (Set.Set a)
 setPowerset = Set.fromList . map Set.fromList . Set.List.powerset . Set.elems
 
-setPairs :: Ord a => Set.Set a -> Set.Set (a,a)
+setPairs :: Ord a => Set.Set a -> Set.Set (a, a)
 setPairs = Set.fromList . Set.List.pairs . Set.elems

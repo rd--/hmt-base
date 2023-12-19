@@ -1,4 +1,4 @@
-{- | Permutation functions. -}
+-- | Permutation functions.
 module Music.Theory.Permutations where
 
 import Data.List {- base -}
@@ -12,7 +12,7 @@ import qualified Music.Theory.List as List {- hmt-base -}
 (2432902008176640000,9223372036854775807)
 -}
 factorial :: Integral n => n -> n
-factorial n = product [1..n]
+factorial n = product [1 .. n]
 
 {- | Number of /k/ element permutations of a set of /n/ elements.
 
@@ -20,7 +20,7 @@ factorial n = product [1..n]
 (6,6,24,24,1716,479001600)
 -}
 nk_permutations :: Integral a => a -> a -> a
-nk_permutations n k = factorial n  `div` factorial (n - k)
+nk_permutations n k = factorial n `div` factorial (n - k)
 
 {- | Number of /nk/ permutations where /n/ '==' /k/.
 
@@ -36,7 +36,7 @@ nk_permutations n k = factorial n  `div` factorial (n - k)
 n_permutations :: (Integral a) => a -> a
 n_permutations n = nk_permutations n n
 
-{- | Permutation given as a zero-indexed list of destination indices. -}
+-- | Permutation given as a zero-indexed list of destination indices.
 type Permutation = [Int]
 
 {- | Generate the permutation from /p/ to /q/, ie. the permutation that, when applied to /p/, gives /q/.
@@ -50,19 +50,19 @@ type Permutation = [Int]
 -}
 permutation :: Eq t => [t] -> [t] -> Permutation
 permutation p q =
-    let f x = List.elem_index_unique x p
-    in map f q
+  let f x = List.elem_index_unique x p
+  in map f q
 
 {- | Permutation to list of swaps, ie. 'zip' [0..]
 
 >>> permutation_to_swaps [0,2,1,3]
 [(0,0),(1,2),(2,1),(3,3)]
 -}
-permutation_to_swaps :: Permutation -> [(Int,Int)]
-permutation_to_swaps = zip [0..]
+permutation_to_swaps :: Permutation -> [(Int, Int)]
+permutation_to_swaps = zip [0 ..]
 
-{- | Inverse of 'permutation_to_swaps', ie. 'map' 'snd' '.' 'sort' -}
-swaps_to_permutation :: [(Int,Int)] -> Permutation
+-- | Inverse of 'permutation_to_swaps', ie. 'map' 'snd' '.' 'sort'
+swaps_to_permutation :: [(Int, Int)] -> Permutation
 swaps_to_permutation = map snd . sort
 
 {- | List of cycles to list of swaps.
@@ -70,7 +70,7 @@ swaps_to_permutation = map snd . sort
 >>> cycles_to_swaps [[0,2],[1],[3,4]]
 [(0,2),(1,1),(2,0),(3,4),(4,3)]
 -}
-cycles_to_swaps :: [[Int]] -> [(Int,Int)]
+cycles_to_swaps :: [[Int]] -> [(Int, Int)]
 cycles_to_swaps = sort . concatMap (List.adj2_cyclic 1)
 
 {- | Swaps to cycles
@@ -87,8 +87,8 @@ swaps_to_cycles s =
         in f [k] k
       step r k =
         if k == z
-        then reverse r
-        else if k `elem` concat r then step r (k + 1) else step (trace k : r) (k + 1)
+          then reverse r
+          else if k `elem` concat r then step r (k + 1) else step (trace k : r) (k + 1)
   in step [] 0
 
 {- | Apply permutation /f/ to /p/.
@@ -126,7 +126,7 @@ apply_permutation_c_zero_indexed = apply_permutation . from_cycles_zero_indexed
 [7,9,0,5,2,6,8,1,4,3]
 -}
 p_inverse :: Permutation -> Permutation
-p_inverse = map snd . sort . flip zip [0..]
+p_inverse = map snd . sort . flip zip [0 ..]
 
 p_cycles :: Permutation -> [[Int]]
 p_cycles = swaps_to_cycles . permutation_to_swaps
@@ -168,13 +168,13 @@ from_cycles_one_indexed = from_cycles_zero_indexed . map (map (subtract 1))
 permutations_n :: Int -> [Permutation]
 permutations_n n =
   let minus [] _ = []
-      minus (x:xs) i = if x < i then x : minus xs i else xs
+      minus (x : xs) i = if x < i then x : minus xs i else xs
       f [] = [[]]
-      f xs = [i : ys | i <- xs , ys <- f (xs `minus` i)]
+      f xs = [i : ys | i <- xs, ys <- f (xs `minus` i)]
   in case n of
-       0 -> []
-       1 -> [[0]]
-       _ -> f [0 .. n - 1]
+      0 -> []
+      1 -> [[0]]
+      _ -> f [0 .. n - 1]
 
 p_size :: Permutation -> Int
 p_size = length
@@ -189,13 +189,13 @@ p_size = length
 -}
 compose :: Permutation -> Permutation -> Permutation
 compose p q =
-    let n = p_size q
-        i = [1 .. n]
-        j = apply_permutation p i
-        k = apply_permutation q j
-    in permutation i k
+  let n = p_size q
+      i = [1 .. n]
+      j = apply_permutation p i
+      k = apply_permutation q j
+  in permutation i k
 
-{- | One-indexed 'p_cycles' -}
+-- | One-indexed 'p_cycles'
 cycles_one_indexed :: Permutation -> [[Int]]
 cycles_one_indexed = map (map (+ 1)) . p_cycles
 
@@ -214,11 +214,11 @@ permutation_mul p q = compose q p
 >>> two_line (permutation [0,1,3] [1,0,3])
 ([1,2,3],[2,1,3])
 -}
-two_line :: Permutation -> ([Int],[Int])
+two_line :: Permutation -> ([Int], [Int])
 two_line p =
-    let n = p_size p
-        i = [1..n]
-    in (i,apply_permutation p i)
+  let n = p_size p
+      i = [1 .. n]
+  in (i, apply_permutation p i)
 
 {- | One line notation of /p/.
 
@@ -242,10 +242,11 @@ one_line = snd . two_line
 -}
 one_line_compact :: Permutation -> String
 one_line_compact =
-    let f n = if n >= 0 && n <= 15
-              then Numeric.showHex n ""
-              else error "one_line_compact:not(0-15)"
-    in concatMap f . one_line
+  let f n =
+        if n >= 0 && n <= 15
+          then Numeric.showHex n ""
+          else error "one_line_compact:not(0-15)"
+  in concatMap f . one_line
 
 {- | Multiplication table of symmetric group /n/.
 
@@ -265,9 +266,9 @@ one_line_compact =
 -}
 multiplication_table :: Int -> [[Permutation]]
 multiplication_table n =
-    let ps = permutations_n n
-        f p = map (compose p) ps
-    in map f ps
+  let ps = permutations_n n
+      f p = map (compose p) ps
+  in map f ps
 
 {-
 

@@ -42,12 +42,12 @@ sqr n = n * n
 >>> map (constrain (3,5)) [2.75,5.25]
 [4.75,3.25]
 -}
-constrain :: (Ord r,Num r) => (r,r) -> r -> r
-constrain (l,r) =
-    let down n i x = if x > i then down n i (x - n) else x
-        up n i x = if x < i then up n i (x + n) else x
-        both n i j x = up n i (down n j x)
-    in both (r - l) l r
+constrain :: (Ord r, Num r) => (r, r) -> r -> r
+constrain (l, r) =
+  let down n i x = if x > i then down n i (x - n) else x
+      up n i x = if x < i then up n i (x + n) else x
+      both n i j x = up n i (down n j x)
+  in both (r - l) l r
 
 -- | 'mod' 5.
 mod5 :: Integral i => i -> i
@@ -70,11 +70,11 @@ mod16 n = n `mod` 16
 >>> integral_and_fractional_parts 1.5
 (1,0.5)
 -}
-integral_and_fractional_parts :: (Integral i, RealFrac t) => t -> (i,t)
+integral_and_fractional_parts :: (Integral i, RealFrac t) => t -> (i, t)
 integral_and_fractional_parts = properFraction
 
 -- | Type specialised.
-integer_and_fractional_parts :: RealFrac t => t -> (Integer,t)
+integer_and_fractional_parts :: RealFrac t => t -> (Integer, t)
 integer_and_fractional_parts = integral_and_fractional_parts
 
 {- | <http://reference.wolfram.com/mathematica/ref/FractionalPart.html>
@@ -85,14 +85,14 @@ integer_and_fractional_parts = integral_and_fractional_parts
 >>> fractional_part 1.0001 < 0.0001 -- rounding error
 True
 
-> import Sound.Sc3.Plot {- hsc3-plot -}
+> import Sound.Sc3.Plot
 > plot_p1_ln [map fractional_part [-2.0,-1.99 .. 2.0]]
 -}
 fractional_part :: RealFrac a => a -> a
 fractional_part = snd . integer_and_fractional_parts
 
 -- | 'floor' of 'Math.Convert.real_to_double'.
-real_floor :: (Real r,Integral i)  => r -> i
+real_floor :: (Real r, Integral i) => r -> i
 real_floor = floor . Math.Convert.real_to_double
 
 -- | Type specialised 'real_floor'.
@@ -100,7 +100,7 @@ real_floor_int :: Real r => r -> Int
 real_floor_int = real_floor
 
 -- | 'round' of 'Math.Convert.real_to_double'.
-real_round :: (Real r,Integral i)  => r -> i
+real_round :: (Real r, Integral i) => r -> i
 real_round = round . Math.Convert.real_to_double
 
 -- | Type specialised 'real_round'.
@@ -131,7 +131,7 @@ False
 [True,False]
 -}
 zero_to_precision :: Real r => Int -> r -> Bool
-zero_to_precision k r = real_floor_int (r * fromIntegral ((10::Int) ^ k)) == 0
+zero_to_precision k r = real_floor_int (r * fromIntegral ((10 :: Int) ^ k)) == 0
 
 {- | Is /r/ whole to /k/ decimal places.
 
@@ -146,7 +146,7 @@ whole_to_precision k = zero_to_precision k . fractional_part . Math.Convert.real
 
 {- | <http://reference.wolfram.com/mathematica/ref/SawtoothWave.html>
 
-> import Sound.Sc3.Plot {- hsc3-plot -}
+> import Sound.Sc3.Plot
 > plot_p1_ln [map sawtooth_wave [-2.0,-1.99 .. 2.0]]
 -}
 sawtooth_wave :: RealFrac a => a -> a
@@ -158,12 +158,12 @@ ie. where 'gcd' of @n@ and @d@ is not @1@.
 >>> map rational_simplifies [(2,3),(4,6),(5,7)]
 [False,True,False]
 -}
-rational_simplifies :: Integral a => (a,a) -> Bool
-rational_simplifies (n,d) = gcd n d /= 1
+rational_simplifies :: Integral a => (a, a) -> Bool
+rational_simplifies (n, d) = gcd n d /= 1
 
 -- | 'numerator' and 'denominator' of rational.
-rational_nd :: Integral t => Ratio t -> (t,t)
-rational_nd r = (numerator r,denominator r)
+rational_nd :: Integral t => Ratio t -> (t, t)
+rational_nd r = (numerator r, denominator r)
 
 -- | Rational as a whole number, or 'Nothing'.
 rational_whole :: Integral a => Ratio a -> Maybe a
@@ -227,7 +227,7 @@ oi_mod n m = ((n - 1) `mod` m) + 1
 [(0,1),(0,3),(0,5),(1,2),(1,4)]
 -}
 oi_divMod :: Integral t => t -> t -> (t, t)
-oi_divMod n m = let (i,j) = (n - 1) `divMod` m in (i,j + 1)
+oi_divMod n m = let (i, j) = (n - 1) `divMod` m in (i, j + 1)
 
 -- * I = integral
 
@@ -241,42 +241,42 @@ oi_divMod n m = let (i,j) = (n - 1) `divMod` m in (i,j + 1)
 -}
 i_square_root :: Integral t => t -> t
 i_square_root n =
-    let babylon a =
-            let b  = quot (a + quot n a) 2
-            in if a > b then babylon b else a
-    in case compare n 0 of
-         GT -> babylon n
-         EQ -> 0
-         _ -> error "i_square_root: negative?"
+  let babylon a =
+        let b = quot (a + quot n a) 2
+        in if a > b then babylon b else a
+  in case compare n 0 of
+      GT -> babylon n
+      EQ -> 0
+      _ -> error "i_square_root: negative?"
 
 -- * Interval
 
 -- | (0,1) = {x | 0 < x < 1}
 in_open_interval :: Ord a => (a, a) -> a -> Bool
-in_open_interval (p,q) n = p < n && n < q
+in_open_interval (p, q) n = p < n && n < q
 
 -- | [0,1] = {x | 0 ≤ x ≤ 1}
 in_closed_interval :: Ord a => (a, a) -> a -> Bool
-in_closed_interval (p,q) n = p <= n && n <= q
+in_closed_interval (p, q) n = p <= n && n <= q
 
 -- | (p,q] (0,1] = {x | 0 < x ≤ 1}
 in_left_half_open_interval :: Ord a => (a, a) -> a -> Bool
-in_left_half_open_interval (p,q) n = p < n && n <= q
+in_left_half_open_interval (p, q) n = p < n && n <= q
 
 -- | [p,q) [0,1) = {x | 0 ≤ x < 1}
 in_right_half_open_interval :: Ord a => (a, a) -> a -> Bool
-in_right_half_open_interval (p,q) n = p <= n && n < q
+in_right_half_open_interval (p, q) n = p <= n && n < q
 
 {- | Calculate /n/th root of /x/.
 
 >>> 12 `nth_root` 2
 1.0594630943592953
 -}
-nth_root :: (Floating a,Eq a) => a -> a -> a
+nth_root :: (Floating a, Eq a) => a -> a -> a
 nth_root n x =
-    let f (_,x0) = (x0, ((n - 1) * x0 + x / x0 ** (n - 1)) / n)
-        eq = uncurry (==)
-    in fst (until eq f (x, x/n))
+  let f (_, x0) = (x0, ((n - 1) * x0 + x / x0 ** (n - 1)) / n)
+      eq = uncurry (==)
+  in fst (until eq f (x, x / n))
 
 {- | Arithmetic mean (average) of a list.
 
@@ -293,8 +293,8 @@ arithmetic_mean_of_list x = sum x / fromIntegral (length x)
 -}
 ns_mean_of_list :: Floating a => [a] -> a
 ns_mean_of_list =
-    let f (m,n) x = (m + (x - m) / (n + 1),n + 1)
-    in fst . foldl' f (0,0)
+  let f (m, n) x = (m + (x - m) / (n + 1), n + 1)
+  in fst . foldl' f (0, 0)
 
 {- | Square of /n/.
 
@@ -306,11 +306,11 @@ square n = n * n
 
 {- | The totient function phi(n), also called Euler's totient function.
 
-> import Sound.Sc3.Plot {- hsc3-plot -}
+> import Sound.Sc3.Plot
 > plot_p1_stp [map totient [1::Int .. 100]]
 -}
 totient :: Integral i => i -> i
-totient n = genericLength (filter (==1) (map (gcd n) [1..n]))
+totient n = genericLength (filter (== 1) (map (gcd n) [1 .. n]))
 
 {- | The /n/-th order Farey sequence.
 
@@ -325,11 +325,11 @@ totient n = genericLength (filter (==1) (map (gcd n) [1..n]))
 -}
 farey :: Integral i => i -> [Ratio i]
 farey n =
-  let step (a,b,c,d) =
+  let step (a, b, c, d) =
         if c > n
-        then Nothing
-        else let k = (n + b) `quot` d in Just (c % d, (c,d,k * c - a,k * d - b))
-  in 0 : unfoldr step (0,1,1,n)
+          then Nothing
+          else let k = (n + b) `quot` d in Just (c % d, (c, d, k * c - a, k * d - b))
+  in 0 : unfoldr step (0, 1, 1, n)
 
 {- | The length of the /n/-th order Farey sequence.
 
@@ -342,13 +342,14 @@ farey n =
 farey_length :: Integral i => i -> i
 farey_length n = if n == 0 then 1 else farey_length (n - 1) + totient n
 
--- | Function to generate the Stern-Brocot tree from an initial row.
---   '%' normalises so 1/0 cannot be written as a 'Rational', hence (n,d).
-stern_brocot_tree_f :: Num n => [(n,n)] -> [[(n,n)]]
+{- | Function to generate the Stern-Brocot tree from an initial row.
+  '%' normalises so 1/0 cannot be written as a 'Rational', hence (n,d).
+-}
+stern_brocot_tree_f :: Num n => [(n, n)] -> [[(n, n)]]
 stern_brocot_tree_f =
-   let med_f (n1,d1) (n2,d2) = (n1 + n2,d1 + d2)
-       f x = concat (transpose [x, zipWith med_f x (List.tail_err x)])
-   in iterate f
+  let med_f (n1, d1) (n2, d2) = (n1 + n2, d1 + d2)
+      f x = concat (transpose [x, zipWith med_f x (List.tail_err x)])
+  in iterate f
 
 {- | The Stern-Brocot tree from (0/1,1/0).
 
@@ -367,12 +368,12 @@ stern_brocot_tree_f =
 >>> map length (take 12 stern_brocot_tree) -- A000051
 [2,3,5,9,17,33,65,129,257,513,1025,2049]
 -}
-stern_brocot_tree :: Num n => [[(n,n)]]
-stern_brocot_tree = stern_brocot_tree_f [(0,1),(1,0)]
+stern_brocot_tree :: Num n => [[(n, n)]]
+stern_brocot_tree = stern_brocot_tree_f [(0, 1), (1, 0)]
 
 -- | Left-hand (rational) side of the the Stern-Brocot tree, ie, from (0/1,1/1).
-stern_brocot_tree_lhs :: Num n => [[(n,n)]]
-stern_brocot_tree_lhs = stern_brocot_tree_f [(0,1),(1,1)]
+stern_brocot_tree_lhs :: Num n => [[(n, n)]]
+stern_brocot_tree_lhs = stern_brocot_tree_f [(0, 1), (1, 1)]
 
 {- | 'stern_brocot_tree_f' as 'Ratio's, for finite subsets.
 

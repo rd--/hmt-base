@@ -17,8 +17,8 @@ True
 -}
 permutations_l :: [a] -> [[a]]
 permutations_l i =
-    let f p = Permutations.apply_permutation p i
-    in map f (Permutations.permutations_n (length i))
+  let f p = Permutations.apply_permutation p i
+  in map f (Permutations.permutations_n (length i))
 
 {- | /k/-element permutations of a set of /n/-elements.
 
@@ -28,8 +28,8 @@ permutations_l i =
 permutations_nk_l :: Eq e => Int -> Int -> [e] -> [[e]]
 permutations_nk_l n k e =
   if length e /= n
-  then error "permutations_nk_l"
-  else nub (map (take k) (permutations_l e))
+    then error "permutations_nk_l"
+    else nub (map (take k) (permutations_l e))
 
 {- | Generate all distinct permutations of a multi-set.
 
@@ -53,7 +53,7 @@ True
 -}
 multiset_permutations_n :: Ord a => [a] -> Int
 multiset_permutations_n x =
-    let occ = map length . group . sort
-        n = Permutations.factorial (length x)
-        d = product $ map Permutations.factorial $ occ x
-    in n `div` d
+  let occ = map length . group . sort
+      n = Permutations.factorial (length x)
+      d = product $ map Permutations.factorial $ occ x
+  in n `div` d

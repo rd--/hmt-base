@@ -37,36 +37,37 @@ db_load_utf8 fn = do
 
 {- | Store 'Db' to 'FilePath'.
 
-> import qualified Music.Theory.Db.Plain as P {- hmt -}
+> import qualified Music.Theory.Db.Plain as Db
 > let fn = "/home/rohan/ut/www-spr/data/db.text"
-> db <- P.db_load_utf8 P.sep_plain fn
+> db <- Db.db_load_utf8 Db.sep_plain fn
 > length db == 1480
 > db_store_utf8 "/tmp/sp.js" db
 -}
 db_store_utf8 :: FilePath -> Db.TextDb -> IO ()
 db_store_utf8 fn db = do
   let encode_assoc = Json.Object . Map.fromList . return . first Text.pack
-      f = Json.Array .
-          map (encode_assoc . second (maybe_list_to_json . list_to_maybe_list)) .
-          Db.record_collate
+      f =
+        Json.Array
+          . map (encode_assoc . second (maybe_list_to_json . list_to_maybe_list))
+          . Db.record_collate
       b = Json.encodeStrict (Json.Array (map f db))
   ByteString.writeFile fn b
 
 -- * Maybe List of String
 
-data Maybe_List_Of_String = S String | L [String] deriving (Eq,Show)
+data Maybe_List_Of_String = S String | L [String] deriving (Eq, Show)
 
 maybe_list_to_list :: Maybe_List_Of_String -> [String]
 maybe_list_to_list m =
-    case m of
-      S s -> [s]
-      L l -> l
+  case m of
+    S s -> [s]
+    L l -> l
 
 list_to_maybe_list :: [String] -> Maybe_List_Of_String
 list_to_maybe_list l =
-    case l of
-      [s] -> S s
-      _ -> L l
+  case l of
+    [s] -> S s
+    _ -> L l
 
 {- | Maybe_List_Of_String to Json.
 

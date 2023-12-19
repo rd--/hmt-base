@@ -47,19 +47,19 @@ Options are:
  column separator string,
  print table delimiters
 -}
-type Text_Table_Opt = (Bool,Bool,Bool,String,Bool)
+type Text_Table_Opt = (Bool, Bool, Bool, String, Bool)
 
 -- | Options for @plain@ layout.
 table_opt_plain :: Text_Table_Opt
-table_opt_plain = (False,True,False," ",False)
+table_opt_plain = (False, True, False, " ", False)
 
 -- | Options for @simple@ layout.
 table_opt_simple :: Text_Table_Opt
-table_opt_simple = (True,True,False," ",True)
+table_opt_simple = (True, True, False, " ", True)
 
 -- | Options for @pipe@ layout.
 table_opt_pipe :: Text_Table_Opt
-table_opt_pipe = (True,True,False," | ",False)
+table_opt_pipe = (True, True, False, " | ", False)
 
 {- | Pretty-print table.  Table is in row order.
 
@@ -71,20 +71,21 @@ table_opt_pipe = (True,True,False," | ",False)
 ["1    2    3    4","a    bc   def","ghij klm  no   p"]
 -}
 table_pp :: Text_Table_Opt -> Text_Table -> [String]
-table_pp (has_hdr,pad_left,eq_width,col_sep,print_eot) dat =
-    let c = transpose (Array.tbl_make_regular_nil "" dat)
-        nc = length c
-        n = let k = map (maximum . map length) c
-            in if eq_width then replicate nc (maximum k) else k
-        ext k s = if pad_left then List.pad_left ' ' k s else List.pad_right ' ' k s
-        jn = concat . intersperse col_sep
-        m = jn (map (`replicate` '-') n)
-        w = map jn (transpose (zipWith (map . ext) n c))
-        d = map String.delete_trailing_whitespace w
-        pr x = if print_eot then List.bracket (m,m) x else x
-    in case d of
-         [] -> error "table_pp"
-         d0:dr -> if has_hdr then d0 : pr dr else pr d
+table_pp (has_hdr, pad_left, eq_width, col_sep, print_eot) dat =
+  let c = transpose (Array.tbl_make_regular_nil "" dat)
+      nc = length c
+      n =
+        let k = map (maximum . map length) c
+        in if eq_width then replicate nc (maximum k) else k
+      ext k s = if pad_left then List.pad_left ' ' k s else List.pad_right ' ' k s
+      jn = concat . intersperse col_sep
+      m = jn (map (`replicate` '-') n)
+      w = map jn (transpose (zipWith (map . ext) n c))
+      d = map String.delete_trailing_whitespace w
+      pr x = if print_eot then List.bracket (m, m) x else x
+  in case d of
+      [] -> error "table_pp"
+      d0 : dr -> if has_hdr then d0 : pr dr else pr d
 
 {- | Variant relying on 'Show' instances.
 
@@ -110,19 +111,19 @@ each case displaced by one location which is empty.
 >>> table_pp table_opt_simple t
 ["  e f g h","- - - - -","a 1 2 3 4","b 2 3 4 1","c 3 4 1 2","- - - - -"]
 -}
-table_matrix :: ([String],[String]) -> Text_Table -> Text_Table
-table_matrix (r,c) t = table_concat [[""] : map return r,c : t]
+table_matrix :: ([String], [String]) -> Text_Table -> Text_Table
+table_matrix (r, c) t = table_concat [[""] : map return r, c : t]
 
 {- | Variant that takes a 'show' function and a /header decoration/ function.
 
 >>> table_matrix_opt show id ([1,2,3],[4,5,6]) [[7,8,9],[10,11,12],[13,14,15]]
 [["","4","5","6"],["1","7","8","9"],["2","10","11","12"],["3","13","14","15"]]
 -}
-table_matrix_opt :: (a -> String) -> (String -> String) -> ([a],[a]) -> Array.Table a -> Text_Table
+table_matrix_opt :: (a -> String) -> (String -> String) -> ([a], [a]) -> Array.Table a -> Text_Table
 table_matrix_opt show_f hd_f nm t =
-    let nm' = Function.bimap1 (map (hd_f . show_f)) nm
-        t' = map (map show_f) t
-    in table_matrix nm' t'
+  let nm' = Function.bimap1 (map (hd_f . show_f)) nm
+      t' = map (map show_f) t
+  in table_matrix nm' t'
 
 {-
 -- | Two-tuple 'show' variant.

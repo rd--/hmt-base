@@ -35,22 +35,22 @@ type Csec = Int -- (0-99)
 -- * Composite types
 
 -- | Minutes, seconds as @(min,sec)@
-type MinSec = (Min,Sec)
+type MinSec = (Min, Sec)
 
 -- | Generic MinSec
-type GMinSec n = (n,n)
+type GMinSec n = (n, n)
 
 -- | Minutes, seconds, centi-seconds as @(min,sec,csec)@
-type MinCsec = (Min,Sec,Csec)
+type MinCsec = (Min, Sec, Csec)
 
 -- | Generic MinCsec
-type GMinCsec n = (n,n,n)
+type GMinCsec n = (n, n, n)
 
 -- | (Hours,Minutes,Seconds)
-type Hms = (Hour,Min,Sec)
+type Hms = (Hour, Min, Sec)
 
 -- | (Days,Hours,Minutes,Seconds)
-type Dhms = (Day,Hour,Min,Sec)
+type Dhms = (Day, Hour, Min, Sec)
 
 -- * Fractional types
 
@@ -199,15 +199,15 @@ fsec_to_difftime = Time.picosecondsToDiffTime . fsec_to_picoseconds
 -}
 fminsec_to_fsec :: FMinSec -> FSec
 fminsec_to_fsec n =
-    let m = ffloor n
-        s = (n - m) * 100
-    in (m * 60) + s
+  let m = ffloor n
+      s = (n - m) * 100
+  in (m * 60) + s
 
-fminsec_to_sec_generic :: (RealFrac f,Integral i) => f -> i
+fminsec_to_sec_generic :: (RealFrac f, Integral i) => f -> i
 fminsec_to_sec_generic n =
-    let m = floor n
-        s = round ((n - fromIntegral m) * 100)
-    in (m * 60) + s
+  let m = floor n
+      s = round ((n - fromIntegral m) * 100)
+  in (m * 60) + s
 
 {- | Fractional minutes are mm.ss, so that 15.35 is 15 minutes and 35 seconds.
 
@@ -224,9 +224,9 @@ fminsec_to_sec = fminsec_to_sec_generic
 -}
 fsec_to_fminsec :: FSec -> FMinSec
 fsec_to_fminsec n =
-    let m = ffloor (n / 60)
-        s = n - (m * 60)
-    in m + (s / 100)
+  let m = ffloor (n / 60)
+      s = n - (m * 60)
+  in m + (s / 100)
 
 {- | Sec to FMinSec
 
@@ -235,9 +235,9 @@ fsec_to_fminsec n =
 -}
 sec_to_fminsec :: Sec -> FMinSec
 sec_to_fminsec n =
-    let m = ffloor (fromIntegral n / 60)
-        s = fromIntegral n - (m * 60)
-    in m + (s / 100)
+  let m = ffloor (fromIntegral n / 60)
+      s = fromIntegral n - (m * 60)
+  in m + (s / 100)
 
 {- | FMinSec addition
 
@@ -274,9 +274,9 @@ ffloor = fromInteger . floor
 -}
 fhour_to_hms :: FHour -> Hms
 fhour_to_hms h =
-    let m = (h - ffloor h) * 60
-        s = (m - ffloor m) * 60
-    in (floor h,floor m,round s)
+  let m = (h - ffloor h) * 60
+      s = (m - ffloor m) * 60
+  in (floor h, floor m, round s)
 
 {- | Hms to fractional hours.
 
@@ -284,7 +284,7 @@ fhour_to_hms h =
 21.75
 -}
 hms_to_fhour :: Hms -> FHour
-hms_to_fhour (h,m,s) = fromIntegral h + (fromIntegral m / 60) + (fromIntegral s / (60 * 60))
+hms_to_fhour (h, m, s) = fromIntegral h + (fromIntegral m / 60) + (fromIntegral s / (60 * 60))
 
 {- | Fractional hour to seconds.
 
@@ -309,11 +309,11 @@ fhour_to_difftime = fsec_to_difftime . fhour_to_fsec
 -}
 utctime_to_fday :: Time.UTCTime -> FDay
 utctime_to_fday t =
-    let d = Time.utctDay t
-        d' = fromIntegral (Time.toModifiedJulianDay d)
-        s = Time.utctDayTime t
-        s_max = 86401
-    in d' + (fromRational (toRational s) / s_max)
+  let d = Time.utctDay t
+      d' = fromIntegral (Time.toModifiedJulianDay d)
+      s = Time.utctDayTime t
+      s_max = 86401
+  in d' + (fromRational (toRational s) / s_max)
 
 -- * DiffTime
 
@@ -347,7 +347,7 @@ hms_to_difftime = fhour_to_difftime . hms_to_fhour
 -- * Hms
 
 hms_to_sec :: Hms -> Sec
-hms_to_sec (h,m,s) = h * 60 * 60 + m * 60 + s
+hms_to_sec (h, m, s) = h * 60 * 60 + m * 60 + s
 
 {- | Seconds to (hours,minutes,seconds).
 
@@ -356,9 +356,9 @@ hms_to_sec (h,m,s) = h * 60 * 60 + m * 60 + s
 -}
 sec_to_hms :: Sec -> Hms
 sec_to_hms s =
-  let (h,s') = s `divMod` (60 * 60)
-      (m,s'') = sec_to_minsec s'
-  in (h,m,s'')
+  let (h, s') = s `divMod` (60 * 60)
+      (m, s'') = sec_to_minsec s'
+  in (h, m, s'')
 
 {- | 'Hms' pretty printer.
 
@@ -366,10 +366,10 @@ sec_to_hms s =
 ["01:02","01:02:03"]
 -}
 hms_pp :: Bool -> Hms -> String
-hms_pp trunc (h,m,s) =
+hms_pp trunc (h, m, s) =
   if trunc && h == 0
-  then printf "%02d:%02d" m s
-  else printf "%02d:%02d:%02d" h m s
+    then printf "%02d:%02d" m s
+    else printf "%02d:%02d:%02d" h m s
 
 {- * 'Hms' parser.
 
@@ -378,9 +378,9 @@ hms_pp trunc (h,m,s) =
 -}
 hms_parse :: String -> Hms
 hms_parse x =
-    case Split.splitOn ":" x of
-      [h,m,s] -> (read h,read m,read s)
-      _ -> error "parse_hms"
+  case Split.splitOn ":" x of
+    [h, m, s] -> (read h, read m, read s)
+    _ -> error "parse_hms"
 
 -- * MinSec
 
@@ -398,7 +398,7 @@ sec_to_minsec = flip divMod 60
 123
 -}
 minsec_to_sec :: Num n => GMinSec n -> n
-minsec_to_sec (m,s) = m * 60 + s
+minsec_to_sec (m, s) = m * 60 + s
 
 -- | Convert /p/ and /q/ to seconds, apply /f/, and convert back to 'MinSec'.
 minsec_binop :: Integral t => (t -> t -> t) -> GMinSec t -> GMinSec t -> GMinSec t
@@ -434,7 +434,7 @@ minsec_add = minsec_binop (+)
 (9,8)
 -}
 minsec_sum :: Integral n => [GMinSec n] -> GMinSec n
-minsec_sum = foldl minsec_add (0,0)
+minsec_sum = foldl minsec_add (0, 0)
 
 {- | 'round' fractional seconds to @(min,sec)@.
 
@@ -450,14 +450,14 @@ fsec_to_minsec = sec_to_minsec . round
 ["00:59","01:01"]
 -}
 minsec_pp :: MinSec -> String
-minsec_pp (m,s) = printf "%02d:%02d" m s
+minsec_pp (m, s) = printf "%02d:%02d" m s
 
 -- * 'MinSec' parser.
-minsec_parse :: (Num n,Read n) => String -> GMinSec n
+minsec_parse :: (Num n, Read n) => String -> GMinSec n
 minsec_parse x =
-    case Split.splitOn ":" x of
-      [m,s] -> (read m,read s)
-      _ -> error ("minsec_parse: " ++ x)
+  case Split.splitOn ":" x of
+    [m, s] -> (read m, read s)
+    _ -> error ("minsec_parse: " ++ x)
 
 -- * MinCsec
 
@@ -468,14 +468,14 @@ minsec_parse x =
 -}
 fsec_to_mincsec :: FSec -> MinCsec
 fsec_to_mincsec tm =
-    let tm' = floor tm
-        (m,s) = sec_to_minsec tm'
-        cs = round ((tm - fromIntegral tm') * 100)
-    in (m,s,cs)
+  let tm' = floor tm
+      (m, s) = sec_to_minsec tm'
+      cs = round ((tm - fromIntegral tm') * 100)
+  in (m, s, cs)
 
 -- | Inverse of 'fsec_mincsec'.
 mincsec_to_fsec :: Real n => GMinCsec n -> FSec
-mincsec_to_fsec (m,s,cs) = realToFrac m * 60 + realToFrac s + (realToFrac cs / 100)
+mincsec_to_fsec (m, s, cs) = realToFrac m * 60 + realToFrac s + (realToFrac cs / 100)
 
 {- | GMinCsec -> Num
 
@@ -483,7 +483,7 @@ mincsec_to_fsec (m,s,cs) = realToFrac m * 60 + realToFrac s + (realToFrac cs / 1
 [100,667,12345]
 -}
 mincsec_to_csec :: Num n => GMinCsec n -> n
-mincsec_to_csec (m,s,cs) = m * 60 * 100 + s * 100 + cs
+mincsec_to_csec (m, s, cs) = m * 60 * 100 + s * 100 + cs
 
 {- | Centi-seconds to 'MinCsec'.
 
@@ -492,9 +492,9 @@ mincsec_to_csec (m,s,cs) = m * 60 * 100 + s * 100 + cs
 -}
 csec_to_mincsec :: Integral n => n -> GMinCsec n
 csec_to_mincsec csec =
-    let (m,cs) = csec `divMod` 6000
-        (s,cs') = cs `divMod` 100
-    in (m,s,cs')
+  let (m, cs) = csec `divMod` 6000
+      (s, cs') = cs `divMod` 100
+  in (m, s, cs')
 
 {- | 'MinCsec' pretty printer, concise mode omits centiseconds when zero.
 
@@ -502,10 +502,10 @@ csec_to_mincsec csec =
 ["00:01","01:00.50"]
 -}
 mincsec_pp_opt :: Bool -> MinCsec -> String
-mincsec_pp_opt concise (m,s,cs) =
+mincsec_pp_opt concise (m, s, cs) =
   if concise && cs == 0
-  then printf "%02d:%02d" m s
-  else printf "%02d:%02d.%02d" m s cs
+    then printf "%02d:%02d" m s
+    else printf "%02d:%02d.%02d" m s cs
 
 {- | 'MinCsec' pretty printer.
 
@@ -521,12 +521,12 @@ mincsec_binop f p q = csec_to_mincsec (f (mincsec_to_csec p) (mincsec_to_csec q)
 -- * DHms
 
 -- | Convert seconds into (days,hours,minutes,seconds).
-sec_to_dhms_generic :: Integral n => n -> (n,n,n,n)
+sec_to_dhms_generic :: Integral n => n -> (n, n, n, n)
 sec_to_dhms_generic n =
-    let (d,h') = n `divMod` (24 * 60 * 60)
-        (h,m') = h' `divMod` (60 * 60)
-        (m,s) = m' `divMod` 60
-    in (d,h,m,s)
+  let (d, h') = n `divMod` (24 * 60 * 60)
+      (h, m') = h' `divMod` (60 * 60)
+      (m, s) = m' `divMod` 60
+  in (d, h, m, s)
 
 {- | Type specialised 'sec_to_dhms_generic'.
 
@@ -541,21 +541,21 @@ sec_to_dhms = sec_to_dhms_generic
 >>> dhms_to_sec (17,1,51,9)
 1475469
 -}
-dhms_to_sec :: Num n => (n,n,n,n) -> n
-dhms_to_sec (d,h,m,s) = sum [d * 24 * 60 * 60,h * 60 * 60,m * 60,s]
+dhms_to_sec :: Num n => (n, n, n, n) -> n
+dhms_to_sec (d, h, m, s) = sum [d * 24 * 60 * 60, h * 60 * 60, m * 60, s]
 
 -- | Generic form of 'parse_dhms'.
-parse_dhms_generic :: (Integral n,Read n) => String -> (n,n,n,n)
+parse_dhms_generic :: (Integral n, Read n) => String -> (n, n, n, n)
 parse_dhms_generic =
-    let sep_elem = Split.split . Split.keepDelimsR . Split.oneOf
-        sep_last x = let (e, x') = List.headTail (reverse x) in (reverse x',e)
-        p x = case sep_last x of
-                (n,'d') -> read n * 24 * 60 * 60
-                (n,'h') -> read n * 60 * 60
-                (n,'m') -> read n * 60
-                (n,'s') -> read n
-                _ -> error "parse_dhms"
-    in sec_to_dhms_generic . sum . map p . filter (not . null) . sep_elem "dhms"
+  let sep_elem = Split.split . Split.keepDelimsR . Split.oneOf
+      sep_last x = let (e, x') = List.headTail (reverse x) in (reverse x', e)
+      p x = case sep_last x of
+        (n, 'd') -> read n * 24 * 60 * 60
+        (n, 'h') -> read n * 60 * 60
+        (n, 'm') -> read n * 60
+        (n, 's') -> read n
+        _ -> error "parse_dhms"
+  in sec_to_dhms_generic . sum . map p . filter (not . null) . sep_elem "dhms"
 
 {- | Parse DHms text.
 All parts are optional, order is not significant, multiple entries are allowed.
@@ -585,5 +585,5 @@ time_to_week = read . format_time_str "%V"
 -- * Util
 
 -- | Given printer, pretty print time span.
-span_pp :: (t -> String) -> (t,t) -> String
-span_pp f (t1,t2) = concat [f t1," - ",f t2]
+span_pp :: (t -> String) -> (t, t) -> String
+span_pp f (t1, t2) = concat [f t1, " - ", f t2]

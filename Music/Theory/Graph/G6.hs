@@ -23,7 +23,7 @@ g6_load fn = do
   return (lines s')
 
 -- | Load G6 file variant where each line is "Description\tG6"
-g6_dsc_load :: FilePath -> IO [(String,String)]
+g6_dsc_load :: FilePath -> IO [(String, String)]
 g6_dsc_load fn = do
   s <- readFile fn
   let r = map (T.split_on_1_err "\t") (lines s)
@@ -32,7 +32,7 @@ g6_dsc_load fn = do
 -- | Call nauty-listg to transform a sequence of G6. (debian = nauty)
 g6_to_edg :: [String] -> IO [T.Edg]
 g6_to_edg g6 = do
-  r <- Process.readProcess "nauty-listg" ["-q","-l0","-e"] (unlines g6)
+  r <- Process.readProcess "nauty-listg" ["-q", "-l0", "-e"] (unlines g6)
   return (map T.edg_parse (Split.chunksOf 2 (lines r)))
 
 -- | 'T.edg_to_g' of 'g6_to_edg'
@@ -40,15 +40,15 @@ g6_to_g :: [String] -> IO [T.G]
 g6_to_g = fmap (map T.edg_to_g) . g6_to_edg
 
 -- | 'g6_to_edg' of 'g6_dsc_load'.
-g6_dsc_load_edg :: FilePath -> IO [(String,T.Edg)]
+g6_dsc_load_edg :: FilePath -> IO [(String, T.Edg)]
 g6_dsc_load_edg fn = do
   dat <- g6_dsc_load fn
-  let (dsc,g6) = unzip dat
+  let (dsc, g6) = unzip dat
   gr <- g6_to_edg g6
   return (zip dsc gr)
 
 -- | 'T.edg_to_g' of 'g6_dsc_load_edg'
-g6_dsc_load_gr :: FilePath -> IO [(String,T.G)]
+g6_dsc_load_gr :: FilePath -> IO [(String, T.G)]
 g6_dsc_load_gr = fmap (map (second T.edg_to_g)) . g6_dsc_load_edg
 
 {- | Generate the text format read by nauty-amtog.
@@ -59,10 +59,12 @@ g6_dsc_load_gr = fmap (map (second T.edg_to_g)) . g6_dsc_load_edg
 "n=4\nm\n0 0 0 1\n0 0 0 1\n0 0 0 1\n1 1 1 0\n\n"
 -}
 adj_mtx_to_am :: T.Adj_Mtx Int -> String
-adj_mtx_to_am (nv,mtx) =
-  unlines ["n=" ++ show nv
-          ,"m"
-          ,unlines (map (unwords . map show) mtx)]
+adj_mtx_to_am (nv, mtx) =
+  unlines
+    [ "n=" ++ show nv
+    , "m"
+    , unlines (map (unwords . map show) mtx)
+    ]
 
 {- | Call nauty-amtog to transform a sequence of Adj_Mtx to G6.
 
@@ -78,7 +80,7 @@ adj_mtx_to_g6 adj = do
 
 -- | 'adj_mtx_to_g6' of 'T.g_to_adj_mtx_undir'
 g_to_g6 :: [T.G] -> IO [String]
-g_to_g6 = adj_mtx_to_g6 . map (T.g_to_adj_mtx_undir (0,1))
+g_to_g6 = adj_mtx_to_g6 . map (T.g_to_adj_mtx_undir (0, 1))
 
 -- | 'writeFile' of 'g_to_g6'
 g_store_g6 :: FilePath -> [T.G] -> IO ()

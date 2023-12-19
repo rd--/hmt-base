@@ -19,4 +19,3 @@ import Music.Theory.Geometry.Projection.Gl as M
 import Music.Theory.Geometry.Quaternion as M
 import Music.Theory.Geometry.Tutte as M
 import Music.Theory.Geometry.Vector as M
-

@@ -3,7 +3,6 @@
 Polygon variables:
 
 n = degree, a = side length, r = ir = inradius, R = cr = circumradius, A = ar = area, s = sagitta
-
 -}
 module Music.Theory.Geometry.Functions where
 
@@ -17,15 +16,15 @@ import Music.Theory.Geometry.Vector {- hmt-base -}
 
 -- * Math
 
-{- | Twice 'pi' -}
+-- | Twice 'pi'
 two_pi :: Floating n => n
 two_pi = 2 * pi
 
-{- | Secant. -}
+-- | Secant.
 sec :: Floating a => a -> a
 sec z = 1 / cos z
 
-{- | Cotangent. -}
+-- | Cotangent.
 cot :: Floating a => a -> a
 cot z = 1 / tan z
 
@@ -40,13 +39,13 @@ True
 degrees_to_radians :: Floating n => n -> n
 degrees_to_radians = (* pi) . (/ 180)
 
-{- | (degrees,minutes) to radians -}
-degrees_minutes_to_radians :: Floating n => (n,n) -> n
-degrees_minutes_to_radians (i,j) = degrees_to_radians (i + (j / 60))
+-- | (degrees,minutes) to radians
+degrees_minutes_to_radians :: Floating n => (n, n) -> n
+degrees_minutes_to_radians (i, j) = degrees_to_radians (i + (j / 60))
 
-{- | (degrees,minutes,seconds) to radians -}
-degrees_minutes_seconds_to_radians :: Floating n => (n,n,n) -> n
-degrees_minutes_seconds_to_radians (i,j,k) = degrees_to_radians (i + (j / 60) + (k / 3600))
+-- | (degrees,minutes,seconds) to radians
+degrees_minutes_seconds_to_radians :: Floating n => (n, n, n) -> n
+degrees_minutes_seconds_to_radians (i, j, k) = degrees_to_radians (i + (j / 60) + (k / 3600))
 
 {- | Radians to degrees.
 
@@ -72,7 +71,7 @@ radians_to_degrees = (* 180) . (/ pi)
 [(100,0),(71,71),(0,100),(-71,71),(-100,0)]
 -}
 polar_to_rectangular :: RealFloat t => V2 t -> V2 t
-polar_to_rectangular (mg,ph) = let c = mkPolar mg ph in (realPart c,imagPart c)
+polar_to_rectangular (mg, ph) = let c = mkPolar mg ph in (realPart c, imagPart c)
 
 {- | (magnitude,phase:degrees) -> (x,y)
 
@@ -86,15 +85,15 @@ polar_to_rectangular (mg,ph) = let c = mkPolar mg ph in (realPart c,imagPart c)
 polar_to_rectangular_dgr :: RealFloat t => V2 t -> V2 t
 polar_to_rectangular_dgr (i, j) = polar_to_rectangular (i, degrees_to_radians j)
 
-{- | (x,y) -> (magnitude,phase:radians) -}
+-- | (x,y) -> (magnitude,phase:radians)
 rectangular_to_polar :: RealFloat t => V2 t -> V2 t
-rectangular_to_polar (x,y) = polar (x :+ y)
+rectangular_to_polar (x, y) = polar (x :+ y)
 
 {- | (x,y) -> (magnitude,phase:degrees)
 
 >>> v2_round (rectangular_to_polar_dgr (-31,95))
 (100,108)
- -}
+-}
 rectangular_to_polar_dgr :: RealFloat t => V2 t -> V2 t
 rectangular_to_polar_dgr = (\(i, j) -> (i, radians_to_degrees j)) . rectangular_to_polar
 
@@ -106,7 +105,7 @@ rectangular_to_polar_dgr = (\(i, j) -> (i, radians_to_degrees j)) . rectangular_
 1.5
 -}
 triangle_semiperimeter_sss :: Fractional a => a -> a -> a -> a
-triangle_semiperimeter_sss a b c = (1/2) * (a + b + c)
+triangle_semiperimeter_sss a b c = (1 / 2) * (a + b + c)
 
 {- | <https://mathworld.wolfram.com/Area.html>
 
@@ -115,8 +114,8 @@ triangle_semiperimeter_sss a b c = (1/2) * (a + b + c)
 -}
 triangle_area_herons_sss :: Floating a => a -> a -> a -> a
 triangle_area_herons_sss a b c =
-    let s = triangle_semiperimeter_sss a b c
-    in sqrt (s * (s - a) * (s - b) * (s - c))
+  let s = triangle_semiperimeter_sss a b c
+  in sqrt (s * (s - a) * (s - b) * (s - c))
 
 {- | Area (aas)
 
@@ -125,10 +124,10 @@ triangle_area_herons_sss a b c =
 -}
 triangle_area_aas :: Floating a => a -> a -> a -> a
 triangle_area_aas alpha beta a =
-    let gamma = pi - alpha - beta
-        n = Math.sqr a * sin beta * sin gamma
-        d = 2 * sin alpha
-    in n / d
+  let gamma = pi - alpha - beta
+      n = Math.sqr a * sin beta * sin gamma
+      d = 2 * sin alpha
+  in n / d
 
 {- | Area (asa)
 
@@ -137,9 +136,9 @@ triangle_area_aas alpha beta a =
 -}
 triangle_area_asa :: Floating a => a -> a -> a -> a
 triangle_area_asa alpha c beta =
-    let n = Math.sqr c
-        d = 2 * (cot alpha + cot beta)
-    in n / d
+  let n = Math.sqr c
+      d = 2 * (cot alpha + cot beta)
+  in n / d
 
 {- | Side (asa)
 
@@ -148,10 +147,10 @@ triangle_area_asa alpha c beta =
 -}
 triangle_side_asa :: Floating a => a -> a -> a -> a
 triangle_side_asa alpha c beta =
-    let gamma = pi - alpha - beta
-    in (sin alpha / sin gamma) * c
+  let gamma = pi - alpha - beta
+  in (sin alpha / sin gamma) * c
 
-{- | <http://mathworld.wolfram.com/LawofCosines.html> -}
+-- | <http://mathworld.wolfram.com/LawofCosines.html>
 law_of_cosines :: Floating a => a -> a -> a -> a
 law_of_cosines s a s' = sqrt (Math.sqr s + Math.sqr s' - 2 * s * s' * cos a)
 
@@ -170,20 +169,20 @@ triangle_side_sas = law_of_cosines
 True
 -}
 triangle_centroid :: Fractional t => V2 t -> V2 t -> V2 t -> V2 t
-triangle_centroid (x1,y1) (x2,y2) (x3,y3) =
-    let x = (x1 + x2 + x3) / 3
-        y = (y1 + y2 + y3) / 3
-    in (x,y)
+triangle_centroid (x1, y1) (x2, y2) (x3, y3) =
+  let x = (x1 + x2 + x3) / 3
+      y = (y1 + y2 + y3) / 3
+  in (x, y)
 
-{- | Given lengths of three sides (a, b and c) calculate the angle between b and c (alpha). -}
+-- | Given lengths of three sides (a, b and c) calculate the angle between b and c (alpha).
 triangle_angle_alpha :: Floating a => a -> a -> a -> a
 triangle_angle_alpha a b c = acos ((b * b + c * c - a * a) / (2 * b * c))
 
-{- | Given lengths of three sides (a, b and c) calculate the angle between a and c (beta). -}
+-- | Given lengths of three sides (a, b and c) calculate the angle between a and c (beta).
 triangle_angle_beta :: Floating a => a -> a -> a -> a
 triangle_angle_beta a b c = acos ((a * a + c * c - b * b) / (2 * a * c))
 
-{- | Given lengths of three sides (a, b and c) calculate the angle between a and b (gamma). -}
+-- | Given lengths of three sides (a, b and c) calculate the angle between a and b (gamma).
 triangle_angle_gamma :: Floating a => a -> a -> a -> a
 triangle_angle_gamma a b c = acos ((a * a + b * b - c * c) / (2 * a * b))
 
@@ -213,7 +212,7 @@ True
 equilateral_triangle_inradius :: Floating a => a -> a
 equilateral_triangle_inradius = (/ 2) . equilateral_triangle_circumradius
 
-{- | Ccw unit square.  <https://mathworld.wolfram.com/UnitSquare.html> -}
+-- | Ccw unit square.  <https://mathworld.wolfram.com/UnitSquare.html>
 unit_square :: Num n => [V2 n]
 unit_square = [(0, 0), (1, 0), (1, 1), (0, 1)]
 
@@ -228,7 +227,7 @@ unit_square = [(0, 0), (1, 0), (1, 1), (0, 1)]
 0.8506508083520399
 -}
 pentagon_circumradius_a :: Floating a => a -> a
-pentagon_circumradius_a a = (1/10) * sqrt (50 + 10 * sqrt 5) * a
+pentagon_circumradius_a a = (1 / 10) * sqrt (50 + 10 * sqrt 5) * a
 
 {- | Regular pentagon inradius (r), c.f. <https://mathworld.wolfram.com/Inradius.html>
 
@@ -236,7 +235,7 @@ pentagon_circumradius_a a = (1/10) * sqrt (50 + 10 * sqrt 5) * a
 True
 -}
 pentagon_inradius_a :: Floating a => a -> a
-pentagon_inradius_a a = (1/10) * sqrt (25 + 10 * sqrt 5) * a
+pentagon_inradius_a a = (1 / 10) * sqrt (25 + 10 * sqrt 5) * a
 
 {- | Regular pentagon sagitta, c.f. <https://mathworld.wolfram.com/Sagitta.html>
 
@@ -247,7 +246,7 @@ pentagon_inradius_a a = (1/10) * sqrt (25 + 10 * sqrt 5) * a
 True
 -}
 pentagon_sagitta_a :: Floating a => a -> a
-pentagon_sagitta_a a = (1/10) * sqrt (25 - 10 * sqrt 5) * a
+pentagon_sagitta_a a = (1 / 10) * sqrt (25 - 10 * sqrt 5) * a
 
 {- | Regular pentagon area, c.f. <https://mathworld.wolfram.com/Area.html>
 
@@ -258,7 +257,7 @@ pentagon_sagitta_a a = (1/10) * sqrt (25 - 10 * sqrt 5) * a
 True
 -}
 pentagon_area_a :: Floating a => a -> a
-pentagon_area_a a = (1/4) * sqrt (25 + 10 * sqrt 5) * a * a
+pentagon_area_a a = (1 / 4) * sqrt (25 + 10 * sqrt 5) * a * a
 
 -- * Hexagon
 
@@ -334,7 +333,7 @@ the points are arranged in a counterclockwise order, and negative
 if they are in clockwise order (Beyer 1987).
 
 >>> let u = [(0,0),(1,0),(1,1),(0,1)]
->>> polygon_signed_area u 
+>>> polygon_signed_area u
 1.0
 
 >>> polygon_signed_area (reverse u)
@@ -342,9 +341,9 @@ if they are in clockwise order (Beyer 1987).
 -}
 polygon_signed_area :: Fractional t => [V2 t] -> t
 polygon_signed_area p =
-    let q = zip p (List.tail_err (cycle p))
-        f ((x1,y1),(x2,y2)) = x1 * y2 - x2 * y1
-    in sum (map f q) / 2
+  let q = zip p (List.tail_err (cycle p))
+      f ((x1, y1), (x2, y2)) = x1 * y2 - x2 * y1
+  in sum (map f q) / 2
 
 {- | a = 2 × R × sin (π / n)
 
@@ -386,7 +385,7 @@ regular_polygon_circumradius_r n r = r * cot (pi / n)
 regular_polygon_circumradius_a :: Floating a => a -> a -> a
 regular_polygon_circumradius_a n a =
   let csc x = 1 / sin x
-  in (1/2) * a * csc (pi / n)
+  in (1 / 2) * a * csc (pi / n)
 
 {- | A = ½ × n × R × R × sin (2 × π / n)
 
@@ -394,7 +393,7 @@ regular_polygon_circumradius_a n a =
 2.598076211353316
 -}
 regular_polygon_area_cr :: Floating a => a -> a -> a
-regular_polygon_area_cr n cr = (1/2) * n * Math.sqr cr * sin (two_pi / n)
+regular_polygon_area_cr n cr = (1 / 2) * n * Math.sqr cr * sin (two_pi / n)
 
 {- | A = ¼ × n × a × a × cot (π / n)
 
@@ -402,7 +401,7 @@ regular_polygon_area_cr n cr = (1/2) * n * Math.sqr cr * sin (two_pi / n)
 [0.43301270189221946,1.0000000000000002,1.720477400588967,2.598076211353316]
 -}
 regular_polygon_area_a :: Floating a => a -> a -> a
-regular_polygon_area_a n a = (1/4) * n * Math.sqr a * cot (pi / n)
+regular_polygon_area_a n a = (1 / 4) * n * Math.sqr a * cot (pi / n)
 
 {- | Sagitta
 
@@ -444,7 +443,7 @@ regular_polygon_apothem_r n r = r * cos (pi / n)
 [(0,0,0),(0,0,1),(0,1,0),(0,1,1),(1,0,0),(1,0,1),(1,1,0),(1,1,1)]
 -}
 cube_vertices :: Num n => V2 n -> [V3 n]
-cube_vertices (i,j) = [(i,i,i),(i,i,j),(i,j,i),(i,j,j),(j,i,i),(j,i,j),(j,j,i),(j,j,j)]
+cube_vertices (i, j) = [(i, i, i), (i, i, j), (i, j, i), (i, j, j), (j, i, i), (j, i, j), (j, j, i), (j, j, j)]
 
 {- | Un-directed graph of cube given lexographic labelling as above.
 Construction of Q3 by connecting pairs of corresponding vertices in two copies of Q2
@@ -453,12 +452,12 @@ Construction of Q3 by connecting pairs of corresponding vertices in two copies o
 >>> (length v,length e)
 (8,12)
 -}
-cube_graph :: ([Int],[(Int,Int)])
+cube_graph :: ([Int], [(Int, Int)])
 cube_graph =
-  let v = [0,4,6,2, 1,5,7,3]
+  let v = [0, 4, 6, 2, 1, 5, 7, 3]
       adj2 l = zip l (List.tail_err l)
-      e = concatMap adj2 [[0,4,6,2,0],[1,5,7,3,1],[0,1],[4,5],[2,3],[6,7]]
-  in (v,e)
+      e = concatMap adj2 [[0, 4, 6, 2, 0], [1, 5, 7, 3, 1], [0, 1], [4, 5], [2, 3], [6, 7]]
+  in (v, e)
 
 {- | Table to label cube_vertices as below.
 
@@ -474,8 +473,8 @@ cube_graph =
 >>> map snd (sort cube_vertices_label_tbl)
 "CcAaDdBb"
 -}
-cube_vertices_label_tbl :: [(Int,Char)]
-cube_vertices_label_tbl = zip [2,6,0,4,3,7,1,5] "ABCDabcd"
+cube_vertices_label_tbl :: [(Int, Char)]
+cube_vertices_label_tbl = zip [2, 6, 0, 4, 3, 7, 1, 5] "ABCDabcd"
 
 {- | C4 (8-cell, octachoron, tesseract, 4-cube) vertices, lexographic ordering.
 
@@ -483,9 +482,9 @@ cube_vertices_label_tbl = zip [2,6,0,4,3,7,1,5] "ABCDabcd"
 16
 -}
 tesseract_vertices :: Num n => V2 n -> [V4 n]
-tesseract_vertices (i,j) =
-  let c3 = cube_vertices (i,j)
-  in concatMap (\n -> map (\(x,y,z) -> (n,x,y,z)) c3) [i,j]
+tesseract_vertices (i, j) =
+  let c3 = cube_vertices (i, j)
+  in concatMap (\n -> map (\(x, y, z) -> (n, x, y, z)) c3) [i, j]
 
 {- | Un-directed graph of tesseract.
 Construction of Q4 by connecting pairs of corresponding vertices in two copies of Q3.
@@ -494,14 +493,17 @@ Construction of Q4 by connecting pairs of corresponding vertices in two copies o
 >>> (length v,length e)
 (16,32)
 -}
-tesseract_graph :: ([Int],[(Int,Int)])
+tesseract_graph :: ([Int], [(Int, Int)])
 tesseract_graph =
-  let (c3_v,c3_e) = cube_graph
+  let (c3_v, c3_e) = cube_graph
       c4_v = c3_v ++ map (+ 8) c3_v
-      c4_e = concat [c3_e
-                    ,map (\(i,j) -> (i + 8,j + 8)) c3_e
-                    ,zip [0 .. 7] [8 .. 15]]
-  in (c4_v,c4_e)
+      c4_e =
+        concat
+          [ c3_e
+          , map (\(i, j) -> (i + 8, j + 8)) c3_e
+          , zip [0 .. 7] [8 .. 15]
+          ]
+  in (c4_v, c4_e)
 
 {- | Table to label tesseract_vertices as cube_vertices.
 
@@ -509,9 +511,9 @@ tesseract_graph =
 >>> map snd (sort tesseract_vertices_label_tbl)
 "CcAaDdBbGgEeHhFf"
 -}
-tesseract_vertices_label_tbl :: [(Int,Char)]
+tesseract_vertices_label_tbl :: [(Int, Char)]
 tesseract_vertices_label_tbl =
-  let f (i,c) = (i + 8,toEnum (fromEnum c + 4))
+  let f (i, c) = (i + 8, toEnum (fromEnum c + 4))
   in cube_vertices_label_tbl ++ map f cube_vertices_label_tbl
 
 {- | C5 (5-cell, pentachoron, pentatope, 4-simplex) co-ordinates.
@@ -521,15 +523,15 @@ tesseract_vertices_label_tbl =
 >>> Data.List.nub [v4_distance i j | i <- c,j <- c, i < j]
 [2.8284271247461903]
 -}
-pentatope :: (Num t,Floating t) => (t,t) -> [V4 t]
-pentatope (i,j) =
+pentatope :: (Num t, Floating t) => (t, t) -> [V4 t]
+pentatope (i, j) =
   let phi = (1 + sqrt 5) / 2
       k = 0.5 * phi * (j - i) + i
-  in [(j,i,i,i),(i,j,i,i),(i,i,j,i),(i,i,i,j),(k,k,k,k)]
+  in [(j, i, i, i), (i, j, i, i), (i, i, j, i), (i, i, i, j), (k, k, k, k)]
 
-{- | C5 graph. |v|=4 |e|=10 -}
-pentatope_graph :: ([Int], [(Int,Int)])
-pentatope_graph = let v = [0 .. 4] in (v,[(i,j) | i <- v, j <- v, i < j])
+-- | C5 graph. |v|=4 |e|=10
+pentatope_graph :: ([Int], [(Int, Int)])
+pentatope_graph = let v = [0 .. 4] in (v, [(i, j) | i <- v, j <- v, i < j])
 
 {- | C16 (16-cell, hexadecachoron, 4-orthoplex)
      All non-oposite vertices are connected by edges.
@@ -537,17 +539,22 @@ pentatope_graph = let v = [0 .. 4] in (v,[(i,j) | i <- v, j <- v, i < j])
 -}
 hexadecachoron :: Num t => [V4 t]
 hexadecachoron =
-  [(1,0,0,0),(-1, 0, 0, 0)
-  ,(0,1,0,0),( 0,-1, 0, 0)
-  ,(0,0,1,0),( 0, 0,-1, 0)
-  ,(0,0,0,1),( 0, 0, 0,-1)]
+  [ (1, 0, 0, 0)
+  , (-1, 0, 0, 0)
+  , (0, 1, 0, 0)
+  , (0, -1, 0, 0)
+  , (0, 0, 1, 0)
+  , (0, 0, -1, 0)
+  , (0, 0, 0, 1)
+  , (0, 0, 0, -1)
+  ]
 
-{- | C16 graph. |v|=8 |e|=24. Opposite vertices are adjacent (even,odd). -}
-hexadecachoron_graph :: ([Int], [(Int,Int)])
+-- | C16 graph. |v|=8 |e|=24. Opposite vertices are adjacent (even,odd).
+hexadecachoron_graph :: ([Int], [(Int, Int)])
 hexadecachoron_graph =
-  let v = [0..7]
+  let v = [0 .. 7]
       f i j = odd i || j /= (i + 1)
-  in (v,[(i,j) | i <- v, j <- v, i < j, f i j])
+  in (v, [(i, j) | i <- v, j <- v, i < j, f i j])
 
 -- * Fano
 
@@ -561,11 +568,11 @@ hexadecachoron_graph =
 > gr_map (subtract 1) fano_plane_graph
 ([-1,0,1,2,3,4,5],[(-1,1),(-1,3),(-1,5),(0,1),(0,4),(0,5),(1,3),(1,4),(1,5),(2,3),(2,4),(2,5),(3,4),(3,5),(4,5)])
 -}
-
-fano_plane_graph :: ([Int], [(Int,Int)])
+fano_plane_graph :: ([Int], [(Int, Int)])
 fano_plane_graph =
-  ([0,1,2,3,4,5,6]
-  ,[(0,2),(0,4),(0,6),(1,2),(1,5),(1,6),(2,4),(2,5),(2,6),(3,4),(3,5),(3,6),(4,5),(4,6),(5,6)])
+  ( [0, 1, 2, 3, 4, 5, 6]
+  , [(0, 2), (0, 4), (0, 6), (1, 2), (1, 5), (1, 6), (2, 4), (2, 5), (2, 6), (3, 4), (3, 5), (3, 6), (4, 5), (4, 6), (5, 6)]
+  )
 
 {- | Polar co-ordinates for the standard drawing of the Fano plane,
 with circumradius /cr/ and P7 at (0,0).
@@ -573,10 +580,10 @@ with circumradius /cr/ and P7 at (0,0).
 fano_plane_coord :: Floating n => n -> [V2 n]
 fano_plane_coord cr =
   let r = regular_polygon_inradius_cr 3 cr
-      p7 = (0,0)
-      (p6,p3,p5) = Music.Theory.Tuple.t3_from_list (map (\n -> (r,pi/6 + two_pi * n)) [0,1/3,2/3])
-      (p2,p1,p4) = Music.Theory.Tuple.t3_from_list (map (\n -> (cr,pi/2 + two_pi * n)) [0,1/3,2/3])
-  in [p1,p2,p3,p4,p5,p6,p7]
+      p7 = (0, 0)
+      (p6, p3, p5) = Music.Theory.Tuple.t3_from_list (map (\n -> (r, pi / 6 + two_pi * n)) [0, 1 / 3, 2 / 3])
+      (p2, p1, p4) = Music.Theory.Tuple.t3_from_list (map (\n -> (cr, pi / 2 + two_pi * n)) [0, 1 / 3, 2 / 3])
+  in [p1, p2, p3, p4, p5, p6, p7]
 
 -- * Intersect
 
@@ -597,14 +604,14 @@ fano_plane_coord cr =
 >>> point_line_intersect ((0,0),(10,10)) (-2.5,-7.5)
 (-0.5,(-5.0,-5.0))
 -}
-point_line_intersect :: Fractional t => V2 (V2 t) -> V2 t -> (t,V2 t)
-point_line_intersect ((x1,y1),(x2,y2)) (x3,y3) =
-    let xd = x2 - x1
-        yd = y2 - y1
-        u = ((x3 - x1) * xd + (y3 - y1) * yd) / (xd * xd + yd * yd)
-        x4 = x1 + u * (x2 - x1)
-        y4 = y1 + u * (y2 - y1)
-    in (u,(x4,y4))
+point_line_intersect :: Fractional t => V2 (V2 t) -> V2 t -> (t, V2 t)
+point_line_intersect ((x1, y1), (x2, y2)) (x3, y3) =
+  let xd = x2 - x1
+      yd = y2 - y1
+      u = ((x3 - x1) * xd + (y3 - y1) * yd) / (xd * xd + yd * yd)
+      x4 = x1 + u * (x2 - x1)
+      y4 = y1 + u * (y2 - y1)
+  in (u, (x4, y4))
 
 {- | Minimum distance between a point and a line, and a flag indicating
    if the intersection point is within the indicated line segment or
@@ -613,10 +620,10 @@ point_line_intersect ((x1,y1),(x2,y2)) (x3,y3) =
 >>> map (point_line_distance ((0,0),(10,10))) [(2,7.5),(-7.5,-2)]
 [(True,3.8890872965260113),(False,3.8890872965260113)]
 -}
-point_line_distance :: (Floating t,Ord t) => V2 (V2 t) -> V2 t -> (Bool,t)
-point_line_distance (p1,p2) p3 =
-  let (u,p4) = point_line_intersect (p1,p2) p3
-  in (u >= 0 && u <= 1,v2_distance p3 p4)
+point_line_distance :: (Floating t, Ord t) => V2 (V2 t) -> V2 t -> (Bool, t)
+point_line_distance (p1, p2) p3 =
+  let (u, p4) = point_line_intersect (p1, p2) p3
+  in (u >= 0 && u <= 1, v2_distance p3 p4)
 
 {- | 'v2_reflect_xy' about 'point_line_intersect'.
 
@@ -625,7 +632,7 @@ point_line_distance (p1,p2) p3 =
 -}
 point_line_reflect :: Fractional a => (V2 a, V2 a) -> V2 a -> V2 a
 point_line_reflect ln p =
-  let (_,r) = point_line_intersect ln p
+  let (_, r) = point_line_intersect ln p
   in v2_reflect_xy r p
 
 -- * Align
@@ -638,11 +645,11 @@ point_line_reflect ln p =
 -}
 line_align :: RealFloat r => V2 (V2 r) -> V2 (V2 r) -> (V2 r, (V2 r, r))
 line_align p q =
-    let (pt0,vc0) = (fst p,uncurry v2_sub p)
-        (pt1,vc1) = (fst q,uncurry v2_sub q)
-        (_,ph0) = rectangular_to_polar vc0
-        (_,ph1) = rectangular_to_polar vc1
-    in (pt1 `v2_sub` pt0,(pt1,ph1 - ph0))
+  let (pt0, vc0) = (fst p, uncurry v2_sub p)
+      (pt1, vc1) = (fst q, uncurry v2_sub q)
+      (_, ph0) = rectangular_to_polar vc0
+      (_, ph1) = rectangular_to_polar vc1
+  in (pt1 `v2_sub` pt0, (pt1, ph1 - ph0))
 
 -- * Circle
 
@@ -654,20 +661,44 @@ line_align p q =
 >>> map (\v -> line_circle_intersection (o,v) c) [(1,0),(1,1)] == [Just (1,-1),Just (z,-z)]
 True
 -}
-line_circle_intersection :: (Ord a,Floating a) => (V2 a,V2 a) -> (V2 a,a) -> Maybe (V2 a)
-line_circle_intersection ((lx,ly),(dx,dy)) ((cx,cy),r) =
-    let a = (dx * dx + dy * dy)
-        b = 2 * ((lx - cx) * dx + (ly - cy) * dy)
-        c = (lx - cx) * (lx - cx) + (ly - cy) * (ly - cy) - r * r
-        z = b * b - 4 * a * c
-    in if z < 0
-       then Nothing
-       else if a == 0
-            then if c == 0 then Just (0,0) else Nothing
-            else Just ((-b + sqrt z) / (2 * a)
-                      ,(-b - sqrt z) / (2 * a))
+line_circle_intersection :: (Ord a, Floating a) => (V2 a, V2 a) -> (V2 a, a) -> Maybe (V2 a)
+line_circle_intersection ((lx, ly), (dx, dy)) ((cx, cy), r) =
+  let a = (dx * dx + dy * dy)
+      b = 2 * ((lx - cx) * dx + (ly - cy) * dy)
+      c = (lx - cx) * (lx - cx) + (ly - cy) * (ly - cy) - r * r
+      z = b * b - 4 * a * c
+  in if z < 0
+      then Nothing
+      else
+        if a == 0
+          then if c == 0 then Just (0, 0) else Nothing
+          else
+            Just
+              ( (-b + sqrt z) / (2 * a)
+              , (-b - sqrt z) / (2 * a)
+              )
 
 -- * Spherical
+
+{- |  Inclination (theta, polar angle, zenith angle, colatitude) to elevation (delta, latitude).
+Inclination is in (0,pi) measuring from the positive z-axis.
+Elevation is in (-pi/2, pi/2) measuring from the x-y plane.
+
+>>> let f = round . radians_to_degrees . inclination_to_elevation . (* pi)
+>>> map f [0, 1/4, 1/2, 3/4, 1]
+[90,45,0,-45,-90]
+-}
+inclination_to_elevation :: RealFloat n => n -> n
+inclination_to_elevation theta = negate (theta - (pi / 2))
+
+{- | Inverse of inclination_to_elevation.
+
+>>> let f = round . radians_to_degrees . elevation_to_inclination . (* pi)
+>>> map f [1/2, 1/4, 0, -1/4, -1/2]
+[0,45,90,135,180]
+-}
+elevation_to_inclination :: RealFloat n => n -> n
+elevation_to_inclination delta = (pi / 2) - delta
 
 {- | Iso convention (r=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
@@ -691,11 +722,11 @@ True
 True
 -}
 cartesian_to_spherical :: RealFloat n => V3 n -> V3 n
-cartesian_to_spherical (x,y,z) =
-  let r = sqrt (x * x + y * y + z * z)
+cartesian_to_spherical (x, y, z) =
+  let rho = sqrt (x * x + y * y + z * z)
       theta = atan2 (sqrt (x * x + y * y)) z -- acos (z / r)
       phi = atan2 y x -- atan (y / x)
-  in (r,theta,phi)
+  in (rho, theta, phi)
 
 {- | Iso convention (r=𝑟=radius, theta=θ=inclination=X, phi=φ=azimuth=Z)
 
@@ -718,10 +749,11 @@ True
 True
 -}
 spherical_to_cartesian :: Floating n => V3 n -> V3 n
-spherical_to_cartesian (r,theta,phi) =
-  (r * sin theta * cos phi
-  ,r * sin theta * sin phi
-  ,r * cos theta)
+spherical_to_cartesian (r, theta, phi) =
+  ( r * sin theta * cos phi
+  , r * sin theta * sin phi
+  , r * cos theta
+  )
 
 -- * Surface Normal
 
@@ -734,12 +766,13 @@ spherical_to_cartesian (r,theta,phi) =
 (1,1,1)
 -}
 v3_p3_normal :: Num t => V3 (V3 t) -> V3 t
-v3_p3_normal (p1,p2,p3) =
-  let (ux,uy,uz) = v3_sub p2 p1
-      (vx,vy,vz) = v3_sub p3 p1
-  in (uy * vz - uz * vy
-     ,uz * vx - ux * vz
-     ,ux * vy - uy * vx)
+v3_p3_normal (p1, p2, p3) =
+  let (ux, uy, uz) = v3_sub p2 p1
+      (vx, vy, vz) = v3_sub p3 p1
+  in ( uy * vz - uz * vy
+     , uz * vx - ux * vz
+     , ux * vy - uy * vx
+     )
 
 {- | 'v3_normalize' of 'v3_p3_normal'.
 
@@ -763,14 +796,17 @@ v3_p3_normal_unit = v3_normalize . v3_p3_normal
 v3_normal :: Num t => [V3 t] -> V3 t
 v3_normal =
   let close l = l ++ [List.head_err l]
-      recur (nx,ny,nz) p =
+      recur (nx, ny, nz) p =
         case p of
-          (x1,y1,z1):(x2,y2,z2):_ ->
-            recur (nx + ((y1 - y2) * (z1 + z2))
-                  ,ny + ((z1 - z2) * (x1 + x2))
-                  ,nz + ((x1 - x2) * (y1 + y2))) (List.tail_err p)
-          _ ->  (nx,ny,nz)
-  in recur (0,0,0) . close
+          (x1, y1, z1) : (x2, y2, z2) : _ ->
+            recur
+              ( nx + ((y1 - y2) * (z1 + z2))
+              , ny + ((z1 - z2) * (x1 + x2))
+              , nz + ((x1 - x2) * (y1 + y2))
+              )
+              (List.tail_err p)
+          _ -> (nx, ny, nz)
+  in recur (0, 0, 0) . close
 
 {- | 'v3_normalize' of 'v3_normal'.
 

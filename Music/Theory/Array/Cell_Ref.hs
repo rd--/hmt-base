@@ -8,8 +8,9 @@ import Data.String {- base -}
 
 import qualified Data.Array as A {- array -}
 
--- $setup
--- >>> :set -XOverloadedStrings
+{- $setup
+>>> :set -XOverloadedStrings
+-}
 
 -- | @A@ indexed case-insensitive column references.  The column following @Z@ is @AA@.
 newtype Column_Ref = Column_Ref {column_ref_string :: String}
@@ -21,23 +22,23 @@ A
 -}
 instance IsString Column_Ref where fromString = Column_Ref
 
-instance Read Column_Ref where readsPrec _ s = [(Column_Ref s,[])]
+instance Read Column_Ref where readsPrec _ s = [(Column_Ref s, [])]
 instance Show Column_Ref where show = column_ref_string
 instance Eq Column_Ref where (==) = (==) `on` column_index
 instance Ord Column_Ref where compare = compare `on` column_index
 
 instance Enum Column_Ref where
-    fromEnum = column_index
-    toEnum = column_ref
+  fromEnum = column_index
+  toEnum = column_ref
 
 instance A.Ix Column_Ref where
-    range = column_range
-    index = interior_column_index
-    inRange = column_in_range
-    rangeSize = column_range_size
+  range = column_range
+  index = interior_column_index
+  inRange = column_in_range
+  rangeSize = column_range_size
 
 -- | Inclusive range of column references.
-type Column_Range = (Column_Ref,Column_Ref)
+type Column_Range = (Column_Ref, Column_Ref)
 
 -- | @1@-indexed row reference.
 type Row_Ref = Int
@@ -47,13 +48,13 @@ row_index :: Row_Ref -> Int
 row_index r = r - 1
 
 -- | Inclusive range of row references.
-type Row_Range = (Row_Ref,Row_Ref)
+type Row_Range = (Row_Ref, Row_Ref)
 
 -- | Cell reference, column then row.
-type Cell_Ref = (Column_Ref,Row_Ref)
+type Cell_Ref = (Column_Ref, Row_Ref)
 
 -- | Inclusive range of cell references.
-type Cell_Range = (Cell_Ref,Cell_Ref)
+type Cell_Range = (Cell_Ref, Cell_Ref)
 
 {- | Case folding letter to index function.  Only valid for ASCII letters.
 
@@ -81,9 +82,9 @@ index_letter i = toEnum (i + fromEnum 'A')
 -}
 column_index :: Column_Ref -> Int
 column_index (Column_Ref c) =
-    let m = iterate (* 26) 1
-        i = reverse (map letter_index c)
-    in sum (zipWith (*) m (zipWith (+) [0..] i))
+  let m = iterate (* 26) 1
+      i = reverse (map letter_index c)
+  in sum (zipWith (*) m (zipWith (+) [0 ..] i))
 
 {- | Column reference to interior index within specified range.
 Type specialised 'Data.Ix.index'.
@@ -101,13 +102,13 @@ Type specialised 'Data.Ix.index'.
 [0,1]
 -}
 interior_column_index :: Column_Range -> Column_Ref -> Int
-interior_column_index (l,r) c =
-    let n = column_index c
-        l' = column_index l
-        r' = column_index r
-    in if n > r'
-       then error (show ("interior_column_index",l,r,c))
-       else n - l'
+interior_column_index (l, r) c =
+  let n = column_index c
+      l' = column_index l
+      r' = column_index r
+  in if n > r'
+      then error (show ("interior_column_index", l, r, c))
+      else n - l'
 
 {- | Inverse of 'column_index'.
 
@@ -119,10 +120,10 @@ CA
 -}
 column_ref :: Int -> Column_Ref
 column_ref =
-    let rec n = case n `quotRem` 26 of
-                  (0,r) -> [index_letter r]
-                  (q,r) -> index_letter (q - 1) : rec r
-    in Column_Ref . rec
+  let rec n = case n `quotRem` 26 of
+        (0, r) -> [index_letter r]
+        (q, r) -> index_letter (q - 1) : rec r
+  in Column_Ref . rec
 
 {- | Type specialised 'pred'.
 
@@ -148,10 +149,10 @@ column_ref_succ = succ
 >>> column_indices ("B","IT")
 (1,253)
 -}
-column_indices :: Column_Range -> (Int,Int)
+column_indices :: Column_Range -> (Int, Int)
 column_indices =
-    let bimap f (i,j) = (f i,f j)
-    in bimap column_index
+  let bimap f (i, j) = (f i, f j)
+  in bimap column_index
 
 {- | Type specialised 'Data.Ix.range'.
 
@@ -163,8 +164,8 @@ column_indices =
 -}
 column_range :: Column_Range -> [Column_Ref]
 column_range rng =
-    let (l,r) = column_indices rng
-    in map column_ref [l .. r]
+  let (l, r) = column_indices rng
+  in map column_ref [l .. r]
 
 {- | Type specialised 'Data.Ix.inRange'.
 
@@ -182,9 +183,9 @@ column_range rng =
 -}
 column_in_range :: Column_Range -> Column_Ref -> Bool
 column_in_range rng c =
-    let (l,r) = column_indices rng
-        k = column_index c
-    in k >= l && k <= r
+  let (l, r) = column_indices rng
+      k = column_index c
+  in k >= l && k <= r
 
 {- | Type specialised 'Data.Ix.rangeSize'.
 
@@ -207,7 +208,7 @@ row_range = A.range
 True
 -}
 cell_ref_minima :: Cell_Ref
-cell_ref_minima = (Column_Ref "A",1)
+cell_ref_minima = (Column_Ref "A", 1)
 
 {- | Cell reference parser for standard notation of (column,row).
 
@@ -216,11 +217,11 @@ Just (CC,348)
 -}
 parse_cell_ref :: String -> Maybe Cell_Ref
 parse_cell_ref s =
-    case span isUpper s of
-      ([],_) -> Nothing
-      (c,r) -> case span isDigit r of
-                 (n,[]) -> Just (Column_Ref c,read n)
-                 _ -> Nothing
+  case span isUpper s of
+    ([], _) -> Nothing
+    (c, r) -> case span isDigit r of
+      (n, []) -> Just (Column_Ref c, read n)
+      _ -> Nothing
 
 -- | 'isJust' of 'parse_cell_ref'.
 is_cell_ref :: String -> Bool
@@ -236,7 +237,7 @@ parse_cell_ref_err = fromMaybe (error "parse_cell_ref") . parse_cell_ref
 "CC348"
 -}
 cell_ref_pp :: Cell_Ref -> String
-cell_ref_pp (Column_Ref c,r) = c ++ show r
+cell_ref_pp (Column_Ref c, r) = c ++ show r
 
 {- | Translate cell reference to @0@-indexed pair.
 
@@ -246,8 +247,8 @@ cell_ref_pp (Column_Ref c,r) = c ++ show r
 >>> Data.Ix.index ((Column_Ref "AA",1),(Column_Ref "ZZ",999)) (Column_Ref "CC",348)
 54293
 -}
-cell_index :: Cell_Ref -> (Int,Int)
-cell_index (c,r) = (column_index c,row_index r)
+cell_index :: Cell_Ref -> (Int, Int)
+cell_index (c, r) = (column_index c, row_index r)
 
 {- | Inverse of cell_index.
 
@@ -257,11 +258,11 @@ cell_index (c,r) = (column_index c,row_index r)
 >>> index_to_cell (4,5)
 (E,6)
 -}
-index_to_cell :: (Int,Int) -> Cell_Ref
-index_to_cell (c,r) = (column_ref c,r + 1)
+index_to_cell :: (Int, Int) -> Cell_Ref
+index_to_cell (c, r) = (column_ref c, r + 1)
 
 -- | 'cell_index' of 'parse_cell_ref_err'
-parse_cell_index :: String -> (Int,Int)
+parse_cell_index :: String -> (Int, Int)
 parse_cell_index = cell_index . parse_cell_ref_err
 
 {- | Type specialised 'Data.Ix.range', cells are in column-order.
@@ -279,18 +280,20 @@ parse_cell_index = cell_index . parse_cell_ref_err
 [('A',1),('A',2),('B',1),('B',2),('C',1),('C',2)]
 -}
 cell_range :: Cell_Range -> [Cell_Ref]
-cell_range ((c1,r1),(c2,r2)) =
-    [(c,r) |
-     c <- column_range (c1,c2)
-    ,r <- row_range (r1,r2)]
+cell_range ((c1, r1), (c2, r2)) =
+  [ (c, r)
+  | c <- column_range (c1, c2)
+  , r <- row_range (r1, r2)
+  ]
 
 {- | Variant of 'cell_range' in row-order.
 
 >>> cell_range_row_order (("AA",1),("AC",2))
 [(AA,1),(AB,1),(AC,1),(AA,2),(AB,2),(AC,2)]
 -}
-cell_range_row_order ::  Cell_Range -> [Cell_Ref]
-cell_range_row_order ((c1,r1),(c2,r2)) =
-    [(c,r) |
-     r <- row_range (r1,r2)
-    ,c <- column_range (c1,c2)]
+cell_range_row_order :: Cell_Range -> [Cell_Ref]
+cell_range_row_order ((c1, r1), (c2, r2)) =
+  [ (c, r)
+  | r <- row_range (r1, r2)
+  , c <- column_range (c1, c2)
+  ]

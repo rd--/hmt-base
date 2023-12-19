@@ -33,7 +33,7 @@ n_powerset = (^) 2
 [64,128,256,512]
 -}
 powerset :: [a] -> [[a]]
-powerset = filterM (const [True,False])
+powerset = filterM (const [True, False])
 
 {- | Variant where result is sorted and the empty set is not given.
 
@@ -48,11 +48,11 @@ powerset_sorted = List.tail_err . List.sort_by_two_stage_on length id . powerset
 >>> pairs [1,2,3]
 [(1,2),(1,3),(2,3)]
 -}
-pairs :: [a] -> [(a,a)]
+pairs :: [a] -> [(a, a)]
 pairs s =
-    case s of
-      [] -> []
-      x:s' -> [(x,y) | y <- s'] ++ pairs s'
+  case s of
+    [] -> []
+    x : s' -> [(x, y) | y <- s'] ++ pairs s'
 
 {- | Three element subsets.
 
@@ -63,11 +63,11 @@ pairs s =
 > let f n = genericLength (triples [1..n]) == nk_combinations n 3
 > all f [1..15]
 -}
-triples :: [a] -> [(a,a,a)]
+triples :: [a] -> [(a, a, a)]
 triples s =
-    case s of
-      [] -> []
-      x:s' -> [(x,y,z) | (y,z) <- pairs s'] ++ triples s'
+  case s of
+    [] -> []
+    x : s' -> [(x, y, z) | (y, z) <- pairs s'] ++ triples s'
 
 {- | Set expansion (ie. to multiset of degree /n/).
 
@@ -76,7 +76,7 @@ triples s =
 -}
 expand_set :: (Ord a) => Int -> [a] -> [[a]]
 expand_set n xs =
-    if length xs >= n
+  if length xs >= n
     then [xs]
     else nub (concatMap (expand_set n) [sort (y : xs) | y <- xs])
 
@@ -102,8 +102,8 @@ partitions = map (map Multiset.toList . Multiset.toList) . Multiset.partitions .
 >>> cartesian_product "xy" "xy"
 [('x','x'),('x','y'),('y','x'),('y','y')]
 -}
-cartesian_product :: [a] -> [b] -> [(a,b)]
-cartesian_product p q = [(i,j) | i <- p, j <- q]
+cartesian_product :: [a] -> [b] -> [(a, b)]
+cartesian_product p q = [(i, j) | i <- p, j <- q]
 
 {- | List form of n-fold cartesian product.
 
@@ -115,11 +115,11 @@ True
 -}
 nfold_cartesian_product :: [[a]] -> [[a]]
 nfold_cartesian_product l =
-    case l of
-      [] -> []
-      [_] -> []
-      [x,y] -> [[i,j] | i <- x, j <- y]
-      x:l' -> concatMap (\e -> map (e :) (nfold_cartesian_product l')) x
+  case l of
+    [] -> []
+    [_] -> []
+    [x, y] -> [[i, j] | i <- x, j <- y]
+    x : l' -> concatMap (\e -> map (e :) (nfold_cartesian_product l')) x
 
 {- | Generate all distinct cycles, aka necklaces, with elements taken from a multiset.
 

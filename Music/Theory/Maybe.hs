@@ -12,12 +12,12 @@ from_just err = fromMaybe (error err)
 >>> maybe_unzip [Just (1,'a'),Nothing,Just (3,'c')]
 ([Just 1,Nothing,Just 3],[Just 'a',Nothing,Just 'c'])
 -}
-maybe_unzip :: [Maybe (a,b)] -> ([Maybe a],[Maybe b])
+maybe_unzip :: [Maybe (a, b)] -> ([Maybe a], [Maybe b])
 maybe_unzip =
-    let f x = case x of
-                Nothing -> (Nothing,Nothing)
-                Just (i,j) -> (Just i,Just j)
-    in unzip . map f
+  let f x = case x of
+        Nothing -> (Nothing, Nothing)
+        Just (i, j) -> (Just i, Just j)
+  in unzip . map f
 
 {- | Replace 'Nothing' elements with last 'Just' value.
 This does not alter the length of the list.
@@ -27,10 +27,10 @@ This does not alter the length of the list.
 -}
 maybe_latch :: a -> [Maybe a] -> [a]
 maybe_latch i x =
-    case x of
-      [] -> []
-      Just e:x' -> e : maybe_latch e x'
-      Nothing:x' -> i : maybe_latch i x'
+  case x of
+    [] -> []
+    Just e : x' -> e : maybe_latch e x'
+    Nothing : x' -> i : maybe_latch i x'
 
 {- | Variant requiring initial value is not 'Nothing'.
 
@@ -51,17 +51,17 @@ maybe_map = map . fmap
 -- | If either is 'Nothing' then 'False', else /eq/ of values.
 maybe_eq_by :: (t -> u -> Bool) -> Maybe t -> Maybe u -> Bool
 maybe_eq_by eq_fn p q =
-    case (p,q) of
-      (Just p',Just q') -> eq_fn p' q'
-      _ -> False
+  case (p, q) of
+    (Just p', Just q') -> eq_fn p' q'
+    _ -> False
 
 -- | Join two values, either of which may be missing.
 maybe_join' :: (s -> t) -> (s -> s -> t) -> Maybe s -> Maybe s -> Maybe t
 maybe_join' f g p q =
-    case (p,q) of
-      (Nothing,_) -> fmap f q
-      (_,Nothing) -> fmap f p
-      (Just p',Just q') -> Just (p' `g` q')
+  case (p, q) of
+    (Nothing, _) -> fmap f q
+    (_, Nothing) -> fmap f p
+    (Just p', Just q') -> Just (p' `g` q')
 
 -- | 'maybe_join'' of 'id'
 maybe_join :: (t -> t -> t) -> Maybe t -> Maybe t -> Maybe t
@@ -74,9 +74,9 @@ Nothing
 -}
 maybe_predicate :: (a -> Bool) -> Maybe a -> Maybe a
 maybe_predicate f i =
-    case i of
-      Nothing -> Nothing
-      Just j -> if f j then Just j else Nothing
+  case i of
+    Nothing -> Nothing
+    Just j -> if f j then Just j else Nothing
 
 {- | 'map' of 'maybe_predicate'.
 
@@ -97,8 +97,7 @@ Nothing
 -}
 all_just :: [Maybe a] -> Maybe [a]
 all_just x =
-    case x of
-      [] -> Just []
-      Just i:x' -> fmap (i :) (all_just x')
-      Nothing:_ -> Nothing
-
+  case x of
+    [] -> Just []
+    Just i : x' -> fmap (i :) (all_just x')
+    Nothing : _ -> Nothing

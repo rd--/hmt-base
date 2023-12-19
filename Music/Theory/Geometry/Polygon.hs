@@ -37,19 +37,19 @@ import qualified Music.Theory.List as List {- hmt-base -}
 >>> f (zip [30,82.24,73.27,60,60] [90,90,101.5,101.5,157])
 [(0,0),(30,0),(30,82),(-43,82),(-55,23),(0,0)]
 -}
-polygon_unfold :: (RealFloat r,Real r) => ((r,r),r) -> [(r,r)] -> [V2 r]
+polygon_unfold :: (RealFloat r, Real r) => ((r, r), r) -> [(r, r)] -> [V2 r]
 polygon_unfold i =
   -- ph = phase, dst = distance, ang = interior angle
   let interior_angle_to_phase_increment x = pi - x
       increment_phase ph ang = ph + interior_angle_to_phase_increment ang `mod'` two_pi
-      f (pt,ph) (dst,ang) =
-        let r = v2_add (polar_to_rectangular (dst,ph)) pt
-        in ((r,increment_phase ph ang),r)
+      f (pt, ph) (dst, ang) =
+        let r = v2_add (polar_to_rectangular (dst, ph)) pt
+        in ((r, increment_phase ph ang), r)
   in (:) (fst i) . snd . mapAccumL f i
 
 -- | 'polygon_unfold' of ((0,0),0)
-polygon_unfold_0 :: (RealFloat r,Real r) => [(r,r)] -> [V2 r]
-polygon_unfold_0 = polygon_unfold ((0,0),0)
+polygon_unfold_0 :: (RealFloat r, Real r) => [(r, r)] -> [V2 r]
+polygon_unfold_0 = polygon_unfold ((0, 0), 0)
 
 {- | Variant with angles in degrees.
 
@@ -79,12 +79,12 @@ polygon_unfold_0 = polygon_unfold ((0,0),0)
 >>> p [(0,0),(62,0),(-19,59),(-50,-36),(0,0)]
 ([62,100,100,62],[36,72,36,216])
 -}
-polygon_unfold_dgr :: (RealFloat r,Real r) => ((r,r),r) -> [(r,r)] -> [V2 r]
-polygon_unfold_dgr (i,j) = let at_snd f (p, q) = (p, f q) in polygon_unfold (i,degrees_to_radians j) . map (at_snd degrees_to_radians)
+polygon_unfold_dgr :: (RealFloat r, Real r) => ((r, r), r) -> [(r, r)] -> [V2 r]
+polygon_unfold_dgr (i, j) = let at_snd f (p, q) = (p, f q) in polygon_unfold (i, degrees_to_radians j) . map (at_snd degrees_to_radians)
 
 -- | 'polygon_unfold_dgr' of ((0,0),0)
-polygon_unfold_dgr_0 :: (RealFloat r,Real r) => [(r,r)] -> [V2 r]
-polygon_unfold_dgr_0 = polygon_unfold_dgr ((0,0),0)
+polygon_unfold_dgr_0 :: (RealFloat r, Real r) => [(r, r)] -> [V2 r]
+polygon_unfold_dgr_0 = polygon_unfold_dgr ((0, 0), 0)
 
 {- | Inverse of 'polygon_unfold'.
 
@@ -107,16 +107,16 @@ polygon_unfold_dgr_0 = polygon_unfold_dgr ((0,0),0)
 >>> h kite
 ([62,100,100,62],[72,72,72,144])
 -}
-polygon_param :: RealFloat r => [V2 r] -> [(r,r)]
+polygon_param :: RealFloat r => [V2 r] -> [(r, r)]
 polygon_param p =
-    let phase_difference_to_interior_angle x = (- (x + pi)) `mod'` two_pi
-        vc = map rectangular_to_polar (List.d_dx_by v2_sub p)
-        acc_f z ph = (ph,phase_difference_to_interior_angle (ph - z))
-        ph0 = v2_y (last vc)
-    in zip (map v2_x vc) ((List.rotate (1::Int) . snd) (mapAccumL acc_f ph0 (map v2_y vc)))
+  let phase_difference_to_interior_angle x = (-(x + pi)) `mod'` two_pi
+      vc = map rectangular_to_polar (List.d_dx_by v2_sub p)
+      acc_f z ph = (ph, phase_difference_to_interior_angle (ph - z))
+      ph0 = v2_y (last vc)
+  in zip (map v2_x vc) ((List.rotate (1 :: Int) . snd) (mapAccumL acc_f ph0 (map v2_y vc)))
 
 -- | Variant with angles in degrees.
-polygon_param_dgr :: RealFloat r => [V2 r] -> [(r,r)]
+polygon_param_dgr :: RealFloat r => [V2 r] -> [(r, r)]
 polygon_param_dgr = let at_snd f (p, q) = (p, f q) in map (at_snd radians_to_degrees) . polygon_param
 
 -- | Polygon.
@@ -146,19 +146,19 @@ polygon_pt p k = p !! k
 polygon_edge :: Polygon t -> Int -> V2 (V2 t)
 polygon_edge p k = polygon_edges p !! k
 
-polygon_align_ln :: RealFloat t => Polygon t -> Int -> (Int,Bool) -> Polygon t
-polygon_align_ln p k0 (k1,k1_rev) =
-    let swap (i,j) = (j,i)
-        l0 = polygon_edge p k0
-        l1 = (if k1_rev then swap else id) (polygon_edge p k1)
-        (tr,(c,r)) = line_align l0 l1
-        f = v2_rotate_about r c . v2_add tr
-    in map f p
+polygon_align_ln :: RealFloat t => Polygon t -> Int -> (Int, Bool) -> Polygon t
+polygon_align_ln p k0 (k1, k1_rev) =
+  let swap (i, j) = (j, i)
+      l0 = polygon_edge p k0
+      l1 = (if k1_rev then swap else id) (polygon_edge p k1)
+      (tr, (c, r)) = line_align l0 l1
+      f = v2_rotate_about r c . v2_add tr
+  in map f p
 
 polygon_reflect_ln_md :: Fractional t => V2 (V2 t) -> Polygon t -> Polygon t
 polygon_reflect_ln_md ln = map (point_line_reflect ln)
 
-polygon_reflect_xy :: Num t => (t,t) -> Polygon t -> Polygon t
+polygon_reflect_xy :: Num t => (t, t) -> Polygon t -> Polygon t
 polygon_reflect_xy xy = map (v2_reflect_xy xy)
 
 polygon_edge_reflect :: Fractional t => Polygon t -> Int -> Polygon t
@@ -182,11 +182,14 @@ polygon_contains_point :: (Ord t, Fractional t) => Polygon t -> V2 t -> Bool
 polygon_contains_point p (x, y) =
   case p of
     [] -> error "polygon_contains_point"
-    l0:l -> let xs = List.adj2 1 ((l0 : l) ++ [l0])
-                f ((x1, y1), (x2, y2)) =
-                  and [y > min y1 y2
-                      ,y <= max y1 y2
-                      ,x <= max x1 x2
-                      ,y1 /= y2
-                      ,x1 == x2 || x <= (y - y1) * (x2 - x1) / (y2 - y1) + x1]
-            in odd (length (filter id (map f xs)))
+    l0 : l ->
+      let xs = List.adj2 1 ((l0 : l) ++ [l0])
+          f ((x1, y1), (x2, y2)) =
+            and
+              [ y > min y1 y2
+              , y <= max y1 y2
+              , x <= max x1 x2
+              , y1 /= y2
+              , x1 == x2 || x <= (y - y1) * (x2 - x1) / (y2 - y1) + x1
+              ]
+      in odd (length (filter id (map f xs)))

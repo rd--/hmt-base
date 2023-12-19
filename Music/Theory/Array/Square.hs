@@ -4,8 +4,9 @@ module Music.Theory.Array.Square where
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
-import qualified Data.Map as Map {- containers -}
+{- containers -}
 import qualified Data.List.Split as Split {- split -}
+import qualified Data.Map as Map
 
 import qualified Music.Theory.Array as Array {- hmt-base -}
 import qualified Music.Theory.Array.Text as Array.Text {- hmt-base -}
@@ -66,9 +67,9 @@ sq_is_linear_square l = length l `List.elem_ordered` Oeis.a000290
 -}
 sq_linear_degree :: Square_Linear t -> Int
 sq_linear_degree =
-    fromMaybe (error "sq_linear_degree") .
-    flip List.elemIndex_ordered Oeis.a000290 .
-    length
+  fromMaybe (error "sq_linear_degree")
+    . flip List.elemIndex_ordered Oeis.a000290
+    . length
 
 -- | Type specialised 'transpose'
 sq_transpose :: Square t -> Square t
@@ -99,7 +100,7 @@ True
 True
 -}
 sq_diagonals_ul_lr :: Square t -> Square t
-sq_diagonals_ul_lr = sq_transpose . zipWith List.rotate_left [0..]
+sq_diagonals_ul_lr = sq_transpose . zipWith List.rotate_left [0 ..]
 
 -- | Full lower-left (ll) to upper-right (ur) diagonals of a square.
 sq_diagonals_ll_ur :: Square t -> Square t
@@ -107,7 +108,7 @@ sq_diagonals_ll_ur = sq_diagonals_ul_lr . reverse
 
 -- | Inverse of 'diagonals_ul_lr'
 sq_undiagonals_ul_lr :: Square t -> Square t
-sq_undiagonals_ul_lr = zipWith List.rotate_right [0..] . sq_transpose
+sq_undiagonals_ul_lr = zipWith List.rotate_right [0 ..] . sq_transpose
 
 -- | Inverse of 'diagonals_ll_ur'
 sq_undiagonals_ll_ur :: Square t -> Square t
@@ -129,7 +130,6 @@ sq_diagonal_ll_ur = sq_diagonal_ul_lr . reverse
 
 >>> sq_pp $ sq_h_reflection sq
 "14  1 12  7\n11  8 13  2\n 5 10  3 16\n 4 15  6  9\n"
-
 -}
 sq_h_reflection :: Square t -> Square t
 sq_h_reflection = map reverse
@@ -141,17 +141,18 @@ sq_is_normal sq =
   in sort (concat sq) == [1 .. n * n]
 
 -- | Sums of (rows, columns, left-right-diagonals, right-left-diagonals)
-sq_sums :: Num n => Square n -> ([n],[n],[n],[n])
+sq_sums :: Num n => Square n -> ([n], [n], [n], [n])
 sq_sums sq =
-  (map sum sq
-  ,map sum (sq_transpose sq)
-  ,map sum (sq_diagonals_ul_lr sq)
-  ,map sum (sq_diagonals_ll_ur sq))
+  ( map sum sq
+  , map sum (sq_transpose sq)
+  , map sum (sq_diagonals_ul_lr sq)
+  , map sum (sq_diagonals_ll_ur sq)
+  )
 
 -- * Pp
 
 sq_opt :: Array.Text.Text_Table_Opt
-sq_opt = (False,True,False," ",False)
+sq_opt = (False, True, False, " ", False)
 
 sq_pp :: Show t => Square t -> String
 sq_pp = unlines . Array.Text.table_pp_show sq_opt
@@ -176,8 +177,8 @@ type Square_Map t = Map.Map Square_Ix t
 -- | 'Square' to 'Square_Map'.
 sq_to_map :: Square t -> Square_Map t
 sq_to_map =
-    let f r = zipWith (\c e -> ((r,c),e)) [0..]
-    in Map.fromList . concat . zipWith f [0..]
+  let f r = zipWith (\c e -> ((r, c), e)) [0 ..]
+  in Map.fromList . concat . zipWith f [0 ..]
 
 -- | Alias for 'Map.!'
 sqm_ix :: Square_Map t -> Square_Ix -> t
@@ -187,30 +188,30 @@ sqm_ix = (Map.!)
 sqm_ix_seq :: Square_Map t -> [Square_Ix] -> [t]
 sqm_ix_seq m = map (sqm_ix m)
 
--- | Make a 'Square' of dimension /dm/ that has elements from /m/ at
--- indicated indices, else 'Nothing'.
+{- | Make a 'Square' of dimension /dm/ that has elements from /m/ at
+indicated indices, else 'Nothing'.
+-}
 sqm_to_partial_sq :: Int -> Square_Map t -> [Square_Ix] -> Square (Maybe t)
 sqm_to_partial_sq dm m ix_set =
-    let f i = if i `elem` ix_set then Just (m Map.! i) else Nothing
-    in Split.chunksOf dm (map f (Array.matrix_indices (dm,dm)))
+  let f i = if i `elem` ix_set then Just (m Map.! i) else Nothing
+  in Split.chunksOf dm (map f (Array.matrix_indices (dm, dm)))
 
 -- * Trs Seq
 
-sq_trs_op :: [(String,Square t -> Square t)]
+sq_trs_op :: [(String, Square t -> Square t)]
 sq_trs_op =
-    [("≡",id)
-    ,("←",sq_h_reflection)
-    ,("↓",sq_transpose)
-    ,("(← · ↓)",sq_h_reflection . sq_transpose)
-    ,("(↓ · ← · ↓)",sq_transpose . sq_h_reflection . sq_transpose)
-    ,("(↓ · ←)",sq_transpose . sq_h_reflection)
-    ,("(← · ↓ · ←)",sq_h_reflection . sq_transpose . sq_h_reflection)
-    ,("↘",sq_diagonals_ul_lr)
-    ,("↙ = (↘ · ←)",sq_diagonals_ul_lr . sq_h_reflection)
-    ,("↗ = (← · ↙)",sq_h_reflection . sq_diagonals_ul_lr . sq_h_reflection)
-    ,("↖ = (← · ↘)",sq_h_reflection . sq_diagonals_ul_lr)
-    ]
+  [ ("≡", id)
+  , ("←", sq_h_reflection)
+  , ("↓", sq_transpose)
+  , ("(← · ↓)", sq_h_reflection . sq_transpose)
+  , ("(↓ · ← · ↓)", sq_transpose . sq_h_reflection . sq_transpose)
+  , ("(↓ · ←)", sq_transpose . sq_h_reflection)
+  , ("(← · ↓ · ←)", sq_h_reflection . sq_transpose . sq_h_reflection)
+  , ("↘", sq_diagonals_ul_lr)
+  , ("↙ = (↘ · ←)", sq_diagonals_ul_lr . sq_h_reflection)
+  , ("↗ = (← · ↙)", sq_h_reflection . sq_diagonals_ul_lr . sq_h_reflection)
+  , ("↖ = (← · ↘)", sq_h_reflection . sq_diagonals_ul_lr)
+  ]
 
-sq_trs_seq :: Square t -> [(String,Square t)]
-sq_trs_seq sq = map (\(nm,fn) -> (nm,fn sq)) sq_trs_op
-
+sq_trs_seq :: Square t -> [(String, Square t)]
+sq_trs_seq sq = map (\(nm, fn) -> (nm, fn sq)) sq_trs_op

@@ -16,7 +16,7 @@ concatMapM :: (Functor m, Monad m) => (t -> m [u]) -> [t] -> m [u]
 concatMapM f = fmap concat . mapM f
 
 -- | If i then j else k.
-m_if :: Monad m => (m Bool,m t,m t) -> m t
-m_if (i,j,k) = do
+m_if :: Monad m => (m Bool, m t, m t) -> m t
+m_if (i, j, k) = do
   r <- i
   if r then j else k

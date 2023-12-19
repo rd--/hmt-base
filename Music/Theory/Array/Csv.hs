@@ -25,8 +25,8 @@ csv_quote fld =
   let esc s =
         case s of
           [] -> []
-          '"':s' -> '"' : '"' : esc s'
-          c:s' -> c : esc s'
+          '"' : s' -> '"' : '"' : esc s'
+          c : s' -> c : esc s'
   in '"' : esc fld ++ "\""
 
 -- | Quote field if required.
@@ -44,29 +44,30 @@ type Csv_Delimiter = Char
 -- | Alias for 'Bool', allow linebreaks in fields.
 type Csv_Allow_Linebreaks = Bool
 
--- | When writing a CSV file should the delimiters be aligned,
--- ie. should columns be padded with spaces, and if so at which side
--- of the data?
+{- | When writing a CSV file should the delimiters be aligned,
+ie. should columns be padded with spaces, and if so at which side
+of the data?
+-}
 data Csv_Align_Columns = Csv_No_Align | Csv_Align_Left | Csv_Align_Right
 
 -- | CSV options.
-type Csv_Opt = (Csv_Has_Header,Csv_Delimiter,Csv_Allow_Linebreaks,Csv_Align_Columns)
+type Csv_Opt = (Csv_Has_Header, Csv_Delimiter, Csv_Allow_Linebreaks, Csv_Align_Columns)
 
 -- | Default CSV options, no header, comma delimiter, no linebreaks, no alignment.
 def_csv_opt :: Csv_Opt
-def_csv_opt = (False,',',False,Csv_No_Align)
+def_csv_opt = (False, ',', False, Csv_No_Align)
 
 -- | CSV table, ie. a 'Table' with 'Maybe' a header.
-type Csv_Table a = (Maybe [String],Array.Table a)
+type Csv_Table a = (Maybe [String], Array.Table a)
 
 -- | Read 'Csv_Table' from @CSV@ file.
 csv_table_read :: Csv_Opt -> (String -> a) -> FilePath -> IO (Csv_Table a)
-csv_table_read (hdr,delim,brk,_) f fn = do
+csv_table_read (hdr, delim, brk, _) f fn = do
   s <- Io.read_file_utf8 fn
   let t = Csv.csvTable (Csv.parseDSV brk delim s)
       p = Csv.fromCSVTable t
-      (h,d) = if hdr then (Just (List.head_err p),List.tail_err p) else (Nothing,p)
-  return (h,map (map f) d)
+      (h, d) = if hdr then (Just (List.head_err p), List.tail_err p) else (Nothing, p)
+  return (h, map (map f) d)
 
 -- | Read 'Array.Table' only with 'def_csv_opt'.
 csv_table_read_def :: (String -> a) -> FilePath -> IO (Array.Table a)
@@ -87,20 +88,21 @@ csv_table_with opt f fn g = fmap g (csv_table_read opt f fn)
 -}
 csv_table_align :: Csv_Align_Columns -> Array.Table String -> Array.Table String
 csv_table_align align tbl =
-    let c = transpose tbl
-        n = map (maximum . map length) c
-        ext k s = let pd = replicate (k - length s) ' '
-                  in case align of
-                       Csv_No_Align -> s
-                       Csv_Align_Left -> pd ++ s
-                       Csv_Align_Right -> s ++ pd
-    in transpose (zipWith (map . ext) n c)
+  let c = transpose tbl
+      n = map (maximum . map length) c
+      ext k s =
+        let pd = replicate (k - length s) ' '
+        in case align of
+            Csv_No_Align -> s
+            Csv_Align_Left -> pd ++ s
+            Csv_Align_Right -> s ++ pd
+  in transpose (zipWith (map . ext) n c)
 
 -- | Pretty-print 'Csv_Table'.
 csv_table_pp :: (a -> String) -> Csv_Opt -> Csv_Table a -> String
-csv_table_pp f (_,delim,brk,align) (hdr,tbl) =
+csv_table_pp f (_, delim, brk, align) (hdr, tbl) =
   let tbl' = csv_table_align align (List.mcons hdr (map (map f) tbl))
-      (_,t) = Csv.toCSVTable tbl'
+      (_, t) = Csv.toCSVTable tbl'
   in Csv.ppDSVTable brk delim t
 
 -- | 'Io.write_file_utf8' of 'csv_table_pp'.
@@ -109,15 +111,15 @@ csv_table_write f opt fn csv = Io.write_file_utf8 fn (csv_table_pp f opt csv)
 
 -- | Write 'Table' only (no header) with 'def_csv_opt'.
 csv_table_write_def :: (a -> String) -> FilePath -> Array.Table a -> IO ()
-csv_table_write_def f fn tbl = csv_table_write f def_csv_opt fn (Nothing,tbl)
+csv_table_write_def f fn tbl = csv_table_write f def_csv_opt fn (Nothing, tbl)
 
 -- | Write plain CSV 'Table'.
 csv_table_write_plain :: FilePath -> Array.Table String -> IO ()
 csv_table_write_plain = csv_table_write_def id
 
 -- | @0@-indexed (row,column) cell lookup.
-table_lookup :: Array.Table a -> (Int,Int) -> a
-table_lookup t (r,c) = let ix = Safe.atNote "table_lookup" in (t `ix` r) `ix` c
+table_lookup :: Array.Table a -> (Int, Int) -> a
+table_lookup t (r, c) = let ix = Safe.atNote "table_lookup" in (t `ix` r) `ix` c
 
 -- | Row data.
 table_row :: Array.Table a -> Cell_Ref.Row_Ref -> [a]
@@ -128,28 +130,28 @@ table_column :: Array.Table a -> Cell_Ref.Column_Ref -> [a]
 table_column t c = Safe.atNote "table_column" (transpose t) (Cell_Ref.column_index c)
 
 -- | Lookup value across columns.
-table_column_lookup :: Eq a => Array.Table a -> (Cell_Ref.Column_Ref,Cell_Ref.Column_Ref) -> a -> Maybe a
-table_column_lookup t (c1,c2) e =
-    let a = zip (table_column t c1) (table_column t c2)
-    in lookup e a
+table_column_lookup :: Eq a => Array.Table a -> (Cell_Ref.Column_Ref, Cell_Ref.Column_Ref) -> a -> Maybe a
+table_column_lookup t (c1, c2) e =
+  let a = zip (table_column t c1) (table_column t c2)
+  in lookup e a
 
 -- | Table cell lookup.
 table_cell :: Array.Table a -> Cell_Ref.Cell_Ref -> a
-table_cell t (c,r) =
-    let (r',c') = (Cell_Ref.row_index r,Cell_Ref.column_index c)
-    in table_lookup t (r',c')
+table_cell t (c, r) =
+  let (r', c') = (Cell_Ref.row_index r, Cell_Ref.column_index c)
+  in table_lookup t (r', c')
 
 -- | @0@-indexed (row,column) cell lookup over column range.
-table_lookup_row_segment :: Array.Table a -> (Int,(Int,Int)) -> [a]
-table_lookup_row_segment t (r,(c0,c1)) =
-    let r' = Safe.atNote "table_lookup_row_segment" t r
-    in take (c1 - c0 + 1) (drop c0 r')
+table_lookup_row_segment :: Array.Table a -> (Int, (Int, Int)) -> [a]
+table_lookup_row_segment t (r, (c0, c1)) =
+  let r' = Safe.atNote "table_lookup_row_segment" t r
+  in take (c1 - c0 + 1) (drop c0 r')
 
 -- | Range of cells from row.
-table_row_segment :: Array.Table a -> (Cell_Ref.Row_Ref,Cell_Ref.Column_Range) -> [a]
-table_row_segment t (r,c) =
-    let (r',c') = (Cell_Ref.row_index r,Cell_Ref.column_indices c)
-    in table_lookup_row_segment t (r',c')
+table_row_segment :: Array.Table a -> (Cell_Ref.Row_Ref, Cell_Ref.Column_Range) -> [a]
+table_row_segment t (r, c) =
+  let (r', c') = (Cell_Ref.row_index r, Cell_Ref.column_indices c)
+  in table_lookup_row_segment t (r', c')
 
 -- * Array
 
@@ -162,11 +164,11 @@ It is assumed that the 'Table' is regular, ie. all rows have an equal number of 
 -}
 table_to_array :: Array.Table a -> Data.Array.Array Cell_Ref.Cell_Ref a
 table_to_array t =
-    let nr = length t
-        nc = length (Safe.atNote "table_to_array" t 0)
-        bnd = (Cell_Ref.cell_ref_minima,(toEnum (nc - 1),nr))
-        asc = zip (Cell_Ref.cell_range_row_order bnd) (concat t)
-    in Data.Array.array bnd asc
+  let nr = length t
+      nc = length (Safe.atNote "table_to_array" t 0)
+      bnd = (Cell_Ref.cell_ref_minima, (toEnum (nc - 1), nr))
+      asc = zip (Cell_Ref.cell_range_row_order bnd) (concat t)
+  in Data.Array.array bnd asc
 
 -- | 'table_to_array' of 'csv_table_read'.
 csv_array_read :: Csv_Opt -> (String -> a) -> FilePath -> IO (Data.Array.Array Cell_Ref.Cell_Ref a)
@@ -176,23 +178,23 @@ csv_array_read opt f fn = fmap (table_to_array . snd) (csv_table_read opt f fn)
 
 csv_field_str :: Csv.CSVField -> String
 csv_field_str f =
-    case f of
-      Csv.CSVField _ _ _ _ s _ -> s
-      Csv.CSVFieldError _ _ _ _ _ -> error "csv_field_str"
+  case f of
+    Csv.CSVField _ _ _ _ s _ -> s
+    Csv.CSVFieldError _ _ _ _ _ -> error "csv_field_str"
 
 csv_error_recover :: Csv.CSVError -> Csv.CSVRow
 csv_error_recover e =
-    case e of
-      Csv.IncorrectRow _ _ _ f -> f
-      Csv.BlankLine _ _ _ _ -> []
-      _ -> error "csv_error_recover: not recoverable"
+  case e of
+    Csv.IncorrectRow _ _ _ f -> f
+    Csv.BlankLine _ _ _ _ -> []
+    _ -> error "csv_error_recover: not recoverable"
 
 csv_row_recover :: Either [Csv.CSVError] Csv.CSVRow -> Csv.CSVRow
 csv_row_recover r =
-    case r of
-      Left [e] -> csv_error_recover e
-      Left _ -> error "csv_row_recover: multiple errors"
-      Right r' -> r'
+  case r of
+    Left [e] -> csv_error_recover e
+    Left _ -> error "csv_row_recover: multiple errors"
+    Right r' -> r'
 
 -- | Read irregular @CSV@ file, ie. rows may have any number of columns, including no columns.
 csv_load_irregular :: (String -> a) -> FilePath -> IO [[a]]
@@ -201,35 +203,34 @@ csv_load_irregular f fn = do
   return (map (map (f . csv_field_str) . csv_row_recover) (Csv.parseCSV s))
 
 csv_write_irregular :: (a -> String) -> Csv_Opt -> FilePath -> Csv_Table a -> IO ()
-csv_write_irregular f opt fn (hdr,tbl) =
+csv_write_irregular f opt fn (hdr, tbl) =
   let tbl' = Array.tbl_make_regular_nil "" (map (map f) tbl)
-  in Io.write_file_utf8 fn (csv_table_pp id opt (hdr,tbl'))
+  in Io.write_file_utf8 fn (csv_table_pp id opt (hdr, tbl'))
 
 csv_write_irregular_def :: (a -> String) -> FilePath -> Array.Table a -> IO ()
-csv_write_irregular_def f fn tbl = csv_write_irregular f def_csv_opt fn (Nothing,tbl)
+csv_write_irregular_def f fn tbl = csv_write_irregular f def_csv_opt fn (Nothing, tbl)
 
 -- * Tuples
 
-type P2_Parser t1 t2 = (String -> t1,String -> t2)
+type P2_Parser t1 t2 = (String -> t1, String -> t2)
 
-csv_table_read_p2 :: P2_Parser t1 t2 -> Csv_Opt -> FilePath -> IO (Maybe (String,String),[(t1,t2)])
+csv_table_read_p2 :: P2_Parser t1 t2 -> Csv_Opt -> FilePath -> IO (Maybe (String, String), [(t1, t2)])
 csv_table_read_p2 f opt fn = do
-  (hdr,dat) <- csv_table_read opt id fn
-  return (fmap Tuple.t2_from_list hdr,map (Tuple.p2_from_list f) dat)
+  (hdr, dat) <- csv_table_read opt id fn
+  return (fmap Tuple.t2_from_list hdr, map (Tuple.p2_from_list f) dat)
 
-type P5_Parser t1 t2 t3 t4 t5 = (String -> t1,String -> t2,String -> t3,String -> t4,String -> t5)
-type P5_Writer t1 t2 t3 t4 t5 = (t1 -> String,t2 -> String,t3 -> String,t4 -> String,t5 -> String)
+type P5_Parser t1 t2 t3 t4 t5 = (String -> t1, String -> t2, String -> t3, String -> t4, String -> t5)
+type P5_Writer t1 t2 t3 t4 t5 = (t1 -> String, t2 -> String, t3 -> String, t4 -> String, t5 -> String)
 
-csv_table_read_p5 :: P5_Parser t1 t2 t3 t4 t5 -> Csv_Opt -> FilePath -> IO (Maybe [String],[(t1,t2,t3,t4,t5)])
+csv_table_read_p5 :: P5_Parser t1 t2 t3 t4 t5 -> Csv_Opt -> FilePath -> IO (Maybe [String], [(t1, t2, t3, t4, t5)])
 csv_table_read_p5 f opt fn = do
-  (hdr,dat) <- csv_table_read opt id fn
-  return (hdr,map (Tuple.p5_from_list f) dat)
+  (hdr, dat) <- csv_table_read opt id fn
+  return (hdr, map (Tuple.p5_from_list f) dat)
 
-csv_table_write_p5 :: P5_Writer t1 t2 t3 t4 t5 -> Csv_Opt -> FilePath -> (Maybe [String],[(t1,t2,t3,t4,t5)]) -> IO ()
-csv_table_write_p5 f opt fn (hdr,dat) = csv_table_write id opt fn (hdr,map (Tuple.p5_to_list f) dat)
+csv_table_write_p5 :: P5_Writer t1 t2 t3 t4 t5 -> Csv_Opt -> FilePath -> (Maybe [String], [(t1, t2, t3, t4, t5)]) -> IO ()
+csv_table_write_p5 f opt fn (hdr, dat) = csv_table_write id opt fn (hdr, map (Tuple.p5_to_list f) dat)
 
-csv_table_read_t9 :: (String -> t) -> Csv_Opt -> FilePath -> IO (Maybe [String],[Tuple.T9 t])
+csv_table_read_t9 :: (String -> t) -> Csv_Opt -> FilePath -> IO (Maybe [String], [Tuple.T9 t])
 csv_table_read_t9 f opt fn = do
-  (hdr,dat) <- csv_table_read opt id fn
-  return (hdr,map (Tuple.t9_from_list . map f) dat)
-
+  (hdr, dat) <- csv_table_read opt id fn
+  return (hdr, map (Tuple.t9_from_list . map f) dat)

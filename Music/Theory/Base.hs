@@ -10,8 +10,8 @@ import Music.Theory.Bits as M
 import Music.Theory.Bool as M
 import Music.Theory.Braille as M
 import Music.Theory.Byte as M
-import Music.Theory.Combinations as M
 import Music.Theory.Colour as M
+import Music.Theory.Combinations as M
 import Music.Theory.Concurrent as M
 import Music.Theory.Directory as M
 import Music.Theory.Directory.Find as M

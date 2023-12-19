@@ -8,21 +8,22 @@ import Data.Ratio {- base -}
 import Data.Word {- base -}
 import Numeric {- base -}
 
--- | Transform 'ReadS' function into precise 'Read' function.
--- Requires using all the input to produce a single token.  The only
--- exception is a singular trailing white space character.
+{- | Transform 'ReadS' function into precise 'Read' function.
+Requires using all the input to produce a single token.  The only
+exception is a singular trailing white space character.
+-}
 reads_to_read_precise :: ReadS t -> (String -> Maybe t)
 reads_to_read_precise f s =
-    case f s of
-      [(r,[])] -> Just r
-      [(r,[c])] -> if isSpace c then Just r else Nothing
-      _ -> Nothing
+  case f s of
+    [(r, [])] -> Just r
+    [(r, [c])] -> if isSpace c then Just r else Nothing
+    _ -> Nothing
 
 -- | Error variant of 'reads_to_read_precise'.
 reads_to_read_precise_err :: String -> ReadS t -> String -> t
 reads_to_read_precise_err err f =
-    fromMaybe (error ("reads_to_read_precise_err:" ++ err)) .
-    reads_to_read_precise f
+  fromMaybe (error ("reads_to_read_precise_err:" ++ err))
+    . reads_to_read_precise f
 
 {- | 'reads_to_read_precise' of 'reads'.
 
@@ -58,9 +59,9 @@ read_err = read_err_msg "read_maybe failed"
 -}
 reads_exact :: Read a => String -> Maybe a
 reads_exact s =
-    case reads s of
-      [(r,"")] -> Just r
-      _ -> Nothing
+  case reads s of
+    [(r, "")] -> Just r
+    _ -> Nothing
 
 {- | Variant of 'reads_exact' that errors on failure.
 
@@ -69,8 +70,8 @@ reads_exact s =
 -}
 reads_exact_err :: Read a => String -> String -> a
 reads_exact_err err_txt str =
-    let err = error ("reads_exact: " ++ err_txt ++ ": " ++ str)
-    in fromMaybe err (reads_exact str)
+  let err = error ("reads_exact: " ++ err_txt ++ ": " ++ str)
+  in fromMaybe err (reads_exact str)
 
 -- * Type specific variants
 
@@ -81,23 +82,24 @@ reads_exact_err err_txt str =
 -}
 read_integral_allow_commas_maybe :: Read i => String -> Maybe i
 read_integral_allow_commas_maybe s =
-    let c = filter ((== ',') . fst) (zip (reverse s) [0..])
-    in if null c
-       then read_maybe s
-       else if map snd c `isPrefixOf` [3::Int,7..]
-            then read_maybe (filter (/= ',') s)
-            else Nothing
+  let c = filter ((== ',') . fst) (zip (reverse s) [0 ..])
+  in if null c
+      then read_maybe s
+      else
+        if map snd c `isPrefixOf` [3 :: Int, 7 ..]
+          then read_maybe (filter (/= ',') s)
+          else Nothing
 
-read_integral_allow_commas_err :: (Integral i,Read i) => String -> i
+read_integral_allow_commas_err :: (Integral i, Read i) => String -> i
 read_integral_allow_commas_err s =
-    let err = error ("read_integral_allow_commas: misplaced commas: " ++ s)
-    in fromMaybe err (read_integral_allow_commas_maybe s)
+  let err = error ("read_integral_allow_commas: misplaced commas: " ++ s)
+  in fromMaybe err (read_integral_allow_commas_maybe s)
 
-read_integral_err :: (Integral i,Read i) => Bool -> String -> i
+read_integral_err :: (Integral i, Read i) => Bool -> String -> i
 read_integral_err allowCommas s =
   if allowCommas
-  then read_integral_allow_commas_err s
-  else reads_exact_err "read_integral" s
+    then read_integral_allow_commas_err s
+    else reads_exact_err "read_integral" s
 
 {- | Type specialised.
 
@@ -115,25 +117,25 @@ Optionally allow commas at integral parts.
 -}
 read_ratio_with_div_err :: (Integral i, Read i) => Bool -> String -> Ratio i
 read_ratio_with_div_err allowCommas s =
-    let f = read_integral_err allowCommas
-    in case break (== '/') s of
-         (n,'/':d) -> f n % f d
-         _ -> read_integral_err allowCommas s % 1
+  let f = read_integral_err allowCommas
+  in case break (== '/') s of
+      (n, '/' : d) -> f n % f d
+      _ -> read_integral_err allowCommas s % 1
 
 {- | Read 'Ratio', allow commas for thousand separators.
 
 >>> read_ratio_allow_commas_err "327,680" "177,147"
 327680 % 177147
 -}
-read_ratio_allow_commas_err :: (Integral i,Read i) => String -> String -> Ratio i
+read_ratio_allow_commas_err :: (Integral i, Read i) => String -> String -> Ratio i
 read_ratio_allow_commas_err n d = let f = read_integral_allow_commas_err in f n % f d
 
 -- | Delete trailing @.@, 'read' fails for @700.@.
 delete_trailing_point :: String -> String
 delete_trailing_point s =
-    case reverse s of
-      '.':s' -> reverse s'
-      _ -> s
+  case reverse s of
+    '.' : s' -> reverse s'
+    _ -> s
 
 {- | 'read_err' disallows trailing decimal points.
 
@@ -209,10 +211,10 @@ read_hex_err = reads_to_read_precise_err "readHex" readHex
 read_hex_sz :: (Eq n, Integral n) => Int -> String -> n
 read_hex_sz k str =
   if length str > k
-  then error "read_hex_sz? = > K"
-  else case readHex str of
-         [(r,[])] -> r
-         _ -> error "read_hex_sz? = PARSE"
+    then error "read_hex_sz? = > K"
+    else case readHex str of
+      [(r, [])] -> r
+      _ -> error "read_hex_sz? = PARSE"
 
 {- | Read hexadecimal representation of 32-bit unsigned word.
 
@@ -229,17 +231,17 @@ read_hex_word32 = read_hex_sz 8
 >>> rational_parse "" :: Maybe Rational
 Nothing
 -}
-rational_parse :: (Read t,Integral t) => String -> Maybe (Ratio t)
+rational_parse :: (Read t, Integral t) => String -> Maybe (Ratio t)
 rational_parse s =
   case break (== '/') s of
-    ([],_) -> Nothing
-    (n,[]) -> Just (read n % 1)
-    (n,_:d) -> Just (read n % read d)
+    ([], _) -> Nothing
+    (n, []) -> Just (read n % 1)
+    (n, _ : d) -> Just (read n % read d)
 
 {- | Erroring variant of 'rational_pp'.
 
 >>> map rational_parse_err ["1","3/2","5/4","2"]
 [1 % 1,3 % 2,5 % 4,2 % 1]
 -}
-rational_parse_err :: (Read t,Integral t) => String -> Ratio t
+rational_parse_err :: (Read t, Integral t) => String -> Ratio t
 rational_parse_err = fromMaybe (error "rational_parse") . rational_parse

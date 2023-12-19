@@ -12,7 +12,7 @@ This runs the system utility /find/, so is Unix only.
 > dir_find "DX7-ROM1A.syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
 -}
 dir_find :: FilePath -> FilePath -> IO [FilePath]
-dir_find fn dir = fmap lines (System.Process.readProcess "find" [dir,"-name",fn] "")
+dir_find fn dir = fmap lines (System.Process.readProcess "find" [dir, "-name", fn] "")
 
 {- | Require that exactly one file is located, else error.
 
@@ -31,7 +31,7 @@ This runs the system utility /find/, so is Unix only.
 > dir_find_ext ".syx" "/home/rohan/sw/hsc3-data/data/yamaha/"
 -}
 dir_find_ext :: String -> FilePath -> IO [FilePath]
-dir_find_ext ext dir = fmap lines (System.Process.readProcess "find" [dir,"-iname",'*' : ext] "")
+dir_find_ext ext dir = fmap lines (System.Process.readProcess "find" [dir, "-iname", '*' : ext] "")
 
 {- | Post-process 'dir_find_ext' to delete starting directory.
 
@@ -52,11 +52,11 @@ path_scan_recursively :: [FilePath] -> FilePath -> IO (Maybe FilePath)
 path_scan_recursively p fn =
   case p of
     [] -> return Nothing
-    dir:p' -> do
+    dir : p' -> do
       r <- dir_find fn dir
       case r of
         [] -> path_scan_recursively p' fn
-        x:_ -> return (Just x)
+        x : _ -> return (Just x)
 
 {- | Search each directory on path recursively for file.
 Runs 'dir_find' so is Unix only.
@@ -67,7 +67,7 @@ path_search_recursively :: [FilePath] -> FilePath -> IO [FilePath]
 path_search_recursively p fn =
   case p of
     [] -> return []
-    dir:p' -> do
+    dir : p' -> do
       r <- dir_find fn dir
       r' <- path_search_recursively p' fn
       return (r ++ r')

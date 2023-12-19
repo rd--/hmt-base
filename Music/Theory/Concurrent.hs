@@ -18,12 +18,13 @@ For 64-bit architectures this is not likely to be an issue, however for 32-bit i
 2925
 -}
 threadDelaySecondsLimit :: Fractional n => n
-threadDelaySecondsLimit = fromIntegral ((maxBound::Int) - 1) / 1e6
+threadDelaySecondsLimit = fromIntegral ((maxBound :: Int) - 1) / 1e6
 
--- | Sleep current thread for the indicated duration (in seconds).
---   Divides long sleeps into parts smaller than 'threadSleepForSeconds'.
+{- | Sleep current thread for the indicated duration (in seconds).
+  Divides long sleeps into parts smaller than 'threadSleepForSeconds'.
+-}
 threadSleepForSeconds :: RealFrac n => n -> IO ()
 threadSleepForSeconds n =
-    if n < threadDelaySecondsLimit
+  if n < threadDelaySecondsLimit
     then threadDelaySeconds n
     else threadDelaySeconds (threadDelaySecondsLimit :: Double) >> threadSleepForSeconds (n - threadDelaySecondsLimit)

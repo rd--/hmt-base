@@ -16,12 +16,12 @@ import qualified Music.Theory.Math.Convert as Math.Convert {- hmt-base -}
 >>> map (num_diff_str_opt (True,2)) [-2,-1,0,1,2]
 ["-2","-1"," 0","+1","+2"]
 -}
-num_diff_str_opt :: (Ord a, Num a, Show a) => (Bool,Int) -> a -> String
-num_diff_str_opt (wr_0,k) n =
+num_diff_str_opt :: (Ord a, Num a, Show a) => (Bool, Int) -> a -> String
+num_diff_str_opt (wr_0, k) n =
   let r = case compare n 0 of
-            LT -> '-' : show (abs n)
-            EQ -> if wr_0 then "0" else ""
-            GT -> '+' : show n
+        LT -> '-' : show (abs n)
+        EQ -> if wr_0 then "0" else ""
+        GT -> '+' : show n
   in if k > 0 then List.pad_left ' ' k r else r
 
 {- | Show /only/ positive and negative values, always with sign.
@@ -33,7 +33,7 @@ num_diff_str_opt (wr_0,k) n =
 ["-2","-1","0","1","2"]
 -}
 num_diff_str :: (Num a, Ord a, Show a) => a -> String
-num_diff_str = num_diff_str_opt (False,0)
+num_diff_str = num_diff_str_opt (False, 0)
 
 -- * Rational
 
@@ -43,15 +43,15 @@ If /conciseInteger/ is True eliding denominators of @1@.
 >>> map (rational_pp_opt True) [1,3/2,5/4,2]
 ["1","3/2","5/4","2"]
 -}
-rational_pp_opt :: (Show a,Integral a) => Bool -> Ratio a -> String
+rational_pp_opt :: (Show a, Integral a) => Bool -> Ratio a -> String
 rational_pp_opt conciseInteger r =
-    let n = numerator r
-        d = denominator r
-    in if d == 1 && conciseInteger
-       then show n
-       else concat [show n,"/",show d]
+  let n = numerator r
+      d = denominator r
+  in if d == 1 && conciseInteger
+      then show n
+      else concat [show n, "/", show d]
 
-rational_pp :: (Show a,Integral a) => Ratio a -> String
+rational_pp :: (Show a, Integral a) => Ratio a -> String
 rational_pp = rational_pp_opt False
 
 {- | Pretty print ratio as @:@ separated integers.
@@ -62,11 +62,11 @@ If /conciseInteger/ is True elide unit denominator.
 -}
 ratio_pp_opt :: Bool -> Rational -> String
 ratio_pp_opt nil r =
-  let f :: (Integer,Integer) -> String
-      f (n,d) = concat [show n,":",show d]
+  let f :: (Integer, Integer) -> String
+      f (n, d) = concat [show n, ":", show d]
   in case Math.rational_nd r of
-       (n,1) -> if nil then show n else f (n,1)
-       x -> f x
+      (n, 1) -> if nil then show n else f (n, 1)
+      x -> f x
 
 {- | Pretty print ratio as @:@ separated integers.
 
@@ -116,8 +116,8 @@ int_pp = show
 real_pp_exact :: RealFrac t => Int -> t -> String
 real_pp_exact k r =
   if Math.whole_to_precision k r
-  then int_pp (truncate r)
-  else real_pp k r
+    then int_pp (truncate r)
+    else real_pp k r
 
 {- | Variant that writes `∞` for Infinity.
 
@@ -147,10 +147,10 @@ real_pp_unicode k r =
 real_pp_trunc :: Real t => Int -> t -> String
 real_pp_trunc k n =
   case break (== '.') (real_pp k n) of
-    (i,[]) -> i
-    (i,j) -> case List.drop_while_end (== '0') j of
-               "." -> if i == "-0" then "0" else i
-               z -> i ++ z
+    (i, []) -> i
+    (i, j) -> case List.drop_while_end (== '0') j of
+      "." -> if i == "-0" then "0" else i
+      z -> i ++ z
 
 {- | Variant of 'showFFloat'.
 The 'Show' instance for floats resorts to exponential notation very readily.
@@ -190,5 +190,5 @@ double_pp = realfloat_pp
 >>> unwords (map (show_bin (Just 3)) [0 .. 7])
 "000 001 010 011 100 101 110 111"
 -}
-show_bin :: (Integral i,Show i) => Maybe Int -> i -> String
+show_bin :: (Integral i, Show i) => Maybe Int -> i -> String
 show_bin k n = maybe id (List.pad_left '0') k (showIntAtBase 2 intToDigit n "")

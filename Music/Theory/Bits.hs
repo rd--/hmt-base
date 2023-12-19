@@ -26,7 +26,7 @@ bits_pp = map bit_pp
 -}
 gen_bitseq :: FiniteBits b => Int -> b -> [Bool]
 gen_bitseq n x =
-    if finiteBitSize x < n
+  if finiteBitSize x < n
     then error "gen_bitseq"
     else map (testBit x) (reverse [0 .. n - 1])
 
@@ -44,9 +44,9 @@ True
 -}
 pack_bitseq :: Bits i => [Bool] -> i
 pack_bitseq =
-    foldl (\n (k,b) -> if b then setBit n k else n) zeroBits .
-    zip [0..] .
-    reverse
+  foldl (\n (k, b) -> if b then setBit n k else n) zeroBits
+    . zip [0 ..]
+    . reverse
 
 {- | 'bits_pp' of 'gen_bitseq'.
 

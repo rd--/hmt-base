@@ -14,9 +14,10 @@ import qualified Music.Theory.Io as T {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Read as T {- hmt-base -}
 
--- $setup
--- >>> let tblFn = "/home/rohan/data/unicode.org/Public/11.0.0/ucd/UnicodeData.txt"
--- >>> tbl <- unicode_data_table_read tblFn
+{- $setup
+>>> let tblFn = "/home/rohan/data/unicode.org/Public/11.0.0/ucd/UnicodeData.txt"
+>>> tbl <- unicode_data_table_read tblFn
+-}
 
 -- * Non-music
 
@@ -77,7 +78,7 @@ combining_overline = toEnum 0x0305
 True
 -}
 overline :: String -> String
-overline = let f x = [x,combining_overline] in concatMap f
+overline = let f x = [x, combining_overline] in concatMap f
 
 {- | The combining under line character.
 
@@ -93,14 +94,14 @@ combining_underline = toEnum 0x0332
 True
 -}
 underline :: String -> String
-underline = let f x = [x,combining_underline] in concatMap f
+underline = let f x = [x, combining_underline] in concatMap f
 
 -- * Table
 
 type Unicode_Index = Int
 type Unicode_Name = String
-type Unicode_Range = (Unicode_Index,Unicode_Index)
-type Unicode_Point = (Unicode_Index,Unicode_Name)
+type Unicode_Range = (Unicode_Index, Unicode_Index)
+type Unicode_Point = (Unicode_Index, Unicode_Name)
 type Unicode_Table = [Unicode_Point]
 
 {- | <http://unicode.org/Public/11.0.0/ucd/UnicodeData.txt>
@@ -124,14 +125,14 @@ unicode_data_table_read fn = do
       f x = (T.read_hex_err (List.head_err x), List.second_err x)
   return (map f t)
 
-unicode_table_block :: (Unicode_Index,Unicode_Index) -> Unicode_Table -> Unicode_Table
-unicode_table_block (l,r) = takeWhile ((<= r) . fst) . dropWhile ((< l) . fst)
+unicode_table_block :: (Unicode_Index, Unicode_Index) -> Unicode_Table -> Unicode_Table
+unicode_table_block (l, r) = takeWhile ((<= r) . fst) . dropWhile ((< l) . fst)
 
 unicode_point_hs :: Unicode_Point -> String
-unicode_point_hs (n,s) = concat ["(0x",showHex n "",",\"",s,"\")"]
+unicode_point_hs (n, s) = concat ["(0x", showHex n "", ",\"", s, "\")"]
 
 unicode_table_hs :: Unicode_Table -> String
-unicode_table_hs = List.bracket ('[',']') . intercalate "," . map unicode_point_hs
+unicode_table_hs = List.bracket ('[', ']') . intercalate "," . map unicode_point_hs
 
 -- * Music
 
@@ -141,21 +142,21 @@ unicode_table_hs = List.bracket ('[',']') . intercalate "," . map unicode_point_
 True
 -}
 music_tbl :: [Unicode_Table]
-music_tbl = [barlines_tbl,accidentals_tbl,notes_tbl,rests_tbl,clefs_tbl]
+music_tbl = [barlines_tbl, accidentals_tbl, notes_tbl, rests_tbl, clefs_tbl]
 
 {- | Accidentals ranges
 
 > putStrLn $ concatMap (unicode_table_hs . flip unicode_table_block tbl) accidentals_rng_set
 -}
 accidentals_rng_set :: [Unicode_Range]
-accidentals_rng_set = [(0x266D,0x266F),(0x1D12A,0x1D133)]
+accidentals_rng_set = [(0x266D, 0x266F), (0x1D12A, 0x1D133)]
 
 {- | Barlines range
 
 > putStrLn $ unicode_table_hs (unicode_table_block barlines_rng tbl)
 -}
 barlines_rng :: Unicode_Range
-barlines_rng = (0x1D100,0x1D105)
+barlines_rng = (0x1D100, 0x1D105)
 
 {- | Unicode barline symbols.
 
@@ -164,12 +165,13 @@ True
 -}
 barlines_tbl :: Unicode_Table
 barlines_tbl =
-  [(0x1D100,"MUSICAL SYMBOL SINGLE BARLINE")
-  ,(0x1D101,"MUSICAL SYMBOL DOUBLE BARLINE")
-  ,(0x1D102,"MUSICAL SYMBOL FINAL BARLINE")
-  ,(0x1D103,"MUSICAL SYMBOL REVERSE FINAL BARLINE")
-  ,(0x1D104,"MUSICAL SYMBOL DASHED BARLINE")
-  ,(0x1D105,"MUSICAL SYMBOL SHORT BARLINE")]
+  [ (0x1D100, "MUSICAL SYMBOL SINGLE BARLINE")
+  , (0x1D101, "MUSICAL SYMBOL DOUBLE BARLINE")
+  , (0x1D102, "MUSICAL SYMBOL FINAL BARLINE")
+  , (0x1D103, "MUSICAL SYMBOL REVERSE FINAL BARLINE")
+  , (0x1D104, "MUSICAL SYMBOL DASHED BARLINE")
+  , (0x1D105, "MUSICAL SYMBOL SHORT BARLINE")
+  ]
 
 {- | Unicode accidental symbols.
 
@@ -178,26 +180,27 @@ True
 -}
 accidentals_tbl :: Unicode_Table
 accidentals_tbl =
-    [(0x266D,"MUSIC FLAT SIGN")
-    ,(0x266E,"MUSIC NATURAL SIGN")
-    ,(0x266F,"MUSIC SHARP SIGN")
-    ,(0x1D12A,"MUSICAL SYMBOL DOUBLE SHARP")
-    ,(0x1D12B,"MUSICAL SYMBOL DOUBLE FLAT")
-    ,(0x1D12C,"MUSICAL SYMBOL FLAT UP")
-    ,(0x1D12D,"MUSICAL SYMBOL FLAT DOWN")
-    ,(0x1D12E,"MUSICAL SYMBOL NATURAL UP")
-    ,(0x1D12F,"MUSICAL SYMBOL NATURAL DOWN")
-    ,(0x1D130,"MUSICAL SYMBOL SHARP UP")
-    ,(0x1D131,"MUSICAL SYMBOL SHARP DOWN")
-    ,(0x1D132,"MUSICAL SYMBOL QUARTER TONE SHARP")
-    ,(0x1D133,"MUSICAL SYMBOL QUARTER TONE FLAT")]
+  [ (0x266D, "MUSIC FLAT SIGN")
+  , (0x266E, "MUSIC NATURAL SIGN")
+  , (0x266F, "MUSIC SHARP SIGN")
+  , (0x1D12A, "MUSICAL SYMBOL DOUBLE SHARP")
+  , (0x1D12B, "MUSICAL SYMBOL DOUBLE FLAT")
+  , (0x1D12C, "MUSICAL SYMBOL FLAT UP")
+  , (0x1D12D, "MUSICAL SYMBOL FLAT DOWN")
+  , (0x1D12E, "MUSICAL SYMBOL NATURAL UP")
+  , (0x1D12F, "MUSICAL SYMBOL NATURAL DOWN")
+  , (0x1D130, "MUSICAL SYMBOL SHARP UP")
+  , (0x1D131, "MUSICAL SYMBOL SHARP DOWN")
+  , (0x1D132, "MUSICAL SYMBOL QUARTER TONE SHARP")
+  , (0x1D133, "MUSICAL SYMBOL QUARTER TONE FLAT")
+  ]
 
 {- | Notes range
 
 > putStrLn $ unicode_table_hs (unicode_table_block notes_rng tbl)
 -}
 notes_rng :: Unicode_Range
-notes_rng = (0x1D15C,0x1D164)
+notes_rng = (0x1D15C, 0x1D164)
 
 {- | Unicode note duration symbols.
 
@@ -206,22 +209,23 @@ True
 -}
 notes_tbl :: Unicode_Table
 notes_tbl =
-    [(0x1D15C,"MUSICAL SYMBOL BREVE")
-    ,(0x1D15D,"MUSICAL SYMBOL WHOLE NOTE")
-    ,(0x1D15E,"MUSICAL SYMBOL HALF NOTE")
-    ,(0x1D15F,"MUSICAL SYMBOL QUARTER NOTE")
-    ,(0x1D160,"MUSICAL SYMBOL EIGHTH NOTE")
-    ,(0x1D161,"MUSICAL SYMBOL SIXTEENTH NOTE")
-    ,(0x1D162,"MUSICAL SYMBOL THIRTY-SECOND NOTE")
-    ,(0x1D163,"MUSICAL SYMBOL SIXTY-FOURTH NOTE")
-    ,(0x1D164,"MUSICAL SYMBOL ONE HUNDRED TWENTY-EIGHTH NOTE")]
+  [ (0x1D15C, "MUSICAL SYMBOL BREVE")
+  , (0x1D15D, "MUSICAL SYMBOL WHOLE NOTE")
+  , (0x1D15E, "MUSICAL SYMBOL HALF NOTE")
+  , (0x1D15F, "MUSICAL SYMBOL QUARTER NOTE")
+  , (0x1D160, "MUSICAL SYMBOL EIGHTH NOTE")
+  , (0x1D161, "MUSICAL SYMBOL SIXTEENTH NOTE")
+  , (0x1D162, "MUSICAL SYMBOL THIRTY-SECOND NOTE")
+  , (0x1D163, "MUSICAL SYMBOL SIXTY-FOURTH NOTE")
+  , (0x1D164, "MUSICAL SYMBOL ONE HUNDRED TWENTY-EIGHTH NOTE")
+  ]
 
 {- | Rests range
 
 > putStrLn $ unicode_table_hs (unicode_table_block rests_rng tbl)
 -}
 rests_rng :: Unicode_Range
-rests_rng = (0x1D13B,0x1D142)
+rests_rng = (0x1D13B, 0x1D142)
 
 {- | Unicode rest symbols.
 
@@ -230,14 +234,15 @@ True
 -}
 rests_tbl :: Unicode_Table
 rests_tbl =
-    [(0x1D13B,"MUSICAL SYMBOL WHOLE REST")
-    ,(0x1D13C,"MUSICAL SYMBOL HALF REST")
-    ,(0x1D13D,"MUSICAL SYMBOL QUARTER REST")
-    ,(0x1D13E,"MUSICAL SYMBOL EIGHTH REST")
-    ,(0x1D13F,"MUSICAL SYMBOL SIXTEENTH REST")
-    ,(0x1D140,"MUSICAL SYMBOL THIRTY-SECOND REST")
-    ,(0x1D141,"MUSICAL SYMBOL SIXTY-FOURTH REST")
-    ,(0x1D142,"MUSICAL SYMBOL ONE HUNDRED TWENTY-EIGHTH REST")]
+  [ (0x1D13B, "MUSICAL SYMBOL WHOLE REST")
+  , (0x1D13C, "MUSICAL SYMBOL HALF REST")
+  , (0x1D13D, "MUSICAL SYMBOL QUARTER REST")
+  , (0x1D13E, "MUSICAL SYMBOL EIGHTH REST")
+  , (0x1D13F, "MUSICAL SYMBOL SIXTEENTH REST")
+  , (0x1D140, "MUSICAL SYMBOL THIRTY-SECOND REST")
+  , (0x1D141, "MUSICAL SYMBOL SIXTY-FOURTH REST")
+  , (0x1D142, "MUSICAL SYMBOL ONE HUNDRED TWENTY-EIGHTH REST")
+  ]
 
 {- | Augmentation dot.
 
@@ -252,7 +257,7 @@ augmentation_dot = (0x1D16D, "MUSICAL SYMBOL COMBINING AUGMENTATION DOT")
 > putStrLn $ unicode_table_hs (unicode_table_block clefs_rng tbl)
 -}
 clefs_rng :: Unicode_Range
-clefs_rng = (0x1D11E,0x1D126)
+clefs_rng = (0x1D11E, 0x1D126)
 
 {- | Unicode clef symbols.
 
@@ -261,22 +266,23 @@ True
 -}
 clefs_tbl :: Unicode_Table
 clefs_tbl =
-    [(0x1D11E,"MUSICAL SYMBOL G CLEF")
-    ,(0x1D11F,"MUSICAL SYMBOL G CLEF OTTAVA ALTA")
-    ,(0x1D120,"MUSICAL SYMBOL G CLEF OTTAVA BASSA")
-    ,(0x1D121,"MUSICAL SYMBOL C CLEF")
-    ,(0x1D122,"MUSICAL SYMBOL F CLEF")
-    ,(0x1D123,"MUSICAL SYMBOL F CLEF OTTAVA ALTA")
-    ,(0x1D124,"MUSICAL SYMBOL F CLEF OTTAVA BASSA")
-    ,(0x1D125,"MUSICAL SYMBOL DRUM CLEF-1")
-    ,(0x1D126,"MUSICAL SYMBOL DRUM CLEF-2")]
+  [ (0x1D11E, "MUSICAL SYMBOL G CLEF")
+  , (0x1D11F, "MUSICAL SYMBOL G CLEF OTTAVA ALTA")
+  , (0x1D120, "MUSICAL SYMBOL G CLEF OTTAVA BASSA")
+  , (0x1D121, "MUSICAL SYMBOL C CLEF")
+  , (0x1D122, "MUSICAL SYMBOL F CLEF")
+  , (0x1D123, "MUSICAL SYMBOL F CLEF OTTAVA ALTA")
+  , (0x1D124, "MUSICAL SYMBOL F CLEF OTTAVA BASSA")
+  , (0x1D125, "MUSICAL SYMBOL DRUM CLEF-1")
+  , (0x1D126, "MUSICAL SYMBOL DRUM CLEF-2")
+  ]
 
 {- | Noteheads unicode range
 
 > putStrLn $ unicode_table_hs (unicode_table_block noteheads_rng tbl)
 -}
 noteheads_rng :: Unicode_Range
-noteheads_rng = (0x1D143,0x1D15B)
+noteheads_rng = (0x1D143, 0x1D15B)
 
 {- | Unicode notehead symbols.
 
@@ -285,31 +291,32 @@ True
 -}
 noteheads_tbl :: Unicode_Table
 noteheads_tbl =
-    [(0x1d143,"MUSICAL SYMBOL X NOTEHEAD")
-    ,(0x1d144,"MUSICAL SYMBOL PLUS NOTEHEAD")
-    ,(0x1d145,"MUSICAL SYMBOL CIRCLE X NOTEHEAD")
-    ,(0x1d146,"MUSICAL SYMBOL SQUARE NOTEHEAD WHITE")
-    ,(0x1d147,"MUSICAL SYMBOL SQUARE NOTEHEAD BLACK")
-    ,(0x1d148,"MUSICAL SYMBOL TRIANGLE NOTEHEAD UP WHITE")
-    ,(0x1d149,"MUSICAL SYMBOL TRIANGLE NOTEHEAD UP BLACK")
-    ,(0x1d14a,"MUSICAL SYMBOL TRIANGLE NOTEHEAD LEFT WHITE")
-    ,(0x1d14b,"MUSICAL SYMBOL TRIANGLE NOTEHEAD LEFT BLACK")
-    ,(0x1d14c,"MUSICAL SYMBOL TRIANGLE NOTEHEAD RIGHT WHITE")
-    ,(0x1d14d,"MUSICAL SYMBOL TRIANGLE NOTEHEAD RIGHT BLACK")
-    ,(0x1d14e,"MUSICAL SYMBOL TRIANGLE NOTEHEAD DOWN WHITE")
-    ,(0x1d14f,"MUSICAL SYMBOL TRIANGLE NOTEHEAD DOWN BLACK")
-    ,(0x1d150,"MUSICAL SYMBOL TRIANGLE NOTEHEAD UP RIGHT WHITE")
-    ,(0x1d151,"MUSICAL SYMBOL TRIANGLE NOTEHEAD UP RIGHT BLACK")
-    ,(0x1d152,"MUSICAL SYMBOL MOON NOTEHEAD WHITE")
-    ,(0x1d153,"MUSICAL SYMBOL MOON NOTEHEAD BLACK")
-    ,(0x1d154,"MUSICAL SYMBOL TRIANGLE-ROUND NOTEHEAD DOWN WHITE")
-    ,(0x1d155,"MUSICAL SYMBOL TRIANGLE-ROUND NOTEHEAD DOWN BLACK")
-    ,(0x1d156,"MUSICAL SYMBOL PARENTHESIS NOTEHEAD")
-    ,(0x1d157,"MUSICAL SYMBOL VOID NOTEHEAD")
-    ,(0x1d158,"MUSICAL SYMBOL NOTEHEAD BLACK")
-    ,(0x1d159,"MUSICAL SYMBOL NULL NOTEHEAD")
-    ,(0x1d15a,"MUSICAL SYMBOL CLUSTER NOTEHEAD WHITE")
-    ,(0x1d15b,"MUSICAL SYMBOL CLUSTER NOTEHEAD BLACK")]
+  [ (0x1d143, "MUSICAL SYMBOL X NOTEHEAD")
+  , (0x1d144, "MUSICAL SYMBOL PLUS NOTEHEAD")
+  , (0x1d145, "MUSICAL SYMBOL CIRCLE X NOTEHEAD")
+  , (0x1d146, "MUSICAL SYMBOL SQUARE NOTEHEAD WHITE")
+  , (0x1d147, "MUSICAL SYMBOL SQUARE NOTEHEAD BLACK")
+  , (0x1d148, "MUSICAL SYMBOL TRIANGLE NOTEHEAD UP WHITE")
+  , (0x1d149, "MUSICAL SYMBOL TRIANGLE NOTEHEAD UP BLACK")
+  , (0x1d14a, "MUSICAL SYMBOL TRIANGLE NOTEHEAD LEFT WHITE")
+  , (0x1d14b, "MUSICAL SYMBOL TRIANGLE NOTEHEAD LEFT BLACK")
+  , (0x1d14c, "MUSICAL SYMBOL TRIANGLE NOTEHEAD RIGHT WHITE")
+  , (0x1d14d, "MUSICAL SYMBOL TRIANGLE NOTEHEAD RIGHT BLACK")
+  , (0x1d14e, "MUSICAL SYMBOL TRIANGLE NOTEHEAD DOWN WHITE")
+  , (0x1d14f, "MUSICAL SYMBOL TRIANGLE NOTEHEAD DOWN BLACK")
+  , (0x1d150, "MUSICAL SYMBOL TRIANGLE NOTEHEAD UP RIGHT WHITE")
+  , (0x1d151, "MUSICAL SYMBOL TRIANGLE NOTEHEAD UP RIGHT BLACK")
+  , (0x1d152, "MUSICAL SYMBOL MOON NOTEHEAD WHITE")
+  , (0x1d153, "MUSICAL SYMBOL MOON NOTEHEAD BLACK")
+  , (0x1d154, "MUSICAL SYMBOL TRIANGLE-ROUND NOTEHEAD DOWN WHITE")
+  , (0x1d155, "MUSICAL SYMBOL TRIANGLE-ROUND NOTEHEAD DOWN BLACK")
+  , (0x1d156, "MUSICAL SYMBOL PARENTHESIS NOTEHEAD")
+  , (0x1d157, "MUSICAL SYMBOL VOID NOTEHEAD")
+  , (0x1d158, "MUSICAL SYMBOL NOTEHEAD BLACK")
+  , (0x1d159, "MUSICAL SYMBOL NULL NOTEHEAD")
+  , (0x1d15a, "MUSICAL SYMBOL CLUSTER NOTEHEAD WHITE")
+  , (0x1d15b, "MUSICAL SYMBOL CLUSTER NOTEHEAD BLACK")
+  ]
 
 {- | Stem code-point
 
@@ -324,7 +331,7 @@ stem = (0x1D165, "MUSICAL SYMBOL COMBINING STEM")
 > putStrLn$ unicode_table_hs (unicode_table_block dynamics_rng tbl)
 -}
 dynamics_rng :: Unicode_Range
-dynamics_rng = (0x1D18C,0x1D193)
+dynamics_rng = (0x1D18C, 0x1D193)
 
 {- | Dyamics table
 
@@ -333,21 +340,22 @@ True
 -}
 dynamics_tbl :: Unicode_Table
 dynamics_tbl =
-    [(0x1d18c,"MUSICAL SYMBOL RINFORZANDO")
-    ,(0x1d18d,"MUSICAL SYMBOL SUBITO")
-    ,(0x1d18e,"MUSICAL SYMBOL Z")
-    ,(0x1d18f,"MUSICAL SYMBOL PIANO")
-    ,(0x1d190,"MUSICAL SYMBOL MEZZO")
-    ,(0x1d191,"MUSICAL SYMBOL FORTE")
-    ,(0x1d192,"MUSICAL SYMBOL CRESCENDO")
-    ,(0x1d193,"MUSICAL SYMBOL DECRESCENDO")]
+  [ (0x1d18c, "MUSICAL SYMBOL RINFORZANDO")
+  , (0x1d18d, "MUSICAL SYMBOL SUBITO")
+  , (0x1d18e, "MUSICAL SYMBOL Z")
+  , (0x1d18f, "MUSICAL SYMBOL PIANO")
+  , (0x1d190, "MUSICAL SYMBOL MEZZO")
+  , (0x1d191, "MUSICAL SYMBOL FORTE")
+  , (0x1d192, "MUSICAL SYMBOL CRESCENDO")
+  , (0x1d193, "MUSICAL SYMBOL DECRESCENDO")
+  ]
 
 {- | Music articulations range
 
 > putStrLn$ unicode_table_hs (unicode_table_block articulations_rng tbl)
 -}
 articulations_rng :: Unicode_Range
-articulations_rng = (0x1D17B,0x1D18B)
+articulations_rng = (0x1D17B, 0x1D18B)
 
 {- | Music articulations table
 
@@ -356,23 +364,24 @@ True
 -}
 articulations_tbl :: Unicode_Table
 articulations_tbl =
-    [(0x1d17b,"MUSICAL SYMBOL COMBINING ACCENT")
-    ,(0x1d17c,"MUSICAL SYMBOL COMBINING STACCATO")
-    ,(0x1d17d,"MUSICAL SYMBOL COMBINING TENUTO")
-    ,(0x1d17e,"MUSICAL SYMBOL COMBINING STACCATISSIMO")
-    ,(0x1d17f,"MUSICAL SYMBOL COMBINING MARCATO")
-    ,(0x1d180,"MUSICAL SYMBOL COMBINING MARCATO-STACCATO")
-    ,(0x1d181,"MUSICAL SYMBOL COMBINING ACCENT-STACCATO")
-    ,(0x1d182,"MUSICAL SYMBOL COMBINING LOURE")
-    ,(0x1d183,"MUSICAL SYMBOL ARPEGGIATO UP")
-    ,(0x1d184,"MUSICAL SYMBOL ARPEGGIATO DOWN")
-    ,(0x1d185,"MUSICAL SYMBOL COMBINING DOIT")
-    ,(0x1d186,"MUSICAL SYMBOL COMBINING RIP")
-    ,(0x1d187,"MUSICAL SYMBOL COMBINING FLIP")
-    ,(0x1d188,"MUSICAL SYMBOL COMBINING SMEAR")
-    ,(0x1d189,"MUSICAL SYMBOL COMBINING BEND")
-    ,(0x1d18a,"MUSICAL SYMBOL COMBINING DOUBLE TONGUE")
-    ,(0x1d18b,"MUSICAL SYMBOL COMBINING TRIPLE TONGUE")]
+  [ (0x1d17b, "MUSICAL SYMBOL COMBINING ACCENT")
+  , (0x1d17c, "MUSICAL SYMBOL COMBINING STACCATO")
+  , (0x1d17d, "MUSICAL SYMBOL COMBINING TENUTO")
+  , (0x1d17e, "MUSICAL SYMBOL COMBINING STACCATISSIMO")
+  , (0x1d17f, "MUSICAL SYMBOL COMBINING MARCATO")
+  , (0x1d180, "MUSICAL SYMBOL COMBINING MARCATO-STACCATO")
+  , (0x1d181, "MUSICAL SYMBOL COMBINING ACCENT-STACCATO")
+  , (0x1d182, "MUSICAL SYMBOL COMBINING LOURE")
+  , (0x1d183, "MUSICAL SYMBOL ARPEGGIATO UP")
+  , (0x1d184, "MUSICAL SYMBOL ARPEGGIATO DOWN")
+  , (0x1d185, "MUSICAL SYMBOL COMBINING DOIT")
+  , (0x1d186, "MUSICAL SYMBOL COMBINING RIP")
+  , (0x1d187, "MUSICAL SYMBOL COMBINING FLIP")
+  , (0x1d188, "MUSICAL SYMBOL COMBINING SMEAR")
+  , (0x1d189, "MUSICAL SYMBOL COMBINING BEND")
+  , (0x1d18a, "MUSICAL SYMBOL COMBINING DOUBLE TONGUE")
+  , (0x1d18b, "MUSICAL SYMBOL COMBINING TRIPLE TONGUE")
+  ]
 
 -- * Math
 
@@ -392,7 +401,7 @@ dot_operator = toEnum 0x22C5
 > putStrLn (unicode_table_hs (ix_set_to_tbl tbl math_plain_ix))
 -}
 math_plain_ix :: [Unicode_Index]
-math_plain_ix = [0x00D7,0x00F7]
+math_plain_ix = [0x00D7, 0x00F7]
 
 {- | Math plain table
 
@@ -400,11 +409,11 @@ math_plain_ix = [0x00D7,0x00F7]
 True
 -}
 math_plain_tbl :: Unicode_Table
-math_plain_tbl = [(0xd7,"MULTIPLICATION SIGN"),(0xf7,"DIVISION SIGN")]
+math_plain_tbl = [(0xd7, "MULTIPLICATION SIGN"), (0xf7, "DIVISION SIGN")]
 
 -- * Blocks
 
-type Unicode_Block = (Unicode_Range,String)
+type Unicode_Block = (Unicode_Range, String)
 
 {- | Unicode blocks
 
@@ -412,19 +421,19 @@ type Unicode_Block = (Unicode_Range,String)
 -}
 unicode_blocks :: [Unicode_Block]
 unicode_blocks =
-    [((0x01B00,0x01B7F),"Balinese")
-    ,((0x02200,0x022FF),"Mathematical Operators")
-    ,((0x025A0,0x025FF),"Geometric Shapes")
-    ,((0x027C0,0x027EF),"Miscellaneous Mathematical Symbols-A")
-    ,((0x027F0,0x027FF),"Supplemental Arrows-A")
-    ,((0x02800,0x028FF),"Braille Patterns")
-    ,((0x02900,0x0297F),"Supplemental Arrows-B")
-    ,((0x02980,0x029FF),"Miscellaneous Mathematical Symbols-B")
-    ,((0x02A00,0x02AFF),"Supplemental Mathematical Operators")
-    ,((0x1D000,0x1D0FF),"Byzantine Musical Symbols")
-    ,((0x1D100,0x1D1FF),"Musical Symbols")
-    ,((0x1D200,0x1D24F),"Ancient Greek Musical Notation")
-    ]
+  [ ((0x01B00, 0x01B7F), "Balinese")
+  , ((0x02200, 0x022FF), "Mathematical Operators")
+  , ((0x025A0, 0x025FF), "Geometric Shapes")
+  , ((0x027C0, 0x027EF), "Miscellaneous Mathematical Symbols-A")
+  , ((0x027F0, 0x027FF), "Supplemental Arrows-A")
+  , ((0x02800, 0x028FF), "Braille Patterns")
+  , ((0x02900, 0x0297F), "Supplemental Arrows-B")
+  , ((0x02980, 0x029FF), "Miscellaneous Mathematical Symbols-B")
+  , ((0x02A00, 0x02AFF), "Supplemental Mathematical Operators")
+  , ((0x1D000, 0x1D0FF), "Byzantine Musical Symbols")
+  , ((0x1D100, 0x1D1FF), "Musical Symbols")
+  , ((0x1D200, 0x1D24F), "Ancient Greek Musical Notation")
+  ]
 
 -- * BAGUA, EIGHT TRI-GRAMS
 
@@ -433,7 +442,7 @@ unicode_blocks =
 > putStrLn $ unicode_table_hs (unicode_table_block (fst bagua) tbl)
 -}
 bagua :: Unicode_Block
-bagua = ((0x02630,0x02637),"BAGUA")
+bagua = ((0x02630, 0x02637), "BAGUA")
 
 {- | Table of eight tri-grams.
 
@@ -445,18 +454,18 @@ WIND,巽,Xùn,☴,011
 WATER,坎,Kǎn,☵,010
 MOUNTAIN,艮,Gèn,☶,001
 EARTH,坤,Kūn,☷,000
-
 -}
 bagua_tbl :: Unicode_Table
 bagua_tbl =
-  [(0x2630,"TRIGRAM FOR HEAVEN")
-  ,(0x2631,"TRIGRAM FOR LAKE")
-  ,(0x2632,"TRIGRAM FOR FIRE")
-  ,(0x2633,"TRIGRAM FOR THUNDER")
-  ,(0x2634,"TRIGRAM FOR WIND")
-  ,(0x2635,"TRIGRAM FOR WATER")
-  ,(0x2636,"TRIGRAM FOR MOUNTAIN")
-  ,(0x2637,"TRIGRAM FOR EARTH")]
+  [ (0x2630, "TRIGRAM FOR HEAVEN")
+  , (0x2631, "TRIGRAM FOR LAKE")
+  , (0x2632, "TRIGRAM FOR FIRE")
+  , (0x2633, "TRIGRAM FOR THUNDER")
+  , (0x2634, "TRIGRAM FOR WIND")
+  , (0x2635, "TRIGRAM FOR WATER")
+  , (0x2636, "TRIGRAM FOR MOUNTAIN")
+  , (0x2637, "TRIGRAM FOR EARTH")
+  ]
 
 -- * YIJING (I-CHING), SIXTY-FOUR HEXAGRAMS
 
@@ -465,7 +474,7 @@ bagua_tbl =
 > putStrLn $ unicode_table_hs (unicode_table_block (fst yijing) tbl)
 -}
 yijing :: Unicode_Block
-yijing = ((0x04DC0,0x04DFF),"YIJING")
+yijing = ((0x04DC0, 0x04DFF), "YIJING")
 
 {- | Yijing hexagrams in King Wen sequence.
 
@@ -536,67 +545,68 @@ yijing = ((0x04DC0,0x04DFF),"YIJING")
 -}
 yijing_tbl :: Unicode_Table
 yijing_tbl =
-  [(0x4dc0,"HEXAGRAM FOR THE CREATIVE HEAVEN")
-  ,(0x4dc1,"HEXAGRAM FOR THE RECEPTIVE EARTH")
-  ,(0x4dc2,"HEXAGRAM FOR DIFFICULTY AT THE BEGINNING")
-  ,(0x4dc3,"HEXAGRAM FOR YOUTHFUL FOLLY")
-  ,(0x4dc4,"HEXAGRAM FOR WAITING")
-  ,(0x4dc5,"HEXAGRAM FOR CONFLICT")
-  ,(0x4dc6,"HEXAGRAM FOR THE ARMY")
-  ,(0x4dc7,"HEXAGRAM FOR HOLDING TOGETHER")
-  ,(0x4dc8,"HEXAGRAM FOR SMALL TAMING")
-  ,(0x4dc9,"HEXAGRAM FOR TREADING")
-  ,(0x4dca,"HEXAGRAM FOR PEACE")
-  ,(0x4dcb,"HEXAGRAM FOR STANDSTILL")
-  ,(0x4dcc,"HEXAGRAM FOR FELLOWSHIP")
-  ,(0x4dcd,"HEXAGRAM FOR GREAT POSSESSION")
-  ,(0x4dce,"HEXAGRAM FOR MODESTY")
-  ,(0x4dcf,"HEXAGRAM FOR ENTHUSIASM")
-  ,(0x4dd0,"HEXAGRAM FOR FOLLOWING")
-  ,(0x4dd1,"HEXAGRAM FOR WORK ON THE DECAYED")
-  ,(0x4dd2,"HEXAGRAM FOR APPROACH")
-  ,(0x4dd3,"HEXAGRAM FOR CONTEMPLATION")
-  ,(0x4dd4,"HEXAGRAM FOR BITING THROUGH")
-  ,(0x4dd5,"HEXAGRAM FOR GRACE")
-  ,(0x4dd6,"HEXAGRAM FOR SPLITTING APART")
-  ,(0x4dd7,"HEXAGRAM FOR RETURN")
-  ,(0x4dd8,"HEXAGRAM FOR INNOCENCE")
-  ,(0x4dd9,"HEXAGRAM FOR GREAT TAMING")
-  ,(0x4dda,"HEXAGRAM FOR MOUTH CORNERS")
-  ,(0x4ddb,"HEXAGRAM FOR GREAT PREPONDERANCE")
-  ,(0x4ddc,"HEXAGRAM FOR THE ABYSMAL WATER")
-  ,(0x4ddd,"HEXAGRAM FOR THE CLINGING FIRE")
-  ,(0x4dde,"HEXAGRAM FOR INFLUENCE")
-  ,(0x4ddf,"HEXAGRAM FOR DURATION")
-  ,(0x4de0,"HEXAGRAM FOR RETREAT")
-  ,(0x4de1,"HEXAGRAM FOR GREAT POWER")
-  ,(0x4de2,"HEXAGRAM FOR PROGRESS")
-  ,(0x4de3,"HEXAGRAM FOR DARKENING OF THE LIGHT")
-  ,(0x4de4,"HEXAGRAM FOR THE FAMILY")
-  ,(0x4de5,"HEXAGRAM FOR OPPOSITION")
-  ,(0x4de6,"HEXAGRAM FOR OBSTRUCTION")
-  ,(0x4de7,"HEXAGRAM FOR DELIVERANCE")
-  ,(0x4de8,"HEXAGRAM FOR DECREASE")
-  ,(0x4de9,"HEXAGRAM FOR INCREASE")
-  ,(0x4dea,"HEXAGRAM FOR BREAKTHROUGH")
-  ,(0x4deb,"HEXAGRAM FOR COMING TO MEET")
-  ,(0x4dec,"HEXAGRAM FOR GATHERING TOGETHER")
-  ,(0x4ded,"HEXAGRAM FOR PUSHING UPWARD")
-  ,(0x4dee,"HEXAGRAM FOR OPPRESSION")
-  ,(0x4def,"HEXAGRAM FOR THE WELL")
-  ,(0x4df0,"HEXAGRAM FOR REVOLUTION")
-  ,(0x4df1,"HEXAGRAM FOR THE CAULDRON")
-  ,(0x4df2,"HEXAGRAM FOR THE AROUSING THUNDER")
-  ,(0x4df3,"HEXAGRAM FOR THE KEEPING STILL MOUNTAIN")
-  ,(0x4df4,"HEXAGRAM FOR DEVELOPMENT")
-  ,(0x4df5,"HEXAGRAM FOR THE MARRYING MAIDEN")
-  ,(0x4df6,"HEXAGRAM FOR ABUNDANCE")
-  ,(0x4df7,"HEXAGRAM FOR THE WANDERER")
-  ,(0x4df8,"HEXAGRAM FOR THE GENTLE WIND")
-  ,(0x4df9,"HEXAGRAM FOR THE JOYOUS LAKE")
-  ,(0x4dfa,"HEXAGRAM FOR DISPERSION")
-  ,(0x4dfb,"HEXAGRAM FOR LIMITATION")
-  ,(0x4dfc,"HEXAGRAM FOR INNER TRUTH")
-  ,(0x4dfd,"HEXAGRAM FOR SMALL PREPONDERANCE")
-  ,(0x4dfe,"HEXAGRAM FOR AFTER COMPLETION")
-  ,(0x4dff,"HEXAGRAM FOR BEFORE COMPLETION")]
+  [ (0x4dc0, "HEXAGRAM FOR THE CREATIVE HEAVEN")
+  , (0x4dc1, "HEXAGRAM FOR THE RECEPTIVE EARTH")
+  , (0x4dc2, "HEXAGRAM FOR DIFFICULTY AT THE BEGINNING")
+  , (0x4dc3, "HEXAGRAM FOR YOUTHFUL FOLLY")
+  , (0x4dc4, "HEXAGRAM FOR WAITING")
+  , (0x4dc5, "HEXAGRAM FOR CONFLICT")
+  , (0x4dc6, "HEXAGRAM FOR THE ARMY")
+  , (0x4dc7, "HEXAGRAM FOR HOLDING TOGETHER")
+  , (0x4dc8, "HEXAGRAM FOR SMALL TAMING")
+  , (0x4dc9, "HEXAGRAM FOR TREADING")
+  , (0x4dca, "HEXAGRAM FOR PEACE")
+  , (0x4dcb, "HEXAGRAM FOR STANDSTILL")
+  , (0x4dcc, "HEXAGRAM FOR FELLOWSHIP")
+  , (0x4dcd, "HEXAGRAM FOR GREAT POSSESSION")
+  , (0x4dce, "HEXAGRAM FOR MODESTY")
+  , (0x4dcf, "HEXAGRAM FOR ENTHUSIASM")
+  , (0x4dd0, "HEXAGRAM FOR FOLLOWING")
+  , (0x4dd1, "HEXAGRAM FOR WORK ON THE DECAYED")
+  , (0x4dd2, "HEXAGRAM FOR APPROACH")
+  , (0x4dd3, "HEXAGRAM FOR CONTEMPLATION")
+  , (0x4dd4, "HEXAGRAM FOR BITING THROUGH")
+  , (0x4dd5, "HEXAGRAM FOR GRACE")
+  , (0x4dd6, "HEXAGRAM FOR SPLITTING APART")
+  , (0x4dd7, "HEXAGRAM FOR RETURN")
+  , (0x4dd8, "HEXAGRAM FOR INNOCENCE")
+  , (0x4dd9, "HEXAGRAM FOR GREAT TAMING")
+  , (0x4dda, "HEXAGRAM FOR MOUTH CORNERS")
+  , (0x4ddb, "HEXAGRAM FOR GREAT PREPONDERANCE")
+  , (0x4ddc, "HEXAGRAM FOR THE ABYSMAL WATER")
+  , (0x4ddd, "HEXAGRAM FOR THE CLINGING FIRE")
+  , (0x4dde, "HEXAGRAM FOR INFLUENCE")
+  , (0x4ddf, "HEXAGRAM FOR DURATION")
+  , (0x4de0, "HEXAGRAM FOR RETREAT")
+  , (0x4de1, "HEXAGRAM FOR GREAT POWER")
+  , (0x4de2, "HEXAGRAM FOR PROGRESS")
+  , (0x4de3, "HEXAGRAM FOR DARKENING OF THE LIGHT")
+  , (0x4de4, "HEXAGRAM FOR THE FAMILY")
+  , (0x4de5, "HEXAGRAM FOR OPPOSITION")
+  , (0x4de6, "HEXAGRAM FOR OBSTRUCTION")
+  , (0x4de7, "HEXAGRAM FOR DELIVERANCE")
+  , (0x4de8, "HEXAGRAM FOR DECREASE")
+  , (0x4de9, "HEXAGRAM FOR INCREASE")
+  , (0x4dea, "HEXAGRAM FOR BREAKTHROUGH")
+  , (0x4deb, "HEXAGRAM FOR COMING TO MEET")
+  , (0x4dec, "HEXAGRAM FOR GATHERING TOGETHER")
+  , (0x4ded, "HEXAGRAM FOR PUSHING UPWARD")
+  , (0x4dee, "HEXAGRAM FOR OPPRESSION")
+  , (0x4def, "HEXAGRAM FOR THE WELL")
+  , (0x4df0, "HEXAGRAM FOR REVOLUTION")
+  , (0x4df1, "HEXAGRAM FOR THE CAULDRON")
+  , (0x4df2, "HEXAGRAM FOR THE AROUSING THUNDER")
+  , (0x4df3, "HEXAGRAM FOR THE KEEPING STILL MOUNTAIN")
+  , (0x4df4, "HEXAGRAM FOR DEVELOPMENT")
+  , (0x4df5, "HEXAGRAM FOR THE MARRYING MAIDEN")
+  , (0x4df6, "HEXAGRAM FOR ABUNDANCE")
+  , (0x4df7, "HEXAGRAM FOR THE WANDERER")
+  , (0x4df8, "HEXAGRAM FOR THE GENTLE WIND")
+  , (0x4df9, "HEXAGRAM FOR THE JOYOUS LAKE")
+  , (0x4dfa, "HEXAGRAM FOR DISPERSION")
+  , (0x4dfb, "HEXAGRAM FOR LIMITATION")
+  , (0x4dfc, "HEXAGRAM FOR INNER TRUTH")
+  , (0x4dfd, "HEXAGRAM FOR SMALL PREPONDERANCE")
+  , (0x4dfe, "HEXAGRAM FOR AFTER COMPLETION")
+  , (0x4dff, "HEXAGRAM FOR BEFORE COMPLETION")
+  ]
