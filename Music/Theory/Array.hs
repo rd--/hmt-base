@@ -1,17 +1,17 @@
 -- | Array & table functions
 module Music.Theory.Array where
 
-{- base -}
-import qualified Data.Array as A {- array -}
-import Data.List
+import Data.List {- base -}
 
-import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Data.Array as A {- array -}
+
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- * Association List (List Array)
 
--- | 'T.minmax' of /k/.
+-- | 'List.minmax' of /k/.
 larray_bounds :: Ord k => [(k, v)] -> (k, k)
-larray_bounds = T.minmax . map fst
+larray_bounds = List.minmax . map fst
 
 -- | 'A.array' of association list.
 larray :: A.Ix k => [(k, v)] -> A.Array k v
@@ -48,7 +48,7 @@ tbl_is_regular = (== 1) . length . nub . map length
 tbl_make_regular :: (t -> u, u) -> Table t -> Table u
 tbl_make_regular (f, k) tbl =
   let z = maximum (map length tbl)
-  in map (T.pad_right k z . map f) tbl
+  in map (List.pad_right k z . map f) tbl
 
 {- | Append a sequence of /nil/ (or default) values to each row of /tbl/
 so to make it regular (ie. all rows of equal length).

@@ -4,12 +4,11 @@ module Music.Theory.Geometry.Picture where
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
-import qualified Music.Theory.Colour as Colour {- hmt-base -}
-{- hmt-base -}
-{- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import qualified Music.Theory.List as List
-import qualified Music.Theory.Math as Math
+
+import qualified Music.Theory.Colour as Colour {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
+import qualified Music.Theory.Math as Math {- hmt-base -}
 
 -- * Type
 

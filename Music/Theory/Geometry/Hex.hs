@@ -1,11 +1,10 @@
 -- | <https://www.redblobgames.com/grids/hexagons/implementation.html>
 module Music.Theory.Geometry.Hex where
 
-{- hmt-base -}
-{- hmt-base -}
+import Music.Theory.Geometry.Matrix {- hmt-base -}
+import Music.Theory.Geometry.Vector {- hmt-base -}
+
 import qualified Music.Theory.Geometry.Functions as Geometry {- hmt-base -}
-import Music.Theory.Geometry.Matrix
-import Music.Theory.Geometry.Vector
 
 {- | Hex (q,r) co-ordinate to (q,r,s) co-ordinate.
 

@@ -9,9 +9,7 @@ module Music.Theory.Graph.Lcf where
 import Data.Complex {- base -}
 import Data.List {- base -}
 
-{- hmt-base -}
-import qualified Music.Theory.Graph.Type as T {- hmt-base -}
-import Music.Theory.Math
+import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
 
 -- | Lcf notation (/l/,/k/). ([3,-3],4) is the cubical graph.
 type Lcf = ([Int], Int)
@@ -24,8 +22,8 @@ lcf_seq (l, k) = concat (replicate k l)
 lcf_degree :: Lcf -> Int
 lcf_degree (l, k) = length l * k
 
--- | 'Lcf' to 'T.Edg' (an edge list)
-lcf_to_edg :: Lcf -> T.Edg
+-- | 'Lcf' to 'Graph.Edg' (an edge list)
+lcf_to_edg :: Lcf -> Graph.Edg
 lcf_to_edg (l, k) =
   let v_n = length l * k
       add i j = (i + j) `mod` v_n
@@ -33,12 +31,12 @@ lcf_to_edg (l, k) =
   in ( (v_n, v_n + (v_n `div` 2))
      , concat
         [ [(i, i `add` 1) | i <- v]
-        , nub (sort (zipWith (curry T.e_sort) v (zipWith add v (lcf_seq (l, k)))))
+        , nub (sort (zipWith (curry Graph.e_sort) v (zipWith add v (lcf_seq (l, k)))))
         ]
      )
 
 -- | Lcf edge-list to graph labeled with circular co-ordinates.
-edg_circ_gr :: R -> T.Edg -> T.Lbl (R, R) ()
+edg_circ_gr :: Double -> Graph.Edg -> Graph.Lbl (Double, Double) ()
 edg_circ_gr rad ((n, _), e) =
   let polar_to_rectangular (mg, ph) = let c = mkPolar mg ph in (realPart c, imagPart c)
       ph_incr = (2 * pi) / fromIntegral n

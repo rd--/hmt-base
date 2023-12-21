@@ -4,23 +4,20 @@ GL_HTTP=https://gitlab.com/rd--/hmt-base.git
 all:
 	echo "hmt-base"
 
+mk-cmd:
+	(cd cmd; make)
+
 clean:
 	rm -Rf dist dist-newstyle *~
 
-push-gl:
-	git push $(GL_GIT)
-
-pull-gl:
-	git pull $(GL_HTTP)
+push-all:
+	r.gitlab-push.sh hmt-base
 
 push-tags:
-	git push $(GL_GIT) --tags
-
-update-rd:
-	ssh rd@rohandrape.net "(cd sw/hmt-base; git pull $(GL_HTTP))"
-
-push-all:
-	make push-gl update-rd
+	r.gitlab-push.sh hmt-base --tags
 
 indent:
 	fourmolu -i Music
+
+doctest:
+	doctest -Wno-x-partial -Wno-incomplete-uni-patterns Music

@@ -10,9 +10,7 @@ import Data.Either {- base -}
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
-{- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.Math
 
 import qualified Music.Theory.Graph.Type as T {- hmt-base -}
 import qualified Music.Theory.Io as T {- hmt-base -}
@@ -33,10 +31,10 @@ obj_vertex_map f (v, c) = (map f v, c)
 
 Obj files store data one-indexed, the Obj type is zero-indexed.
 -}
-type Obj = Obj_ (V3 R)
+type Obj = Obj_ (V3 Double)
 
 -- | Parse Obj entry, recognised types are v=vertex, p=point, l=line, f=face
-obj_parse_entry :: String -> Either (V3 R) (Char, [Int])
+obj_parse_entry :: String -> Either (V3 Double) (Char, [Int])
 obj_parse_entry s =
   let read_ix = subtract 1 . read
   in case words s of
@@ -62,7 +60,7 @@ obj_load :: FilePath -> IO Obj
 obj_load = fmap (obj_parse . filter (not . obj_is_nil_line) . lines) . T.read_file_utf8
 
 -- | Given k=precision for printing, format Obj entry.
-obj_format_entry :: Int -> Either (V3 R) (Char, [Int]) -> String
+obj_format_entry :: Int -> Either (V3 Double) (Char, [Int]) -> String
 obj_format_entry k =
   let f_pp = unwords . (:) "v" . map (T.realfloat_pp k) . T.t3_to_list
       i_pp (c, x) = unwords ([c] : map (show . (+) 1) x)
@@ -77,7 +75,7 @@ obj_store k fn =
 -- * Ln
 
 -- | l=line entries
-type Ln_Dat = ([V3 R], [[Int]])
+type Ln_Dat = ([V3 Double], [[Int]])
 
 -- | Select only l=line entries from 'Obj'.
 obj_to_ln :: Obj -> Ln_Dat
@@ -92,7 +90,7 @@ ln_to_obj (v, l) = (v, map ((,) 'l') l)
 obj_load_ln :: FilePath -> IO Ln_Dat
 obj_load_ln = fmap obj_to_ln . obj_load
 
-ln_dat_from_vertex_seq :: [[V3 R]] -> Ln_Dat
+ln_dat_from_vertex_seq :: [[V3 Double]] -> Ln_Dat
 ln_dat_from_vertex_seq t =
   let reverse_lookup key = fmap fst . find ((== key) . snd)
       reverse_lookup_err key = fromMaybe (error "reverse_lookup") . reverse_lookup key
@@ -105,12 +103,12 @@ obj_store_ln_dat :: Int -> FilePath -> Ln_Dat -> IO ()
 obj_store_ln_dat k fn = obj_store k fn . ln_to_obj
 
 -- | k=precision, fn=file-name
-obj_store_ln :: Int -> FilePath -> [[V3 R]] -> IO ()
+obj_store_ln :: Int -> FilePath -> [[V3 Double]] -> IO ()
 obj_store_ln k fn = obj_store_ln_dat k fn . ln_dat_from_vertex_seq
 
 -- * Graph
 
-obj_to_lbl_ :: Obj -> T.Lbl_ (V3 R)
+obj_to_lbl_ :: Obj -> T.Lbl_ (V3 Double)
 obj_to_lbl_ =
   let f (ty, ix) = case ty of
         'l' -> T.adj2 1 ix
@@ -119,26 +117,26 @@ obj_to_lbl_ =
   in bimap (zip [0 ..]) (map (\i -> (i, ())) . concatMap f)
 
 -- | 'obj_to_lbl_' of 'obj_load'
-obj_load_lbl_ :: FilePath -> IO (T.Lbl_ (V3 R))
+obj_load_lbl_ :: FilePath -> IO (T.Lbl_ (V3 Double))
 obj_load_lbl_ = fmap obj_to_lbl_ . obj_load
 
 -- | Requires (but does not check) that graph vertices be indexed [0 .. #v - 1]
-lbl_to_obj :: T.Lbl_ (V3 R) -> Obj
+lbl_to_obj :: T.Lbl_ (V3 Double) -> Obj
 lbl_to_obj (v, e) = let f ((i, j), ()) = ('l', [i, j]) in (map snd v, map f e)
 
 -- | 'obj_store' of 'lbl_to_obj', k=precision
-obj_store_lbl_ :: Int -> FilePath -> T.Lbl_ (V3 R) -> IO ()
+obj_store_lbl_ :: Int -> FilePath -> T.Lbl_ (V3 Double) -> IO ()
 obj_store_lbl_ k fn = obj_store k fn . lbl_to_obj
 
 -- * Faces
 
 -- | (vertices,[[v-indices]]) ; zero-indexed
-type Face_Dat = ([V3 R], [[Int]])
+type Face_Dat = ([V3 Double], [[Int]])
 
 {- | Rewrite a set of faces (Ccw triples of (x,y,z) coordinates) as Face_Dat.
   Vertices are zero-indexed.
 -}
-face_dat_from_vertex_seq :: [[V3 R]] -> Face_Dat
+face_dat_from_vertex_seq :: [[V3 Double]] -> Face_Dat
 face_dat_from_vertex_seq t =
   let v = nub (sort (concat t))
       v_ix = zip [0 ..] v
@@ -146,7 +144,7 @@ face_dat_from_vertex_seq t =
   in (v, f)
 
 -- | Inverse of 'face_dat_from_vertex_seq'.
-face_dat_to_vertex_seq :: Face_Dat -> [[V3 R]]
+face_dat_to_vertex_seq :: Face_Dat -> [[V3 Double]]
 face_dat_to_vertex_seq (v, f) = map (map (`T.lookup_err` zip [0 ..] v)) f
 
 face_dat_to_obj :: Face_Dat -> Obj
@@ -157,7 +155,7 @@ obj_store_face_dat :: Int -> FilePath -> Face_Dat -> IO ()
 obj_store_face_dat k fn = obj_store k fn . face_dat_to_obj
 
 -- | 'obj_store_face_dat' of 'face_dat_from_vertex_seq'
-obj_store_face_set :: Int -> FilePath -> [[V3 R]] -> IO ()
+obj_store_face_set :: Int -> FilePath -> [[V3 Double]] -> IO ()
 obj_store_face_set k fn = obj_store_face_dat k fn . face_dat_from_vertex_seq
 
 obj_to_face_dat :: Obj -> Face_Dat

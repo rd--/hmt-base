@@ -4,9 +4,8 @@ module Music.Theory.Array.Square where
 import Data.List {- base -}
 import Data.Maybe {- base -}
 
-{- containers -}
 import qualified Data.List.Split as Split {- split -}
-import qualified Data.Map as Map
+import qualified Data.Map as Map {- containers -}
 
 import qualified Music.Theory.Array as Array {- hmt-base -}
 import qualified Music.Theory.Array.Text as Array.Text {- hmt-base -}

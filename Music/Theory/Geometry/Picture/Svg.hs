@@ -1,11 +1,10 @@
 module Music.Theory.Geometry.Picture.Svg where
 
 import Music.Theory.Colour {- hmt-base -}
-{- hmt-base -}
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Picture {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.Math
+import Music.Theory.Math {- hmt-base -}
 
 type SvgAttr = (String, String)
 

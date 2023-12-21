@@ -1,8 +1,7 @@
 module Music.Theory.Db.Cli where
 
-{- hmt-base -}
 import qualified Music.Theory.Db.Common as Common {- hmt-base -}
-import qualified Music.Theory.Db.Csv as Csv
+import qualified Music.Theory.Db.Csv as Csv {- hmt-base -}
 import qualified Music.Theory.Db.Json as Json {- hmt-base -}
 import qualified Music.Theory.Db.Plain as Plain {- hmt-base -}
 
