@@ -78,6 +78,17 @@ unlines_nil = unlines . filter (not . null)
 unlinesNoTrailingNewline :: [String] -> String
 unlinesNoTrailingNewline = intercalate "\n"
 
+{- | unlines without a trailing newline.
+
+>>> unlinesExceptLast (words "a b c")
+"a\nb\nc"
+-}
+unlinesExceptLast :: [String] -> String
+unlinesExceptLast x =
+  case unsnoc x of
+    Just (l, e) -> unlines l ++ e
+    _ -> concat x
+
 {- | Capitalise first character of word.
 
 >>> capitalise "freqShift"

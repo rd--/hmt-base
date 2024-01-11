@@ -65,6 +65,14 @@ v2_rotate_about r p0 p1 = v2_rotate r (p1 `v2_sub` p0) `v2_add` p0
 v2_scale :: Num n => n -> V2 n -> V2 n
 v2_scale n = v2_map (* n)
 
+{- | Absolute value
+
+>>> v2_abs (1,-1)
+(1,1)
+-}
+v2_abs :: Num n => V2 n -> V2 n
+v2_abs = v2_map abs
+
 -- | Pointwise '+', c.f. <https://mathworld.wolfram.com/VectorAddition.html>
 v2_add :: Num n => V2 n -> V2 n -> V2 n
 v2_add = v2_zip (+)
@@ -92,9 +100,29 @@ v2_sub = v2_zip (-)
 v2_negate :: Num t => V2 t -> V2 t
 v2_negate = v2_map negate
 
--- | Pointwise '*', c.f. <https://mathworld.wolfram.com/VectorMultiplication.html>
+{- | Pointwise '*', c.f. <https://mathworld.wolfram.com/VectorMultiplication.html>
+
+>>> v2_mul (6,5) (2,3)
+(12,15)
+-}
 v2_mul :: Num n => V2 n -> V2 n -> V2 n
 v2_mul = v2_zip (*)
+
+{- | Pointwise '**'
+
+>>> v2_pow (6,0) (2,3)
+(36.0,0.0)
+-}
+v2_pow :: Floating n => V2 n -> V2 n -> V2 n
+v2_pow = v2_zip (**)
+
+{- | Pointwise '^'
+
+>>> v2_hat (6,0) (2,3)
+(36,0)
+-}
+v2_hat :: (Num n, Integral i) => V2 n -> V2 i -> V2 n
+v2_hat = v2_zip (^)
 
 -- | Pointwise '/'.
 v2_div :: Fractional n => V2 n -> V2 n -> V2 n

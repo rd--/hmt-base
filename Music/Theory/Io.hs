@@ -25,7 +25,7 @@ file_size fn = withFile fn ReadMode hFileSize
 read_file_utf8_text :: FilePath -> IO T.Text
 read_file_utf8_text = fmap T.decodeUtf8 . B.readFile
 
--- | Read (strictly) a UTF-8 encoded text file, implemented via "Data.Text".
+-- | Read (strictly) a Utf-8 encoded text file, implemented via "Data.Text".
 read_file_utf8 :: FilePath -> IO String
 read_file_utf8 = fmap T.unpack . read_file_utf8_text
 
@@ -35,7 +35,7 @@ read_file_utf8_or def f = do
   x <- D.doesFileExist f
   if x then read_file_utf8 f else return def
 
--- | Write UTF8 string as file, via "Data.Text".
+-- | Write Utf8 string as file, via "Data.Text".
 write_file_utf8 :: FilePath -> String -> IO ()
 write_file_utf8 fn = B.writeFile fn . T.encodeUtf8 . T.pack
 
