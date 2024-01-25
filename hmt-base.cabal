@@ -23,6 +23,7 @@ Library
                    data-ordlist,
                    directory,
                    filepath,
+                   json,
                    lazy-csv,
                    microaeson,
                    monad-loops,
@@ -39,6 +40,7 @@ Library
   Exposed-modules: Music.Theory.Array
                    Music.Theory.Array.Cell_Ref
                    Music.Theory.Array.Csv
+                   Music.Theory.Array.Json
                    Music.Theory.Array.Square
                    Music.Theory.Array.Text
                    Music.Theory.Base
