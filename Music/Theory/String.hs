@@ -118,3 +118,25 @@ unCapitalise x =
 -}
 on_lines :: (String -> String) -> String -> String
 on_lines f = unlines . map f . lines
+
+{- | Is string prefixed by k tabs?
+
+>>> tabPrefixed 1 "\tyes"
+True
+
+>>> tabPrefixed 2 "\tno"
+False
+-}
+tabPrefixed :: Int -> String -> Bool
+tabPrefixed k = isPrefixOf (replicate k '\t')
+
+{- | Is string prefixed by k spaces?
+
+>>> spacePrefixed 4 "    yes"
+True
+
+>>> spacePrefixed 8 "    no"
+False
+-}
+spacePrefixed :: Int -> String -> Bool
+spacePrefixed k = isPrefixOf (replicate k ' ')

@@ -36,7 +36,7 @@ Library
                    text,
                    time
   Default-Language:Haskell2010
-  GHC-Options:     -Wall -fwarn-tabs
+  GHC-Options:     -Wall -Wno-x-partial -Wno-incomplete-uni-patterns
   Exposed-modules: Music.Theory.Array
                    Music.Theory.Array.Cell_Ref
                    Music.Theory.Array.Csv
@@ -93,6 +93,7 @@ Library
                    Music.Theory.Json
                    Music.Theory.List
                    Music.Theory.Map
+                   Music.Theory.Markdown
                    Music.Theory.Math
                    Music.Theory.Math.Constant
                    Music.Theory.Math.Convert

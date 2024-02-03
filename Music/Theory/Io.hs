@@ -68,3 +68,7 @@ getAvailableLinesFromStdin = do
 -- | Interact with stdin and stdout.  Like Prelude.interact, but with pipes.
 interactWithStdio :: (String -> String) -> IO ()
 interactWithStdio strFunc = forever (getAvailableLinesFromStdin >>= \ln -> putStrLn (strFunc (unlines ln)) >> hFlush stdout)
+
+-- | Interact with lines
+interactLines :: ([String] -> [String]) -> IO ()
+interactLines f = interact (unlines . f . lines)
