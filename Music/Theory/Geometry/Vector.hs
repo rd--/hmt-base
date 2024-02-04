@@ -429,12 +429,18 @@ v3_dot (x1, y1, z1) (x2, y2, z2) = x1 * x2 + y1 * y2 + z1 * z2
 
 {- | The cross product is a vector that is perpendicular to both inputs, and normal to the plane containing them,
 c.f. <https://mathworld.wolfram.com/CrossProduct.html>
+
+>>> v3_cross_product (1,2,-1) (-1,1,0)
+(1,1,3)
+
+>>> v3_cross_product (3.2,4.2,5.2) (0.75,0.09,0.06) `v3_approx_eq` (-0.216,3.708,-2.862)
+True
 -}
 v3_cross_product :: Num t => V3 t -> V3 t -> V3 t
 v3_cross_product (x1, y1, z1) (x2, y2, z2) =
-  ( (y1 * z2) - (y2 * z1)
-  , (x1 * z2) - (x2 * z1)
-  , (x1 * y2) - (x2 * y1)
+  ( (y1 * z2) - (z1 * y2)
+  , (z1 * x2) - (x1 * z2)
+  , (x1 * y2) - (y1 * x2)
   )
 
 -- | Scale V3.
