@@ -22,7 +22,7 @@ related:
 * * *
 
 ```
-$ doctest Music/Theory/Base.hs
-Examples: 1173  Tried: 1173  Errors: 0  Failures: 0
+$ make doctest
+Examples: 1191  Tried: 1173  Errors: 0  Failures: 0
 $
 ```
