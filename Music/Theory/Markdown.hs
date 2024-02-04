@@ -2,6 +2,7 @@
 module Music.Theory.Markdown where
 
 import Data.List {- base -}
+import Data.Maybe {- base -}
 
 import qualified Music.Theory.String as String {- hmt-base -}
 
@@ -102,3 +103,20 @@ indentedToFencedCodeBlocksAccum state current =
 -}
 indentedToFencedCodeBlocks :: [String] -> [String]
 indentedToFencedCodeBlocks = snd . mapAccumL indentedToFencedCodeBlocksAccum ("", False)
+
+fencedToIndentedCodeBlocksAccum :: BlockState -> String -> (BlockState, Maybe String)
+fencedToIndentedCodeBlocksAccum state current =
+  let (_, inBlock) = state
+      (state', indent) = fencedCodeBlockBoundariesAccum state current
+  in case indent of
+      Minus -> (state', Nothing)
+      Zero -> (state', Just (if inBlock then "\t" ++ current else current))
+      Plus -> (state', Nothing)
+
+{- | Indented to fenced code blocks
+
+> s <- readFile "/home/rohan/sw/spl/help/Reference/SinOsc.help.sl"
+> putStr $ unlines $ indentedToFencedCodeBlocks (lines s)
+-}
+fencedToIndentedCodeBlocks :: [String] -> [String]
+fencedToIndentedCodeBlocks = catMaybes . snd . mapAccumL fencedToIndentedCodeBlocksAccum ("", False)
