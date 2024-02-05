@@ -1163,6 +1163,14 @@ drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 drop_while_right :: (a -> Bool) -> [a] -> [a]
 drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 
+{- | 'dropWhile' from both ends of a list.
+
+>>> trim isSpace " string "
+"string"
+-}
+trim :: (a -> Bool) -> [a] -> [a]
+trim f = reverse . dropWhile f . reverse . dropWhile f
+
 {- | 'take' from right.
 
 >>> take_right 3 "taking"

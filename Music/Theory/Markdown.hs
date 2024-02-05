@@ -115,7 +115,7 @@ fencedToIndentedCodeBlocksAccum state current =
 
 {- | Indented to fenced code blocks
 
-> s <- readFile "/home/rohan/sw/spl/help/Reference/SinOsc.help.sl"
+> s <- readFile "/home/rohan/sw/spl/help/Reference/abs.help.sl"
 > putStr $ unlines $ indentedToFencedCodeBlocks (lines s)
 -}
 fencedToIndentedCodeBlocks :: [String] -> [String]
