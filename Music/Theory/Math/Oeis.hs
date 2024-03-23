@@ -1251,7 +1251,7 @@ Decimal expansion of Champernowne constant (or Mahler's number), formed by conca
 True
 -}
 a033307 :: [Int]
-a033307 = concatMap (map (read . return) . show) [1..]
+a033307 = concatMap (map (read . return) . show) [1 ..]
 
 {- | <http://oeis.org/A033812>
 

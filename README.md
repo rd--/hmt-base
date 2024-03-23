@@ -17,12 +17,12 @@ related:
 [obj](http://rohandrape.net/?t=hmt-base&e=md/obj.md),
 [ply](http://rohandrape.net/?t=hmt-base&e=md/ply.md)
 
-© [rohan drape](http://rohandrape.net/), 2006-2023, [gpl](http://gnu.org/copyleft/).
+© [rohan drape](http://rohandrape.net/), 2006-2024, [gpl](http://gnu.org/copyleft/).
 
 * * *
 
 ```
 $ make doctest
-Examples: 1191  Tried: 1173  Errors: 0  Failures: 0
+Examples: 1205  Tried: 1205  Errors: 0  Failures: 0
 $
 ```

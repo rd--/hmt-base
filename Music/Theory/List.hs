@@ -1165,6 +1165,7 @@ drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 
 {- | 'dropWhile' from both ends of a list.
 
+>>> import Data.Char
 >>> trim isSpace " string "
 "string"
 -}
