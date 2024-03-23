@@ -14,13 +14,38 @@ import qualified Music.Theory.List as List {- hmt-base -}
 factorial :: Integral n => n -> n
 factorial n = product [1 .. n]
 
+{- | Stope funtion.
+<https://code.jsoftware.com/wiki/Vocabulary/hat#stope>
+
+>>> stope 5 1 3
+210
+
+>>> stope 5 (-1) 3
+60
+
+>>> stope 5.1 1 3
+220.88099999999997
+
+>>> let f n k = stope n (-1) k
+>>> (f 3 2,f 3 3,f 4 3,f 4 4,f 13 3,f 12 12)
+(6,6,24,24,1716,479001600)
+-}
+stope :: (Num a, Enum a) => a -> a -> a -> a
+stope x p y =
+  let y' = [0 .. y - 1]
+  in foldr1 (*) (map (\k -> x + (k * p)) y')
+
 {- | Number of /k/ element permutations of a set of /n/ elements.
 
->>> let f = nk_permutations in (f 3 2,f 3 3,f 4 3,f 4 4,f 13 3,f 12 12)
+>>> nk_permutations 5 3
+60
+
+>>> let f = nk_permutations
+>>> (f 3 2,f 3 3,f 4 3,f 4 4,f 13 3,f 12 12)
 (6,6,24,24,1716,479001600)
 -}
 nk_permutations :: Integral a => a -> a -> a
-nk_permutations n k = factorial n `div` factorial (n - k)
+nk_permutations n k = stope n (-1) k
 
 {- | Number of /nk/ permutations where /n/ '==' /k/.
 

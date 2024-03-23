@@ -2056,3 +2056,24 @@ lc = list-comprehension
 -}
 all_pairs_lc :: [t] -> [u] -> [(t, u)]
 all_pairs_lc p q = [(x, y) | x <- p, y <- q]
+
+{- | Hamming distance.
+Does not check lists are of equal size.
+
+>>> hammingDistance "karolin" "kathrin"
+3
+
+>>> hammingDistance "karolin" "kerstin"
+3
+
+>>> hammingDistance "kathrin" "kerstin"
+4
+
+>>> hammingDistance "0000" "1111"
+4
+
+>>> hammingDistance "2173896" "2233796"
+3
+-}
+hammingDistance :: Eq t => [t] -> [t] -> Int
+hammingDistance p q = sum (zipWith (\i j -> if i /= j then 1 else 0) p q)

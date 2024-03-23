@@ -1243,6 +1243,16 @@ a033622_n n =
     then 9 * 2 ^ n - 9 * 2 ^ (n `div` 2) + 1
     else 8 * 2 ^ n - 6 * 2 ^ ((n + 1) `div` 2) + 1
 
+{- | <http://oeis.org/A033307>
+
+Decimal expansion of Champernowne constant (or Mahler's number), formed by concatenating the positive integers.
+
+>>> [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9] `isPrefixOf` a033307
+True
+-}
+a033307 :: [Int]
+a033307 = concatMap (map (read . return) . show) [1..]
+
 {- | <http://oeis.org/A033812>
 
 The Loh-Shu 3 X 3 magic square, lexicographically largest variant when read by columns.
