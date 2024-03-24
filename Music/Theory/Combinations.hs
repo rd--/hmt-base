@@ -14,6 +14,35 @@ import qualified Music.Theory.Permutations as Permutations {- hmt-base -}
 nk_combinations :: Integral a => a -> a -> a
 nk_combinations n k = Permutations.nk_permutations n k `div` Permutations.factorial k
 
+{- | <https://reference.wolfram.com/language/ref/Binomial.html>
+
+>>> binomial 5 3
+10
+
+>>> binomial 3 5
+0
+
+>>> binomial 6 3
+20
+
+>>> binomial 8 4
+70
+
+>>> binomial 333 33
+3888653852803216535842634400242612716809201918
+
+>>> binomial 0 0
+1
+
+>>> binomial 0 1
+0
+
+>>> map (\i -> map (\j -> binomial i j) [0 .. i]) [0 .. 5]
+[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1],[1,5,10,10,5,1]]
+-}
+binomial :: Integral a => a -> a -> a
+binomial n k = if k == 0 then 1 else nk_combinations n k
+
 {- | /k/ element subsets of /s/.
 
 >>> combinations 3 [1..4]
