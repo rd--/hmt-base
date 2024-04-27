@@ -63,10 +63,15 @@ combinations k s =
 
 -- * Dyck
 
-{- | <http://www.acta.sapientia.ro/acta-info/C1-1/info1-9.pdf> (P.110)
+{- | <https://arxiv.org/pdf/1002.2625.pdf> (P.110)
 
 >>> dyck_words_lex 3
 [[0,0,0,1,1,1],[0,0,1,0,1,1],[0,0,1,1,0,1],[0,1,0,0,1,1],[0,1,0,1,0,1]]
+
+The number of Dyck words of length _2 * n_ is the _n_-th Catalan number.
+
+>>> map length (map dyck_words_lex [1 .. 10])
+[1,2,5,14,42,132,429,1430,4862,16796]
 -}
 dyck_words_lex :: (Num t, Ord t) => t -> [[t]]
 dyck_words_lex n =

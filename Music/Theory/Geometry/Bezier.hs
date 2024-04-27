@@ -1,9 +1,10 @@
 -- | Bezier functions.
 module Music.Theory.Geometry.Bezier where
 
-import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.List {- hmt-base -}
+
+import qualified Music.Theory.Geometry.Matrix as Matrix {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- | Given quadratic parameters (q1,q2,q3) generate cubic parameters (c1,c2,c3,c4)
 bezier_quadratic_to_cubic :: Fractional n => V3 (V2 n) -> V4 (V2 n)
@@ -85,7 +86,7 @@ bezier4_v3 ((x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)) mu =
   )
 
 -- | 4x4 matrix that, applied to (1,t,t*t,t*t*t) gives the bezier4 bases.
-bezier4_m44 :: Num n => M44 n
+bezier4_m44 :: Num n => Matrix.M44 n
 bezier4_m44 = ((1, -3, 3, -1), (0, 3, -6, 3), (0, 0, 3, -3), (0, 0, 0, 1))
 
 {- | Bezier bases, matrix form.
@@ -94,7 +95,7 @@ map bezier4_bases_mtx [0,1/2,1] == map bezier4_bases [0,1/2,1]
 zipWith v4_sub (map bezier4_bases_mtx [1/4,1/3]) (map bezier4_bases [1/4,1/3])
 -}
 bezier4_bases_mtx :: Num a => a -> V4 a
-bezier4_bases_mtx t = m44_apply bezier4_m44 (1, t, t * t, t * t * t)
+bezier4_bases_mtx t = Matrix.m44_apply bezier4_m44 (1, t, t * t, t * t * t)
 
 {- | Matrix form of 'bezier4'.
 
@@ -202,8 +203,8 @@ bezier4_seq_y0 dx pt = maybe 0 snd . bezier4_seq_y' dx pt
 -}
 bezier4_seq_wt :: (Ord a, Integral i, Fractional a, Enum a) => a -> [V2 a] -> i -> [a]
 bezier4_seq_wt dx pt n =
-  let (l, _) = head_err pt
-      (r, _) = last_err pt
+  let (l, _) = List.head_err pt
+      (r, _) = List.last_err pt
       l' = l + ((r - l) / fromIntegral n)
       ix = [l, l' .. r]
   in map (bezier4_seq_y0 dx pt) ix

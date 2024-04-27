@@ -5,12 +5,12 @@ Synopsis:          Haskell Music Theory Base
 Description:       Haskell music theory Base Library
 License:           GPL-3.0-only
 Category:          Music
-Copyright:         Rohan Drape, 2006-2023
+Copyright:         Rohan Drape, 2006-2024
 Author:            Rohan Drape
 Maintainer:        rd@rohandrape.net
 Stability:         Experimental
 Homepage:          http://rohandrape.net/t/hmt-base
-Tested-With:       GHC == 9.6.1
+Tested-With:       GHC == 9.8.1
 Build-Type:        Simple
 Data-files:        README.md
 
@@ -100,6 +100,7 @@ Library
                    Music.Theory.Math.Histogram
                    Music.Theory.Math.Nichomachus
                    Music.Theory.Math.Oeis
+                   Music.Theory.Math.Predicate
                    Music.Theory.Math.Prime
                    Music.Theory.Math.Prime.List
                    Music.Theory.Maybe

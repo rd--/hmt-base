@@ -11,6 +11,11 @@ import qualified Music.Theory.List as T {- hmt-base -}
 
 -- * Vertices
 
+{- | A vertex sequence is normal if it is the integers from zero to one less than the order.
+
+>>> v_is_normal [0 .. 5]
+Just 6
+-}
 v_is_normal :: [Int] -> Maybe Int
 v_is_normal v = let k = length v in if v == [0 .. k - 1] then Just k else Nothing
 
