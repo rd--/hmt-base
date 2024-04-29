@@ -9,16 +9,16 @@ import Data.Ratio {- base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math.Convert as Math.Convert {- hmt-base -}
 
--- | Alias for 'Double'.  (R = Real, not Rational)
+-- | Real, alias for 'Double'.  (R = Real, not Rational)
 type R = Double
 
 rmod :: R -> R -> R
 rmod = Data.Fixed.mod'
 
--- | Alias for 'Integer'.
+-- | Integer, alias for 'Integer'.
 type I = Integer
 
--- | Alias for 'Rational'.  (F = Fraction, not Float)
+-- | Fraction, alias for 'Rational'.  (F = Fraction, not Float)
 type F = Rational
 
 -- | Epsilon for ~=.

@@ -1,3 +1,4 @@
+-- | OpenGL
 module Music.Theory.Geometry.Projection.Gl where
 
 import Music.Theory.Geometry.Matrix {- hmt-base -}

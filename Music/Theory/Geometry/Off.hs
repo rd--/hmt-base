@@ -13,6 +13,8 @@
 
 
 GeomView: <http://www.geomview.org/docs/html/OFF.html>
+
+Off files are zero indexed.
 -}
 module Music.Theory.Geometry.Off where
 
@@ -331,7 +333,7 @@ off4_store k = off_store k "4OFF" (\(x, y, z, w) -> [x, y, z, w])
 
 -- * Off
 
--- | Read the TYPE entry for an Off file, ie. Off or 4Off.
+-- | Read the Type entry for an Off file, ie. Off or 4Off.
 off_load_type :: FilePath -> IO String
 off_load_type fn = withFile fn ReadMode hGetLine
 

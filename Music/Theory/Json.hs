@@ -13,6 +13,9 @@ import qualified Data.Aeson.Micro as Json {- microaeson -}
 
 import qualified Music.Theory.Math.Predicate as Math {- hmt-base -}
 
+-- | Json object.
+type Object = Json.Object
+
 -- | Json value.
 type Value = Json.Value
 
@@ -118,10 +121,10 @@ Object (fromList [("blob",Array [Number 0.0,Number 1.0])])
 decode_str :: String -> Value
 decode_str = decode_value_err . ByteString.Char8.pack
 
-object_lookup :: String -> Json.Object -> Maybe Json.Value
+object_lookup :: String -> Object -> Maybe Value
 object_lookup k = Map.lookup (Text.pack k)
 
-object_lookup_err :: String -> Json.Object -> Json.Value
+object_lookup_err :: String -> Object -> Value
 object_lookup_err k o =
   let err = error ("object_lookup: " ++ k ++ " -- " ++ show o)
   in fromMaybe err (object_lookup k o)
@@ -186,7 +189,7 @@ value_to_int_list_list = map value_to_int_list . value_to_list_err
 value_to_string_list :: Value -> [String]
 value_to_string_list = map value_to_string_err . value_to_list_err
 
-value_to_object_err :: Value -> Json.Object
+value_to_object_err :: Value -> Object
 value_to_object_err j =
   case j of
     Json.Object o -> o

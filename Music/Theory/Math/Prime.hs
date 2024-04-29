@@ -47,6 +47,9 @@ prime_k i = if Primes.isPrime i then Just (List.findIndex_err (== i) primes_list
 
 >>> prime_k_err 13
 5
+
+>>> map Prime.prime_k_err [2,3,5,7,11,13,17,19,23,29,31]
+[0,1,2,3,4,5,6,7,8,9,10]
 -}
 prime_k_err :: Integral a => a -> Int
 prime_k_err = fromMaybe (error "prime_k: not prime?") . prime_k
