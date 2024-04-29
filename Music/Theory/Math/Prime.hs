@@ -12,6 +12,10 @@ import qualified Music.Theory.List as List {- hmt -}
 import qualified Music.Theory.Math as Math {- hmt -}
 import qualified Music.Theory.Unicode as Unicode {- hmt -}
 
+{- | Alias for 'Primes.primes'. -}
+is_prime :: Integral i => i -> Bool
+is_prime = Primes.isPrime
+
 {- | Alias for 'Primes.primes'.
 
 >>> take 12 primes_list
