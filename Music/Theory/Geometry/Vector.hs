@@ -208,9 +208,15 @@ v2_maximum = foldr1 (v2_zip max)
 v2_bounds :: Ord t => [V2 t] -> V2 (V2 t)
 v2_bounds c = let r = unzip c in (v2_map minimum r, v2_map maximum r)
 
--- | Combine two (min,max) values.
+{- | Combine two (min,max) values.
+
+>>> let p = ((-240,-240),(240,240))
+>>> let q = ((0,0),(208,120))
+>>> v2_bounds_join p q
+((-240,-240),(240,240))
+-}
 v2_bounds_join :: (Num t, Ord t) => V2 (V2 t) -> V2 (V2 t) -> V2 (V2 t)
-v2_bounds_join ((x0, y0), (x1, y1)) ((x2, y2), (x3, y3)) = ((min x0 x1, min y0 y1), (max x2 x3, max y2 y3))
+v2_bounds_join ((x0, y0), (x1, y1)) ((x2, y2), (x3, y3)) = ((min x0 x2, min y0 y2), (max x1 x3, max y1 y3))
 
 -- | 'v2_min' of left and 'v2_max' of right bound, i.e. minima and maxima of all x and y together.
 v2_extent_u :: Ord t => [V2 t] -> V2 t

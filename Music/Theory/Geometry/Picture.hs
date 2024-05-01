@@ -58,9 +58,16 @@ circle_f clr = Circle (Right clr)
 
 -- * Analysis
 
-circle_bounds :: Num t => V2 t -> t -> V2 (V2 t)
-circle_bounds (x, y) n = ((x - n, y - n), (n * 2, n * 2))
+{- | Circle is centre & radius.
+Bounds are ((x0,y0),(x1,y1)).
 
+>>> circle_bounds (0, 0) 1
+((-1,-1),(1,1))
+-}
+circle_bounds :: Num t => V2 t -> t -> V2 (V2 t)
+circle_bounds (x, y) n = ((x - n, y - n), (x + n, y + n))
+
+-- | ((x0,y0),(x1,y1))
 mark_wn :: (Num n, Ord n) => Mark n -> V2 (V2 n)
 mark_wn m =
   case m of

@@ -587,6 +587,16 @@ fano_plane_coord cr =
 
 -- * Intersect
 
+{- | The point at /z/ along line, 0 is the start of the line and 1 is the end.
+
+>>> point_along_line 0.5 ((0,0),(1,1))
+(0.5,0.5)
+-}
+point_along_line :: Num n => n -> V2 (V2 n) -> V2 n
+point_along_line z (p1, p2) =
+  let v = v2_scale z (v2_sub p2 p1)
+  in v2_add v p1
+
 {- | Minimal distance between a point and a line.
      Calculates distance along indicated line segment and intersection point.
 
