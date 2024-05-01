@@ -89,10 +89,10 @@ matrix (((a, b), (c, d)), (e, f)) = concat ["matrix(", unwords (map show [a, b, 
 transform_group :: Show t => (M22 t, V2 t) -> [SvgElem] -> SvgElem
 transform_group m e = SvgElem "g" [("transform", matrix m)] e
 
--- | m = margin
+-- | m = margin, add transform group to flip y axis
 picture_render :: R -> V2 (V2 R) -> Picture R -> SvgElem
-picture_render m w p =
-  let ((x0, y0), (_x1, y1)) = w
+picture_render m wn p =
+  let ((x0, y0), (_x1, y1)) = wn
       dy = y1 - y0
       e = (m / 2) - x0
       f = dy + (m / 2) + y0
@@ -100,10 +100,15 @@ picture_render m w p =
 
 picture_to_svg_elem :: R -> Picture R -> SvgElem
 picture_to_svg_elem m p =
-  let w = picture_wn p
-      ((x0, y0), (x1, y1)) = w
-      vb = ("viewbox", unwords (map show [x0 - m, y0 - m, (m * 2) + (x1 - x0), (m * 2) + (y1 - y0)]))
-  in SvgElem "svg" [("xmlns", "http://www.w3.org/2000/svg"), vb] [picture_render m w p]
+  let wn = picture_wn p
+      ((x0, y0), (x1, y1)) = wn
+      w = (m * 2) + (x1 - x0)
+      h = (m * 2) + (y1 - y0)
+      attr = [("xmlns", "http://www.w3.org/2000/svg")
+             ,("viewbox", unwords (map show [x0 - m, y0 - m, w, h]))
+             ,("width", show w)
+             ,("height", show h)]
+  in SvgElem "svg" attr [picture_render m wn p]
 
 svg_attr_pp :: SvgAttr -> String
 svg_attr_pp (name, value) = concat [name, "=\"", value, "\""]
