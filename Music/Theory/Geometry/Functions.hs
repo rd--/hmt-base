@@ -661,6 +661,28 @@ line_align p q =
       (_, ph1) = rectangular_to_polar vc1
   in (pt1 `v2_sub` pt0, (pt1, ph1 - ph0))
 
+{- | Find interesction of two infinite lines.
+
+>>> line_line_intersection ((4,0),(6,10)) ((0,3),(10,7))
+(5.0,5.0)
+
+If lines are parallel, intersection point will contain infinite values.
+
+>>> line_line_intersection ((0,0),(1,1)) ((1,2),(4,5))
+(-Infinity,-Infinity)
+-}
+line_line_intersection :: Fractional r => V2 (V2 r) -> V2 (V2 r) -> V2 r
+line_line_intersection ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) =
+  let a1 = y2 - y1
+      b1 = x1 - x2
+      c1 = (a1 * x1) + (b1 * y1)
+      a2 = y4 - y3
+      b2 = x3 - x4
+      c2 = (a2 * x3) + (b2 * y3)
+      delta = (a1 * b2) - (a2 * b1)
+  in (((b2 * c1) - (b1 * c2)) / delta
+     ,((a1 * c2) - (a2 * c1)) / delta)
+
 -- * Circle
 
 {- | Distances along a line, given as Pt and Vc, that it intersects with a circle.
@@ -855,3 +877,26 @@ right_trapezoid_area a h1 h2 = 0.5 * a * (h1 + h2)
 -}
 right_trapezoid_perimeter :: Floating a => a -> a -> a -> a
 right_trapezoid_perimeter a h1 h2 = let sq x = x * x in a + h1 + h2 + sqrt (sq a + sq (h2 - h1))
+
+-- * Annulus
+
+{- | An annulus is the region between two concentric circles.
+R (r2) is the radius of the outer circle, r (r1) is the radius of the inner circle.
+The area of an annulus is the difference in the areas of the larger circle and the smaller one.
+
+>>> annulus_area 13 5
+452.3893421169302
+
+>>> annulus_area 20 16
+452.3893421169302
+-}
+annulus_area :: Floating a => a -> a -> a
+annulus_area r2 r1 = pi * ((r2 * r2) - (r1 * r1))
+
+{- | An annulus sector is a segment of an annulus, given by an angle (theta) in radians.
+
+>>> annulus_sector_area (pi / 2) 20 16
+113.09733552923255
+-}
+annulus_sector_area :: Floating a => a -> a -> a -> a
+annulus_sector_area theta r2 r1 = (theta / 2) * ((r2 * r2) - (r1 * r1))

@@ -3,7 +3,8 @@ module Music.Theory.Math.Oeis where
 
 import Data.Bits {- base -}
 import Data.Char {- base -}
-import Data.List {- base -}
+import Data.List as List {- base -}
+import Data.Maybe as Maybe {- base -}
 import Data.Ratio {- base -}
 
 import qualified Data.Set as Set {- containers -}
@@ -339,6 +340,16 @@ True
 -}
 a000292 :: (Enum n, Num n) => [n]
 a000292 = scanl1 (+) a000217
+
+{- | <https://oeis.org/A000302>
+
+Powers of 4: a(n) = 4^n.
+
+>>> [1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864, 268435456, 1073741824, 4294967296, 17179869184, 68719476736, 274877906944, 1099511627776, 4398046511104, 17592186044416, 70368744177664, 281474976710656] `isPrefixOf` a000302
+True
+-}
+a000302 :: Integral i => [i]
+a000302 = iterate (* 4) 1
 
 {- | <http://oeis.org/A000384>
 
@@ -761,6 +772,16 @@ a004001 =
         in x' : h (n + 1) x'
   in 1 : 1 : h 3 1
 
+{- | <http://oeis.org/A004171>
+
+a(n) = 2^(2n+1).
+
+>>> [2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, 2147483648, 8589934592, 34359738368, 137438953472, 549755813888, 2199023255552, 8796093022208, 35184372088832, 140737488355328, 562949953421312] `isPrefixOf` a004171
+True
+-}
+a004171 :: Integral i => [i]
+a004171 = iterate (* 4) 2
+
 {- | <http://oeis.org/A004718>
 
 Per Nørgård's "infinity sequence"
@@ -775,6 +796,24 @@ True
 -}
 a004718 :: Num n => [n]
 a004718 = 0 : concat (transpose [map (+ 1) a004718, map negate (List.tail_err a004718)])
+
+{- | <http://oeis.org/A005132>
+
+Recamán's sequence (or Recaman's sequence): a(0) = 0; for n > 0, a(n) = a(n-1) - n if nonnegative and not already in the sequence, otherwise a(n) = a(n-1) + n.
+
+>>> [0, 1, 3, 6, 2, 7, 13, 20, 12, 21, 11, 22, 10, 23, 9, 24, 8, 25, 43, 62, 42, 63, 41, 18, 42, 17, 43, 16, 44, 15, 45, 14, 46, 79, 113, 78, 114, 77, 39, 78, 38, 79, 37, 80, 36, 81, 35, 82, 34, 83, 33, 84, 32, 85, 31, 86, 30, 87, 29, 88, 28, 89, 27, 90, 26, 91, 157, 224, 156, 225, 155] `isPrefixOf` a005132
+True
+
+> plot_p1_ln [take 200 (a005132 :: [Int])]
+> plot_p1_pt [take 500 (a005132 :: [Int])]
+-}
+a005132 :: Integral i => [i]
+a005132 =
+   let recaman :: Integral i => Set.Set i -> i -> i -> [i]
+       recaman s n x = if x > n && (x - n) `Set.notMember` s
+                       then (x - n) : recaman (Set.insert (x - n) s) (n + 1) (x - n)
+                       else (x + n) : recaman (Set.insert (x + n) s) (n + 1) (x + n)
+   in 0 : recaman (Set.singleton 0) 1 0
 
 {- | <http://oeis.org/A005185>
 
@@ -904,6 +943,18 @@ a006368 =
        where
         (u, u') = divMod n 2; (v, v') = divMod n 4
   in map f [0 ..]
+
+{- | <http://oeis.org/A006577>
+
+Number of halving and tripling steps to reach 1 in '3x+1' problem, or -1 if 1 is never reached.
+
+>>> [0,1,7,2,5,8,16,3,19,6,14,9,9,17,17,4,12,20,20,7,7,15,15,10,23] `isPrefixOf` a006577
+-}
+a006577 :: [Int]
+a006577 = map a006577_n [1..]
+
+a006577_n :: Integer -> Int
+a006577_n n = Maybe.fromJust (List.findIndex (n `elem`) a127824_tbl)
 
 {- | <http://oeis.org/A006842>
 
@@ -1959,6 +2010,29 @@ a126976 =
   , 02
   , 31
   ]
+
+{- | <http://oeis.org/A127824>
+
+Triangle in which row n is a sorted list of all numbers having total stopping time n in the Collatz (or 3x+1) iteration.
+
+>>> [1, 2, 4, 8, 16, 5, 32, 10, 64, 3, 20, 21, 128, 6, 40, 42, 256, 12, 13, 80, 84, 85, 512, 24, 26, 160, 168, 170, 1024, 48, 52, 53, 320, 336, 340, 341, 2048, 17, 96, 104, 106, 113, 640, 672, 680, 682, 4096, 34, 35, 192, 208, 212, 213, 226, 227, 1280, 1344, 1360, 1364] `isPrefixOf` a127824
+
+-}
+a127824 :: [Integer]
+a127824 = concat a127824_tbl
+
+a127824_n_k :: Int -> Int -> Integer
+a127824_n_k n k = a127824_tbl !! n !! k
+
+a127824_n :: Int -> [Integer]
+a127824_n n = a127824_tbl !! n
+
+a127824_tbl :: [[Integer]]
+a127824_tbl =
+   let f row = sort $ map (* 2) row `union`
+                  [x' | x <- row, let x' = (x - 1) `div` 3,
+                        x' * 3 == x - 1, odd x', x' > 1]
+   in iterate f [1]
 
 {- | <https://oeis.org/A143207>
 
