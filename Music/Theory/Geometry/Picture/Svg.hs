@@ -1,13 +1,16 @@
 -- | Picture Svg.
 module Music.Theory.Geometry.Picture.Svg where
 
+import Text.Printf {- base -}
+
 import Music.Theory.Colour {- hmt-base -}
+import Music.Theory.Geometry.Functions {- hmt-base -}
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Picture {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import Music.Theory.Math {- hmt-base -}
 
--- | Svg attribute
+-- | Svg attribute (key, value)
 type SvgAttr = (String, String)
 
 -- | Colour to hex string.
@@ -68,6 +71,18 @@ polygon pt =
 circle :: Show t => Centre_Radius t -> [SvgAttr]
 circle ((x, y), r) = [("cx", show x), ("cy", show y), ("r", show r)]
 
+{- | Arc.  theta=central angle.  phi=initial angle.
+
+>>> arc ((0,0),1) (pi / 4) 0
+[("d","M 1.0 0.0 A 1.0 1.0 0 0 0 0.7071067811865476 0.7071067811865475")]
+-}
+arc :: Centre_Radius R -> R -> R -> [SvgAttr]
+arc ((x, y), r) theta phi =
+  let (x1,y1) = v2_add (x,y) (polar_to_rectangular (r,phi))
+      (x2,y2) = v2_add (x,y) (polar_to_rectangular (r,theta + phi))
+      largeArcFlag = if theta <= pi then 0 else 1 :: Int
+  in [("d", printf "M %f %f A %f %f 0 %d 0 %f %f" x1 y1 r r largeArcFlag x2 y2)]
+
 -- | Render Mark to Svg element
 mark_render :: Mark R -> SvgElem
 mark_render m =
@@ -75,6 +90,7 @@ mark_render m =
     Line pen ln -> SvgElem "line" (line ln ++ stroke pen) []
     Polygon e pt -> SvgElem "polygon" (polygon pt ++ mark e) []
     Circle e cr -> SvgElem "circle" (circle cr ++ mark e) []
+    Arc pen cr theta phi -> SvgElem "path" (arc cr theta phi ++ stroke pen) []
     Dot clr cr -> SvgElem "circle" (circle cr ++ fill clr) []
 
 -- | Translate

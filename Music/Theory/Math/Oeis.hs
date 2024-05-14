@@ -7,6 +7,7 @@ import Data.List as List {- base -}
 import Data.Maybe as Maybe {- base -}
 import Data.Ratio {- base -}
 
+import qualified Data.IntMap as IntMap {- containers -}
 import qualified Data.Set as Set {- containers -}
 
 import qualified Data.MemoCombinators as Memo {- data-memocombinators -}
@@ -2034,6 +2035,26 @@ a127824_tbl =
                         x' * 3 == x - 1, odd x', x' > 1]
    in iterate f [1]
 
+{- | <https://oeis.org/A133058>
+
+a(0) = a(1) = 1; for n > 1, a(n) = a(n-1) + n + 1 if a(n-1) and n are coprime, otherwise a(n) = a(n-1)/gcd(a(n-1),n).
+
+>>> [1, 1, 4, 8, 2, 8, 4, 12, 3, 1, 12, 24, 2, 16, 8, 24, 3, 21, 7, 27, 48, 16, 8, 32, 4, 30, 15, 5, 34, 64, 32, 64, 2, 36, 18, 54, 3, 41, 80, 120, 3, 45, 15, 59, 104, 150, 75, 123, 41, 91, 142, 194, 97, 151, 206, 262, 131, 189, 248, 308, 77, 139, 202, 266, 133, 199, 266, 334, 167] `isPrefixOf` a133058
+
+> plot_p1_pt [take 1000 a133058 :: [Int]]
+-}
+a133058 :: Integral i => [i]
+a133058 =
+  let f n =
+        if n <= 1
+        then 1
+        else let p = a133058 `genericIndex` (n - 1)
+                 g = gcd p n
+             in if g == 1
+                then p + n + 1
+                else p `div` g
+  in map f [0..]
+
 {- | <https://oeis.org/A143207>
 
 Numbers with distinct prime factors 2, 3, and 5.
@@ -2060,6 +2081,24 @@ True
 -}
 a164555 :: Integral t => [t]
 a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
+
+{- | <https://oeis.org/A229037>
+
+The "forest fire": sequence of positive integers where each is chosen to be as small as possible subject to the condition that no three terms a(j), a(j+k), a(j+2k) (for any j and k) form an arithmetic progression.
+
+>>> [1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 9, 4, 4, 5, 5, 10, 5, 5, 10, 2, 10, 13, 11, 10, 8, 11, 13, 10, 12, 10, 10, 12, 10, 11, 14, 20, 13] `isPrefixOf` a229037
+True
+
+> plot_p1_pt [take 750 a229037 :: [Int]]
+-}
+a229037 :: Integral i => [i]
+a229037 =
+  let f i m =
+        let y = head [z | z <- [1..],
+                      all (\k -> z + m IntMap.! (i - k) /= 2 * m IntMap.! (i - k `div` 2))
+                      [1, 3 .. i - 1]]
+        in y : f (i + 1) (IntMap.insert (i + 1) y m)
+  in f 0 IntMap.empty
 
 {- | <https://oeis.org/A242179>
 

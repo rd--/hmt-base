@@ -22,16 +22,22 @@ type Colour = Colour.Rgba Double
 no_dash :: Num r => Dash r
 no_dash = ([], 0)
 
--- | (line-width,colour,dash-pattern)
+{- | (line-width,colour,dash-pattern)
+
+>>> Pen 1 (0,0,0,1) no_dash
+Pen 1 (0.0,0.0,0.0,1.0) ([],0)
+-}
 data Pen r = Pen (Line_Width r) (Colour) (Dash r) deriving (Eq, Show)
 
 -- | (centre,radius)
 type Centre_Radius t = (V2 t, t)
 
+-- | Mark.
 data Mark r
   = Line (Pen r) (V2 (V2 r))
-  | Polygon (Either (Pen r) (Colour)) [V2 r]
-  | Circle (Either (Pen r) (Colour)) (Centre_Radius r)
+  | Polygon (Either (Pen r) Colour) [V2 r]
+  | Circle (Either (Pen r) Colour) (Centre_Radius r)
+  | Arc (Pen r) (Centre_Radius r) r r
   | Dot (Colour) (Centre_Radius r)
   deriving (Eq, Show)
 
@@ -74,6 +80,7 @@ mark_wn m =
     Line _ (p1, p2) -> v2_bounds [p1, p2]
     Polygon _ p -> v2_bounds p
     Circle _ (c, r) -> circle_bounds c r
+    Arc _ (c, r) _ _ -> circle_bounds c r
     Dot _ (c, r) -> circle_bounds c r
 
 mark_normal :: Ord r => Mark r -> Mark r
@@ -82,6 +89,7 @@ mark_normal m =
     Line p (p1, p2) -> Line p (if p1 <= p2 then (p1, p2) else (p2, p1))
     Polygon _ _ -> m -- should ensure CCW
     Circle _ _ -> m
+    Arc _ _ _ _ -> m
     Dot _ _ -> m
 
 mark_pt_set :: Mark r -> [V2 r]
@@ -90,6 +98,7 @@ mark_pt_set m =
     Line _ (p, q) -> [p, q]
     Polygon _ p -> p
     Circle _ (p, _) -> [p]
+    Arc _ (p, _) _ _ -> [p]
     Dot _ (p, _) -> [p]
 
 mark_ln :: Mark r -> Maybe (V2 (V2 r))
@@ -130,6 +139,7 @@ picture_ln mk =
         Line (Pen _ c _) (p1, p2) -> (c, [p1, p2])
         Polygon c p -> (get_c c, p ++ [List.head_err p])
         Circle c (p1, _) -> (get_c c, [p1])
+        Arc c (p1, _) _ _ -> (get_c (Left c), [p1])
         Dot c (p1, _) -> (c, [p1])
   in map f mk
 

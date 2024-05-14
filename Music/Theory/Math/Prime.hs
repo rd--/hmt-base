@@ -16,6 +16,14 @@ import qualified Music.Theory.Unicode as Unicode {- hmt -}
 is_prime :: Integral i => i -> Bool
 is_prime = Primes.isPrime
 
+{- | Are p and q coprime?
+
+>>> are_coprime 5 7
+True
+-}
+are_coprime :: Integral i => i -> i -> Bool
+are_coprime p q = gcd p q == 1
+
 {- | Alias for 'Primes.primes'.
 
 >>> take 12 primes_list
