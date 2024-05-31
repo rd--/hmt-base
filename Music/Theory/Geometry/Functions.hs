@@ -188,7 +188,7 @@ triangle_angle_gamma a b c = acos ((a * a + b * b - c * c) / (2 * a * b))
 
 -- * Equilateral triangle
 
-{- Area (sss)
+{- | Equilateral triangle area (sss)
 
 >>> equilateral_triangle_area 1 == triangle_area_herons_sss 1 1 1
 True
