@@ -34,6 +34,8 @@ m22_determinant ((a, b), (c, d)) = a * d - b * c
 >>> m22_inverse ((-1,3/2),(1,-1))
 ((2.0,3.0),(2.0,2.0))
 
+> mathematica: Inverse[{{ -1, 3/2},{ 1, -1}}] == {{2,3},{2,2}}
+> octave: inv([-1 1; 3/2 -3]) == [-2 -1; -2/3 -2/3]
 > sage: matrix(2,2,[-1,3/2,1,-1]).inverse() == matrix(2,2,[2,3,2,2])
 -}
 m22_inverse :: Fractional t => M22 t -> M22 t
@@ -63,7 +65,7 @@ m22_mul (a, b) (c, d) =
   let (i, j) = m22_transpose (c, d)
   in m22_zip v2_dot ((a, a), (b, b)) ((i, j), (i, j)) -- 00 01 10 11
 
--- | Apply M22 to V2.
+-- | Apply M22 to V2, i.e. dot(m,v).
 m22_apply :: Num n => M22 n -> V2 n -> V2 n
 m22_apply ((a, b), (c, d)) (x, y) = (a * x + b * y, c * x + d * y)
 
@@ -92,6 +94,14 @@ m33_from_list list =
 m33_from_list_err :: [n] -> M33 n
 m33_from_list_err = fromMaybe (error "m33_from_list") . m33_from_list
 
+{- | Determinant
+
+>>> m33_determinant ((1,2,3),(4,5,6),(7,8,9))
+0
+
+>>> m33_determinant ((2,9,4),(7,5,3),(6,1,8))
+-360
+-}
 m33_determinant :: Num t => M33 t -> t
 m33_determinant ((a, b, c), (d, e, f), (g, h, i)) = a * e * i + b * f * g + c * d * h - c * e * g - b * d * i - a * f * h
 
@@ -151,7 +161,7 @@ m33_mul (a, b, c) (d, e, f) =
   let (i, j, k) = m33_transpose (d, e, f)
   in m33_zip v3_dot ((a, a, a), (b, b, b), (c, c, c)) ((i, j, k), (i, j, k), (i, j, k)) -- 00 01 02 10 11 12 20 21 22
 
--- | Apply M33 to V3.
+-- | Apply M33 to V3, ie. dot(m, v)
 m33_apply :: Num n => M33 n -> V3 n -> V3 n
 m33_apply ((a, b, c), (d, e, f), (g, h, i)) (x, y, z) =
   ( a * x + b * y + c * z

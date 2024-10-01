@@ -86,14 +86,15 @@ isometric_prj3 = (pi / 6, pi / 6, (1, 1, 1))
 isometric_tile_prj3 :: Floating n => Prj3 n
 isometric_tile_prj3 = let x = atan (1 / 2) in (x, x, (1, 1, 1))
 
-{- | (α=π÷4,β=0,×=1÷2) ; sin(pi/4)==1/sqrt(2)
+{- | (α=π÷4,β=0,×=1÷2) ; a=atan(2) | a=sin(pi/4)==1/sqrt(2)
 
->>> let m = ((-1,0,cos (pi/4)/2),(0,1,sin (pi/4)/2),(0,0,0))
->>> prj3_to_m33 cabinet_oblique_prj3 == m
+>>> let a = atan 2 -- pi / 4
+>>> let m = ((-1,0,cos(a)/2),(0,1,sin(a)/2),(0,0,0))
+>>> prj3_to_m33 (cabinet_oblique_prj3 a) == m
 True
 -}
-cabinet_oblique_prj3 :: Floating n => Prj3 n
-cabinet_oblique_prj3 = (pi / 4, 0, (1, 1, 1 / 2))
+cabinet_oblique_prj3 :: Floating n => n -> Prj3 n
+cabinet_oblique_prj3 a = (a, 0, (1, 1, 1 / 2))
 
 -- | (α=π÷4,β=0,×=1)
 cavalier_oblique_prj3 :: Floating n => Prj3 n
@@ -131,7 +132,11 @@ trimetric_23_12_prj3 = let f = degrees_minutes_to_radians in (f (23, 16), f (12,
 trimetric_48_25_prj3 :: Floating n => Prj3 n
 trimetric_48_25_prj3 = let f = degrees_minutes_to_radians in (f (48, 14), f (24, 46), (1, 3 / 4, 7 / 8))
 
--- | (α=π÷6,β=0,×=1÷2)
+{- | (α=π÷6,β=0,×=1÷2)
+
+>>> prj3_to_m33 chinese_prj3
+((-1.0,0.0,0.43301270189221935),(0.0,1.0,0.24999999999999997),(0.0,0.0,0.0))
+-}
 chinese_prj3 :: Floating n => Prj3 n
 chinese_prj3 = (pi / 6, 0, (1, 1, 1 / 2))
 

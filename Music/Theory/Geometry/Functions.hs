@@ -672,7 +672,7 @@ If lines are parallel, intersection point will contain infinite values.
 (-Infinity,-Infinity)
 -}
 line_line_intersection :: Fractional r => V2 (V2 r) -> V2 (V2 r) -> V2 r
-line_line_intersection ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) =
+line_line_intersection ((x1, y1), (x2, y2)) ((x3, y3), (x4, y4)) =
   let a1 = y2 - y1
       b1 = x1 - x2
       c1 = (a1 * x1) + (b1 * y1)
@@ -680,8 +680,9 @@ line_line_intersection ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) =
       b2 = x3 - x4
       c2 = (a2 * x3) + (b2 * y3)
       delta = (a1 * b2) - (a2 * b1)
-  in (((b2 * c1) - (b1 * c2)) / delta
-     ,((a1 * c2) - (a2 * c1)) / delta)
+  in ( ((b2 * c1) - (b1 * c2)) / delta
+     , ((a1 * c2) - (a2 * c1)) / delta
+     )
 
 -- * Circle
 

@@ -156,6 +156,10 @@ read_maybe_int :: String -> Maybe Int
 read_maybe_int = read_maybe
 
 -- | Type specialised 'read_err'.
+read_integer :: String -> Integer
+read_integer = read_err
+
+-- | Type specialised 'read_err'.
 read_int :: String -> Int
 read_int = read_err
 
@@ -223,6 +227,34 @@ read_hex_sz k str =
 -}
 read_hex_word32 :: String -> Word32
 read_hex_word32 = read_hex_sz 8
+
+-- * Radix
+
+{- | Read Smalltalk syntax radix prefixed integer.
+
+>>> map read_radix_err ["02r1001", "08r1001", "16r1001"]
+[9,513,4097]
+
+>>> map read_radix_err ["02r10111", "08r27", "10r23", "16r17"]
+[23,23,23,23]
+
+>>> map read_radix_err ["-02r10111", "-08r27", "-10r23", "-16r17"]
+[-23,-23,-23,-23]
+-}
+read_radix_err :: (Read i, Integral i) => String -> i
+read_radix_err s =
+  case break (== 'r') s of
+    (lhs, _ : rhs) ->
+      let signedBase = read lhs
+          base = abs signedBase
+          sign = signum signedBase
+          charToInt x = if Data.Char.isDigit x then Data.Char.digitToInt x else fromEnum (Data.Char.toLower x) - 87
+          charToIntegral = fromIntegral . charToInt
+          isValid x = let i = charToIntegral x in i >= 0 && i < base
+      in case Numeric.readInt base isValid charToInt rhs of
+          [(r, _)] -> r * signum sign
+          _ -> error "read_radix_err: encoding error"
+    _ -> error "read_radix_err: syntax error"
 
 -- * Rational
 

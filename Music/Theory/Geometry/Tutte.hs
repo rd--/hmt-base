@@ -1,5 +1,5 @@
 {- | Tutte, W. T. (1963), "How to draw a graph",
-  Proceedings of the London Mathematical Society, 13: 743–767,
+  Proceedings of the London Mathematical Society, 13: 743–767.
 -}
 module Music.Theory.Geometry.Tutte where
 
@@ -14,7 +14,7 @@ import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
 import qualified Music.Theory.Image.Svg as Svg {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 
-{- | /k/ points on unit circle
+{- | /k/ equally spaced points on unit circle
 
 >>> map v2_round (v_on_unit_circle 4)
 [(1,0),(0,1),(-1,0),(0,-1)]
@@ -24,28 +24,36 @@ v_on_unit_circle k =
   let i = two_pi / fromIntegral k
   in map (\ph -> polar_to_rectangular (1, ph)) (take k [0, i ..])
 
--- | [(Vertex,Coordinate)]
+-- | Vertex locations. [(Vertex,Coordinate)]
 type V_Loc = [(Int, V2 Double)]
 
-{- | k = n-vertices
+{- | k = n-vertices, fc = face
 
->>> map (\(i, j) -> (i, v2_round j)) (v_init_loc 8 [0,1,2,3])
+>>> let k = 8
+>>> let fc = [0,1,2,3]
+>>> let pp = map (\(i, j) -> (i, v2_round j))
+>>> pp (v_init_loc k fc)
 [(0,(1,0)),(1,(0,1)),(2,(-1,0)),(3,(0,-1)),(4,(0,0)),(5,(0,0)),(6,(0,0)),(7,(0,0))]
 -}
 v_init_loc :: Int -> [Int] -> V_Loc
 v_init_loc k fc =
   let fc_v = zip fc (v_on_unit_circle (length fc))
-      sel i = case lookup i fc_v of Just j -> (i, j); _ -> (i, (0, 0))
+      sel i = case lookup i fc_v of
+        Just j -> (i, j)
+        _ -> (i, (0, 0))
   in map sel [0 .. k - 1]
 
 -- | 'v2_centroid' of indexed 'V_Loc'
 v_loc_centre :: V_Loc -> [Int] -> V2 Double
 v_loc_centre v e = v2_centroid (map (`List.lookup_err` v) e)
 
--- | a = adj-mtx, fc = face, v = vertices-loc
+-- | adj = adjacency-matrix, fc = face, v = vertices-loc
 tutte_step :: Graph.Adj_Mtx Int -> [Int] -> V_Loc -> V_Loc
 tutte_step adj fc v =
-  let f (i, j) = if i `elem` fc then (i, j) else (i, v_loc_centre v (Graph.adj_mtx_con (0, 1) adj i))
+  let f (i, j) =
+        if i `elem` fc
+          then (i, j)
+          else (i, v_loc_centre v (Graph.adj_mtx_con (0, 1) adj i))
   in map f v
 
 -- | Generate sequence of Tuttes given graph, face list and outer face index.

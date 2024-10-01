@@ -78,8 +78,8 @@ circle ((x, y), r) = [("cx", show x), ("cy", show y), ("r", show r)]
 -}
 arc :: Centre_Radius R -> R -> R -> [SvgAttr]
 arc ((x, y), r) theta phi =
-  let (x1,y1) = v2_add (x,y) (polar_to_rectangular (r,phi))
-      (x2,y2) = v2_add (x,y) (polar_to_rectangular (r,theta + phi))
+  let (x1, y1) = v2_add (x, y) (polar_to_rectangular (r, phi))
+      (x2, y2) = v2_add (x, y) (polar_to_rectangular (r, theta + phi))
       largeArcFlag = if theta <= pi then 0 else 1 :: Int
   in [("d", printf "M %f %f A %f %f 0 %d 0 %f %f" x1 y1 r r largeArcFlag x2 y2)]
 
@@ -120,10 +120,12 @@ picture_to_svg_elem m p =
       ((x0, y0), (x1, y1)) = wn
       w = (m * 2) + (x1 - x0)
       h = (m * 2) + (y1 - y0)
-      attr = [("xmlns", "http://www.w3.org/2000/svg")
-             ,("viewbox", unwords (map show [x0 - m, y0 - m, w, h]))
-             ,("width", show w)
-             ,("height", show h)]
+      attr =
+        [ ("xmlns", "http://www.w3.org/2000/svg")
+        , ("viewbox", unwords (map show [x0 - m, y0 - m, w, h]))
+        , ("width", show w)
+        , ("height", show h)
+        ]
   in SvgElem "svg" attr [picture_render m wn p]
 
 svg_attr_pp :: SvgAttr -> String

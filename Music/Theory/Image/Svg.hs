@@ -9,7 +9,7 @@ import Text.Printf {- base -}
 
 import qualified Music.Theory.Colour as Colour {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.Math (R, I) {- hmt-base -}
+import Music.Theory.Math (I {- hmt-base -}, R)
 
 {- | image-size:(width,height) viewbox:((x,y),(width,height))
 

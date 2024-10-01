@@ -375,7 +375,7 @@ Normalized total height of all nodes in all rooted trees with n labeled nodes.
 True
 -}
 a000435 :: [Integer]
-a000435 = map (Math.rational_whole_err . a000435_n) [1..]
+a000435 = map (Math.rational_whole_err . a000435_n) [1 ..]
 
 a000435_n :: Rational -> Rational
 a000435_n n =
@@ -830,11 +830,12 @@ True
 -}
 a005132 :: Integral i => [i]
 a005132 =
-   let recaman :: Integral i => Set.Set i -> i -> i -> [i]
-       recaman s n x = if x > n && (x - n) `Set.notMember` s
-                       then (x - n) : recaman (Set.insert (x - n) s) (n + 1) (x - n)
-                       else (x + n) : recaman (Set.insert (x + n) s) (n + 1) (x + n)
-   in 0 : recaman (Set.singleton 0) 1 0
+  let recaman :: Integral i => Set.Set i -> i -> i -> [i]
+      recaman s n x =
+        if x > n && (x - n) `Set.notMember` s
+          then (x - n) : recaman (Set.insert (x - n) s) (n + 1) (x - n)
+          else (x + n) : recaman (Set.insert (x + n) s) (n + 1) (x + n)
+  in 0 : recaman (Set.singleton 0) 1 0
 
 {- | <http://oeis.org/A005185>
 
@@ -975,7 +976,7 @@ Number of halving and tripling steps to reach 1 in '3x+1' problem, or -1 if 1 is
 True
 -}
 a006577 :: [Int]
-a006577 = map a006577_n [1..]
+a006577 = map a006577_n [1 ..]
 
 a006577_n :: Integer -> Int
 a006577_n n = Maybe.fromJust (List.findIndex (n `elem`) a127824_tbl)
@@ -1465,7 +1466,7 @@ True
 a005229 :: [Int]
 a005229 =
   let f = ((+) `Function.on` (\n -> a005229 !! (n - 1)))
-  in 1 : 1 : zipWith f a005229 (zipWith (-) [3..] a005229)
+  in 1 : 1 : zipWith f a005229 (zipWith (-) [3 ..] a005229)
 
 {- | <http://oeis.org/A053121>
 
@@ -1521,7 +1522,8 @@ True
 -}
 a055748 :: [Int]
 a055748 =
-  let h n y x = -- y=a(n-2) x=a(n-1)
+  let h n y x =
+        -- y=a(n-2) x=a(n-1)
         let y' = x
             x' = (a055748 !! (x - 1)) + (a055748 !! (n - y - 1 - 1))
         in x' : h (n + 1) y' x'
@@ -2087,10 +2089,17 @@ a127824_n n = a127824_tbl !! n
 
 a127824_tbl :: [[Integer]]
 a127824_tbl =
-   let f row = List.sort $ map (* 2) row `List.union`
-                  [x' | x <- row, let x' = (x - 1) `div` 3,
-                        x' * 3 == x - 1, odd x', x' > 1]
-   in iterate f [1]
+  let f row =
+        List.sort $
+          map (* 2) row
+            `List.union` [ x'
+                         | x <- row
+                         , let x' = (x - 1) `div` 3
+                         , x' * 3 == x - 1
+                         , odd x'
+                         , x' > 1
+                         ]
+  in iterate f [1]
 
 {- | <https://oeis.org/A133058>
 
@@ -2105,13 +2114,14 @@ a133058 :: Integral i => [i]
 a133058 =
   let f n =
         if n <= 1
-        then 1
-        else let p = a133058 `List.genericIndex` (n - 1)
-                 g = gcd p n
-             in if g == 1
+          then 1
+          else
+            let p = a133058 `List.genericIndex` (n - 1)
+                g = gcd p n
+            in if g == 1
                 then p + n + 1
                 else p `div` g
-  in map f [0..]
+  in map f [0 ..]
 
 {- | <https://oeis.org/A143207>
 
@@ -2152,9 +2162,14 @@ True
 a229037 :: Integral i => [i]
 a229037 =
   let f i m =
-        let y = head [z | z <- [1..],
-                      all (\k -> z + m IntMap.! (i - k) /= 2 * m IntMap.! (i - k `div` 2))
-                      [1, 3 .. i - 1]]
+        let y =
+              head
+                [ z
+                | z <- [1 ..]
+                , all
+                    (\k -> z + m IntMap.! (i - k) /= 2 * m IntMap.! (i - k `div` 2))
+                    [1, 3 .. i - 1]
+                ]
         in y : f (i + 1) (IntMap.insert (i + 1) y m)
   in f 0 IntMap.empty
 
@@ -2180,8 +2195,9 @@ True
 -}
 a181391 :: [Int]
 a181391 =
-  let g xs = let m = 1 + Maybe.fromMaybe (-1) (List.findIndex (== head xs) $ tail xs)
-             in Just (m, m : xs)
+  let g xs =
+        let m = 1 + Maybe.fromMaybe (-1) (List.findIndex (== head xs) $ tail xs)
+        in Just (m, m : xs)
   in 0 : (List.unfoldr g [0])
 
 {- | <https://oeis.org/A212804>
