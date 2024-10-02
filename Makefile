@@ -9,6 +9,7 @@ mk-cmd:
 
 clean:
 	rm -Rf dist dist-newstyle *~
+	(cd cmd; make clean)
 
 push-all:
 	r.gitlab-push.sh hmt-base
