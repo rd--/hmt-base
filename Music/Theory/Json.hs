@@ -32,6 +32,14 @@ isSafeIntegral i = i >= -9007199254740991 && i <= 9007199254740991
 
 -- * Encoding
 
+-- | 'Json.encode'
+encode_value :: Value -> ByteString.ByteString
+encode_value = Json.encode
+
+-- | 'Json.encode' to String
+encode_value_str :: Value -> String
+encode_value_str = ByteString.Char8.unpack . encode_value
+
 -- | Encode integral (unsafe)
 encode_integral :: Integral n => n -> Value
 encode_integral = Json.Number . fromIntegral
@@ -97,7 +105,7 @@ writeFile fn json = ByteString.writeFile fn (Json.encode json)
 
 -- * Decode
 
--- | Erroring 'J.decode'
+-- | Erroring 'Json.decode'
 decode_value_err :: ByteString.ByteString -> Value
 decode_value_err = fromMaybe (error "decode_value") . Json.decode
 
