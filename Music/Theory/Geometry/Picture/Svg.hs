@@ -23,22 +23,35 @@ clr_to_hex_string =
 clr_to_opacity :: Colour.Rgba Double -> Double
 clr_to_opacity (_, _, _, a) = a
 
--- | Fill, and set stroke to none.
+{- | Fill, and set stroke to none.
+
+Default fill-opacity=1
+-}
 fill :: Colour.Rgba Double -> [SvgAttr]
 fill clr =
   [ ("fill", clr_to_hex_string clr)
-  , ("fill-opacity", show (clr_to_opacity clr))
+  , ("fill-opacity", show (clr_to_opacity clr)) -- elide if default
   , ("stroke", "none")
   ]
 
--- | Stroke, and set fill to transparent.
+{- | Stroke, and set fill to transparent.
+
+lw = line-width, clr = colour
+
+Default values are: stroke-opacity=1 stroke-width=1px fill-opacity=1
+
+Default settings should be elided.
+Also attributes that are inherited may be set on the <g> container element.
+SVG 2 requires that length attributes (i.e. for stroke-width) have units specified.
+Printing precision should be specified.
+-}
 stroke :: Picture.Pen Double -> [SvgAttr]
 stroke (Picture.Pen lw clr dash) =
   concat
     [
       [ ("stroke", clr_to_hex_string clr)
-      , ("stroke-opacity", show (clr_to_opacity clr))
-      , ("stroke-width", show lw)
+      , ("stroke-opacity", show (clr_to_opacity clr)) -- elide if default
+      , ("stroke-width", show lw ++ "px") -- elide if default
       , ("fill-opacity", "0")
       ]
     , if dash == Picture.no_dash
