@@ -117,6 +117,9 @@ True
 
 >>> length $ map (\(n,x) -> toEnum n : x) $ filter (\(_,x) -> "EMPTY SET" `isInfixOf` x) tbl
 6
+
+> import Text.Printf
+> mapM_ putStrLn $ map (\(n,x) -> printf "%c U+%05X %s" (toEnum n :: Char) n x) tbl
 -}
 unicode_data_table_read :: FilePath -> IO Unicode_Table
 unicode_data_table_read fn = do

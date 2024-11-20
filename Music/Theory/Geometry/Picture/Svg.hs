@@ -3,26 +3,28 @@ module Music.Theory.Geometry.Picture.Svg where
 
 import Text.Printf {- base -}
 
-import Music.Theory.Colour {- hmt-base -}
-import Music.Theory.Geometry.Functions {- hmt-base -}
-import Music.Theory.Geometry.Matrix {- hmt-base -}
-import Music.Theory.Geometry.Picture {- hmt-base -}
-import Music.Theory.Geometry.Vector {- hmt-base -}
-import Music.Theory.Math {- hmt-base -}
+import qualified Music.Theory.Colour as Colour {- hmt-base -}
+import qualified Music.Theory.Geometry.Functions as Functions {- hmt-base -}
+import qualified Music.Theory.Geometry.Matrix as Matrix {- hmt-base -}
+import qualified Music.Theory.Geometry.Picture as Picture {- hmt-base -}
+import qualified Music.Theory.Geometry.Vector as Vector {- hmt-base -}
 
 -- | Svg attribute (key, value)
 type SvgAttr = (String, String)
 
 -- | Colour to hex string.
-clr_to_hex_string :: Rgba R -> String
-clr_to_hex_string = rgb8_to_hex_str . (rgb_to_rgb8 :: Rgb R -> Rgb Int) . rgba_to_rgb
+clr_to_hex_string :: Colour.Rgba Double -> String
+clr_to_hex_string =
+  Colour.rgb8_to_hex_str
+    . (Colour.rgb_to_rgb8 :: Colour.Rgb Double -> Colour.Rgb Int)
+    . Colour.rgba_to_rgb
 
 -- | Colour alpha channel.
-clr_to_opacity :: Rgba R -> Double
+clr_to_opacity :: Colour.Rgba Double -> Double
 clr_to_opacity (_, _, _, a) = a
 
 -- | Fill, and set stroke to none.
-fill :: Rgba R -> [SvgAttr]
+fill :: Colour.Rgba Double -> [SvgAttr]
 fill clr =
   [ ("fill", clr_to_hex_string clr)
   , ("fill-opacity", show (clr_to_opacity clr))
@@ -30,8 +32,8 @@ fill clr =
   ]
 
 -- | Stroke, and set fill to transparent.
-stroke :: Pen R -> [SvgAttr]
-stroke (Pen lw clr dash) =
+stroke :: Picture.Pen Double -> [SvgAttr]
+stroke (Picture.Pen lw clr dash) =
   concat
     [
       [ ("stroke", clr_to_hex_string clr)
@@ -39,7 +41,7 @@ stroke (Pen lw clr dash) =
       , ("stroke-width", show lw)
       , ("fill-opacity", "0")
       ]
-    , if dash == no_dash
+    , if dash == Picture.no_dash
         then []
         else
           [ ("stroke-dasharray", unwords (map show (fst dash)))
@@ -48,7 +50,7 @@ stroke (Pen lw clr dash) =
     ]
 
 -- | Mark
-mark :: Either (Pen R) (Rgba R) -> [SvgAttr]
+mark :: Either (Picture.Pen Double) (Colour.Rgba Double) -> [SvgAttr]
 mark = either stroke fill
 
 -- | Svg node
@@ -57,18 +59,30 @@ type SvgNode = String
 -- | Svg element
 data SvgElem = SvgElem SvgNode [SvgAttr] [SvgElem]
 
--- | Line
-line :: Show t => V2 (V2 t) -> [SvgAttr]
+{- | Line
+
+>>> line ((0, 0), (1, 1))
+[("x1","0"),("y1","0"),("x2","1"),("y2","1")]
+-}
+line :: Show t => Vector.V2 (Vector.V2 t) -> [SvgAttr]
 line ((x1, y1), (x2, y2)) = zipWith (,) ["x1", "y1", "x2", "y2"] (map show [x1, y1, x2, y2])
 
--- | Polygon
-polygon :: Show t => [V2 t] -> [SvgAttr]
+{- | Polygon
+
+>>> polygon [(0, 0), (1, 1), (1, 0)]
+[("points","0,0 1,1 1,0")]
+-}
+polygon :: Show t => [Vector.V2 t] -> [SvgAttr]
 polygon pt =
   let f (x, y) = show x ++ "," ++ show y
   in [("points", unwords (map f pt))]
 
--- | Circle
-circle :: Show t => Centre_Radius t -> [SvgAttr]
+{- | Circle
+
+>>> circle ((0, 0), 1)
+[("cx","0"),("cy","0"),("r","1")]
+-}
+circle :: Show t => Picture.Centre_Radius t -> [SvgAttr]
 circle ((x, y), r) = [("cx", show x), ("cy", show y), ("r", show r)]
 
 {- | Arc.  theta=central angle.  phi=initial angle.
@@ -76,37 +90,37 @@ circle ((x, y), r) = [("cx", show x), ("cy", show y), ("r", show r)]
 >>> arc ((0,0),1) (pi / 4) 0
 [("d","M 1.0 0.0 A 1.0 1.0 0 0 0 0.7071067811865476 0.7071067811865475")]
 -}
-arc :: Centre_Radius R -> R -> R -> [SvgAttr]
+arc :: Picture.Centre_Radius Double -> Double -> Double -> [SvgAttr]
 arc ((x, y), r) theta phi =
-  let (x1, y1) = v2_add (x, y) (polar_to_rectangular (r, phi))
-      (x2, y2) = v2_add (x, y) (polar_to_rectangular (r, theta + phi))
+  let (x1, y1) = Vector.v2_add (x, y) (Functions.polar_to_rectangular (r, phi))
+      (x2, y2) = Vector.v2_add (x, y) (Functions.polar_to_rectangular (r, theta + phi))
       largeArcFlag = if theta <= pi then 0 else 1 :: Int
   in [("d", printf "M %f %f A %f %f 0 %d 0 %f %f" x1 y1 r r largeArcFlag x2 y2)]
 
 -- | Render Mark to Svg element
-mark_render :: Mark R -> SvgElem
+mark_render :: Picture.Mark Double -> SvgElem
 mark_render m =
   case m of
-    Line pen ln -> SvgElem "line" (line ln ++ stroke pen) []
-    Polygon e pt -> SvgElem "polygon" (polygon pt ++ mark e) []
-    Circle e cr -> SvgElem "circle" (circle cr ++ mark e) []
-    Arc pen cr theta phi -> SvgElem "path" (arc cr theta phi ++ stroke pen) []
-    Dot clr cr -> SvgElem "circle" (circle cr ++ fill clr) []
+    Picture.Line pen ln -> SvgElem "line" (line ln ++ stroke pen) []
+    Picture.Polygon e pt -> SvgElem "polygon" (polygon pt ++ mark e) []
+    Picture.Circle e cr -> SvgElem "circle" (circle cr ++ mark e) []
+    Picture.Arc pen cr theta phi -> SvgElem "path" (arc cr theta phi ++ stroke pen) []
+    Picture.Dot clr cr -> SvgElem "circle" (circle cr ++ fill clr) []
 
 -- | Translate
-translate :: Show t => V2 t -> String
+translate :: Show t => Vector.V2 t -> String
 translate (x, y) = concat ["translate(", unwords (map show [x, y]), ")"]
 
 -- | Matrix
-matrix :: Show t => (M22 t, V2 t) -> String
+matrix :: Show t => (Matrix.M22 t, Vector.V2 t) -> String
 matrix (((a, b), (c, d)), (e, f)) = concat ["matrix(", unwords (map show [a, b, c, d, e, f]), ")"]
 
 -- | Group with transform.
-transform_group :: Show t => (M22 t, V2 t) -> [SvgElem] -> SvgElem
+transform_group :: Show t => (Matrix.M22 t, Vector.V2 t) -> [SvgElem] -> SvgElem
 transform_group m e = SvgElem "g" [("transform", matrix m)] e
 
 -- | m = margin, add transform group to flip y axis
-picture_render :: R -> V2 (V2 R) -> Picture R -> SvgElem
+picture_render :: Double -> Vector.V2 (Vector.V2 Double) -> Picture.Picture Double -> SvgElem
 picture_render m wn p =
   let ((x0, y0), (_x1, y1)) = wn
       dy = y1 - y0
@@ -114,9 +128,9 @@ picture_render m wn p =
       f = dy + (m / 2) + y0
   in transform_group (((1, 0), (0, -1)), (e, f)) (map mark_render p)
 
-picture_to_svg_elem :: R -> Picture R -> SvgElem
+picture_to_svg_elem :: Double -> Picture.Picture Double -> SvgElem
 picture_to_svg_elem m p =
-  let wn = picture_wn p
+  let wn = Picture.picture_wn p
       ((x0, y0), (x1, y1)) = wn
       w = (m * 2) + (x1 - x0)
       h = (m * 2) + (y1 - y0)
@@ -151,5 +165,5 @@ svg_elem_pp (SvgElem name attr children) =
     ]
 
 -- | m=margin, fn=file-name, p=picture
-picture_to_svg :: R -> FilePath -> Picture R -> IO ()
+picture_to_svg :: Double -> FilePath -> Picture.Picture Double -> IO ()
 picture_to_svg m fn p = writeFile fn (svg_elem_pp (picture_to_svg_elem m p))
