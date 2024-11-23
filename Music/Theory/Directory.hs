@@ -3,12 +3,12 @@ module Music.Theory.Directory where
 
 import Control.Monad {- base -}
 import Data.List {- base -}
-import Data.Maybe {- base -}
+import qualified Data.Maybe {- base -}
 import qualified System.Environment {- base -}
 
 import qualified Data.List.Split {- split -}
-import System.Directory {- directory -}
-import System.FilePath {- filepath -}
+import qualified System.Directory as Directory {- directory -}
+import qualified System.FilePath as FilePath {- filepath -}
 
 import qualified Music.Theory.Monad {- hmt-base -}
 
@@ -19,7 +19,7 @@ import qualified Music.Theory.Monad {- hmt-base -}
 > map takeDirectory x == ["x","x/y",".","/"]
 -}
 parent_dir :: FilePath -> FilePath
-parent_dir = takeDirectory . dropTrailingPathSeparator
+parent_dir = FilePath.takeDirectory . FilePath.dropTrailingPathSeparator
 
 -- | Colon separated path list.
 path_split :: String -> [FilePath]
@@ -57,15 +57,15 @@ path_scan p fn =
   case p of
     [] -> return Nothing
     dir : p' ->
-      let nm = dir </> fn
+      let nm = dir FilePath.</> fn
           f x = if x then return (Just nm) else path_scan p' fn
-      in doesFileExist nm >>= f
+      in Directory.doesFileExist nm >>= f
 
 -- | Erroring variant.
 path_scan_err :: [FilePath] -> FilePath -> IO FilePath
 path_scan_err p x =
   let err = error (concat ["path_scan: ", show p, ": ", x])
-  in fmap (fromMaybe err) (path_scan p x)
+  in fmap (Data.Maybe.fromMaybe err) (path_scan p x)
 
 {- | Scan a list of directories and return all located files.
 Do not traverse any sub-directory structure.
@@ -77,18 +77,22 @@ Since 1.2.1.0 there is also findFiles.
 -}
 path_search :: [FilePath] -> FilePath -> IO [FilePath]
 path_search p fn = do
-  let fq = map (\dir -> dir </> fn) p
-      chk q = doesFileExist q >>= \x -> return (if x then Just q else Nothing)
-  fmap catMaybes (mapM chk fq)
+  let fq = map (\dir -> dir FilePath.</> fn) p
+      chk q = Directory.doesFileExist q >>= \x -> return (if x then Just q else Nothing)
+  fmap Data.Maybe.catMaybes (mapM chk fq)
 
-{- | Get sorted list of files at /dir/ with /ext/, ie. ls dir/*.ext
+{- | Get sorted list of files at /dir/ with /ext/, ie. ls dir/*.ext.
+The exact rule is that ext must be a suffix of the complete extension.
+I.e. requesting .sl will match files having extension .help.sl,
+but naturally requesting .help.sl will not match files with only the extension .sl.
 
 > dir_list_ext "/home/rohan/rd/j/" ".hs"
+> dir_list_ext "/home/rohan/sw/spl/Help/Guide/" ".help.sl"
 -}
 dir_list_ext :: FilePath -> String -> IO [FilePath]
 dir_list_ext dir ext = do
-  l <- listDirectory dir
-  let fn = filter ((==) ext . takeExtension) l
+  l <- Directory.listDirectory dir
+  let fn = filter (\x -> ext `isSuffixOf` FilePath.takeExtensions x) l
   return (sort fn)
 
 {- | Post-process 'dir_list_ext' to gives file-names with /dir/ prefix.
@@ -96,7 +100,7 @@ dir_list_ext dir ext = do
 > dir_list_ext_path "/home/rohan/rd/j/" ".hs"
 -}
 dir_list_ext_path :: FilePath -> String -> IO [FilePath]
-dir_list_ext_path dir ext = fmap (map (dir </>)) (dir_list_ext dir ext)
+dir_list_ext_path dir ext = fmap (map (dir FilePath.</>)) (dir_list_ext dir ext)
 
 {- | Subset of files in /dir/ with an extension in /ext/.
   Extensions include the leading dot and are case-sensitive.
@@ -104,8 +108,8 @@ dir_list_ext_path dir ext = fmap (map (dir </>)) (dir_list_ext dir ext)
 -}
 dir_subset_rel :: [String] -> FilePath -> IO [FilePath]
 dir_subset_rel ext dir = do
-  let f nm = takeExtension nm `elem` ext
-  c <- getDirectoryContents dir
+  let f nm = FilePath.takeExtensions nm `elem` ext
+  c <- Directory.getDirectoryContents dir
   return (sort (filter f c))
 
 {- | Variant of dir_subset_rel where results have dir/ prefix.
@@ -113,17 +117,17 @@ dir_subset_rel ext dir = do
 > dir_subset [".hs"] "/home/rohan/sw/hmt/cmd"
 -}
 dir_subset :: [String] -> FilePath -> IO [FilePath]
-dir_subset ext dir = fmap (map (dir </>)) (dir_subset_rel ext dir)
+dir_subset ext dir = fmap (map (dir FilePath.</>)) (dir_subset_rel ext dir)
 
 -- | Subdirectories (relative) of /dir/.
 dir_subdirs_rel :: FilePath -> IO [FilePath]
 dir_subdirs_rel dir =
-  let sel fn = doesDirectoryExist (dir </> fn)
-  in listDirectory dir >>= filterM sel
+  let sel fn = Directory.doesDirectoryExist (dir FilePath.</> fn)
+  in Directory.listDirectory dir >>= filterM sel
 
 -- | Subdirectories of /dir/.
 dir_subdirs :: FilePath -> IO [FilePath]
-dir_subdirs dir = fmap (map (dir </>)) (dir_subdirs_rel dir)
+dir_subdirs dir = fmap (map (dir FilePath.</>)) (dir_subdirs_rel dir)
 
 {- | Recursive form of 'dir_subdirs'.
 
@@ -144,19 +148,19 @@ dir_subdirs_recursively dir = do
 -}
 to_absolute_cwd :: FilePath -> IO FilePath
 to_absolute_cwd x =
-  if isAbsolute x
+  if FilePath.isAbsolute x
     then return x
-    else fmap (</> x) getCurrentDirectory
+    else fmap (FilePath.</> x) Directory.getCurrentDirectory
 
 -- | If /i/ is an existing file then /j/ else /k/.
 if_file_exists :: (FilePath, IO t, IO t) -> IO t
-if_file_exists (i, j, k) = Music.Theory.Monad.m_if (doesFileExist i, j, k)
+if_file_exists (i, j, k) = Music.Theory.Monad.m_if (Directory.doesFileExist i, j, k)
 
 -- | 'createDirectoryIfMissing' (including parents) and then 'writeFile'
 writeFile_mkdir :: FilePath -> String -> IO ()
 writeFile_mkdir fn s = do
-  let dir = takeDirectory fn
-  createDirectoryIfMissing True dir
+  let dir = FilePath.takeDirectory fn
+  Directory.createDirectoryIfMissing True dir
   writeFile fn s
 
 -- | 'writeFile_mkdir' only if file does not exist.
