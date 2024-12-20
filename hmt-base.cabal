@@ -1,6 +1,6 @@
 cabal-version:     2.4
 Name:              hmt-base
-Version:           0.21
+Version:           0.22
 Synopsis:          Haskell Music Theory Base
 Description:       Haskell music theory Base Library
 License:           GPL-3.0-only
@@ -10,7 +10,7 @@ Author:            Rohan Drape
 Maintainer:        rd@rohandrape.net
 Stability:         Experimental
 Homepage:          http://rohandrape.net/t/hmt-base
-Tested-With:       GHC == 9.10.1
+Tested-With:       GHC == 9.12.1
 Build-Type:        Simple
 Data-files:        README.md
 

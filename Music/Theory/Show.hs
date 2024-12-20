@@ -51,6 +51,11 @@ rational_pp_opt conciseInteger r =
       then show n
       else concat [show n, "/", show d]
 
+{- | Pretty printer for 'Rational' using @/@.
+
+>>> rational_pp (9 / 8)
+"9/8"
+-}
 rational_pp :: (Show a, Integral a) => Ratio a -> String
 rational_pp = rational_pp_opt False
 
