@@ -21,32 +21,52 @@ import qualified Music.Theory.Tuple as T {- hmt-base -}
 -- * Obj
 
 -- | See Obj
-type Obj_ t = ([t], [(Char, [Int])])
+type ObjOf t = ([t], [(Char, [Int])])
 
 -- | Apply f at vertices of Obj.
-obj_vertex_map :: (t -> u) -> Obj_ t -> Obj_ u
+obj_vertex_map :: (t -> u) -> ObjOf t -> ObjOf u
 obj_vertex_map f (v, c) = (map f v, c)
 
 {- | ([Vertex],[(Cmd,[Vertex-Index])])
 
 Obj files store data one-indexed, the Obj type is zero-indexed.
 -}
-type Obj = Obj_ (V3 Double)
+type Obj = ObjOf (V3 Double)
 
--- | Parse Obj entry, recognised types are v=vertex, p=point, l=line, f=face
+{- | Pre-parse entries to delete:
+vertex normals (vn),
+vertex textures (vt),
+group names (group).
+-}
+obj_pre_parse_entry :: String -> Maybe String
+obj_pre_parse_entry s =
+  case words s of
+    "group" : _ -> Nothing
+    "vn" : _ -> Nothing
+    "vt" : _ -> Nothing
+    _ -> Just s
+
+{- | Parse Obj entry.
+Recognised types are v=vertex, p=point, l=line, f=face.
+vn and vt are deleted before processing.
+Indicies ignore vn and vt items.
+
+>>> obj_parse_entry "f 6//1 5//1 8//1 7//1 "
+Right ('f',[5,4,7,6])
+-}
 obj_parse_entry :: String -> Either (V3 Double) (Char, [Int])
 obj_parse_entry s =
-  let read_ix = subtract 1 . read
+  let read_ix = subtract 1 . read . takeWhile (/= '/')
   in case words s of
       ["v", x, y, z] -> Left (read x, read y, read z)
       "p" : ix -> Right ('p', map read_ix ix)
       "l" : ix -> Right ('l', map read_ix ix)
       "f" : ix -> Right ('f', map read_ix ix)
-      _ -> error "obj_parse_entry"
+      _ -> error ("obj_parse_entry: " ++ s)
 
 -- | 'partitionEithers' of 'obj_parse_entry'
 obj_parse :: [String] -> Obj
-obj_parse = partitionEithers . map obj_parse_entry
+obj_parse = partitionEithers . map obj_parse_entry . mapMaybe obj_pre_parse_entry
 
 -- | Empty lines are allowed and ignored, comments are #-prefixed.
 obj_is_nil_line :: String -> Bool

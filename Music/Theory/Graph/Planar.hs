@@ -116,6 +116,7 @@ plc_to_g p =
       g (i, j) = i <= j
   in (v, filter g (map f (plc_edge_set p)))
 
+-- | (n-graphs, [(n-vertices, n-edges, n-faces)])
 plc_stat :: FilePath -> IO (Int, [(Int, Int, Int)])
 plc_stat plc_fn = do
   p_seq <- plc_load plc_fn

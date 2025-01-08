@@ -24,7 +24,11 @@ frustum (left, right) (bottom, top) (nearval, farval) =
       d = -(2 * farval * nearval) / (farval - nearval) -- error?
   in ((x, 0, 0, 0), (0, y, 0, 0), (a, b, c, -1), (a, 0, d, 0))
 
--- | <https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml>
+{- | <https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml>
+
+>>> gl_perspective (30, 1, 1, 100)
+((3.7320508075688776,0.0,0.0,0.0),(0.0,3.7320508075688776,0.0,0.0),(0.0,0.0,-1.02020202020202,-1.0),(0.0,0.0,-2.0202020202020203,0.0))
+-}
 gl_perspective :: (Floating n) => V4 n -> M44 n
 gl_perspective (fovy, aspect, zNear, zFar) =
   let ymax = zNear * tan (fovy * pi / 360)

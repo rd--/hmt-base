@@ -1,4 +1,7 @@
--- | Projections
+{- | Projections
+
+<https://www.compuphase.com/axometr.htm>
+-}
 module Music.Theory.Geometry.Projection where
 
 import Music.Theory.Geometry.Functions {- hmt-base -}

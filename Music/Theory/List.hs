@@ -882,6 +882,9 @@ ord_map_locate mp i =
 
 >>> dx_d 5 [1,2,3]
 [5,6,8,11]
+
+>>> dx_d 1 [1,2,3]
+[1,2,4,7]
 -}
 dx_d :: (Num a) => a -> [a] -> [a]
 dx_d = scanl (+)
