@@ -2,6 +2,8 @@
 
 Pdf=<http://www.cs.utah.edu/~boulos/cs3505/obj_spec.pdf>
 Txt=<http://www.martinreddy.net/gfx/3d/OBJ.spec>
+
+Obj files are one indexed.
 -}
 module Music.Theory.Geometry.Obj where
 
@@ -20,7 +22,7 @@ import qualified Music.Theory.Tuple as T {- hmt-base -}
 
 -- * Obj
 
--- | See Obj
+-- | See Obj.
 type ObjOf t = ([t], [(Char, [Int])])
 
 -- | Apply f at vertices of Obj.
@@ -29,7 +31,8 @@ obj_vertex_map f (v, c) = (map f v, c)
 
 {- | ([Vertex],[(Cmd,[Vertex-Index])])
 
-Obj files store data one-indexed, the Obj type is zero-indexed.
+Obj files store data one-indexed,
+however the Obj type is zero-indexed.
 -}
 type Obj = ObjOf (V3 Double)
 
@@ -46,6 +49,16 @@ obj_pre_parse_entry s =
     "vt" : _ -> Nothing
     _ -> Just s
 
+{- | Read float, set to zero if close according to epsilon.
+
+>>> obj_read_float 1E-14 "9.253255885689386e-18"
+0.0
+-}
+obj_read_float :: Double -> String -> Double
+obj_read_float epsilon s =
+  let n = read s
+  in if abs n < epsilon then 0 else n
+
 {- | Parse Obj entry.
 Recognised types are v=vertex, p=point, l=line, f=face.
 vn and vt are deleted before processing.
@@ -57,8 +70,9 @@ Right ('f',[5,4,7,6])
 obj_parse_entry :: String -> Either (V3 Double) (Char, [Int])
 obj_parse_entry s =
   let read_ix = subtract 1 . read . takeWhile (/= '/')
+      read_r = obj_read_float 1E-14
   in case words s of
-      ["v", x, y, z] -> Left (read x, read y, read z)
+      ["v", x, y, z] -> Left (read_r x, read_r y, read_r z)
       "p" : ix -> Right ('p', map read_ix ix)
       "l" : ix -> Right ('l', map read_ix ix)
       "f" : ix -> Right ('f', map read_ix ix)

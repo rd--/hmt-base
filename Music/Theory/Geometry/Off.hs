@@ -24,7 +24,7 @@ import Data.Maybe {- base -}
 import System.IO {- base -}
 import Text.Printf {- base -}
 
-import Music.Theory.Colour {- hmt-base -}
+import qualified Music.Theory.Colour as Colour {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Show as Show {- hmt-base -}
@@ -471,7 +471,7 @@ off_load_f64 = off_load
 {- | Rewrite a set of faces as (vertices,[[v-indices]]).
   Indices are zero-indexed.
 -}
-off_clr_face_set_dat :: (Ord n, Eq i) => [([V3 n], Rgb i)] -> ([(Int, V3 n)], [([Int], Rgb i)])
+off_clr_face_set_dat :: (Ord n, Eq i) => [([V3 n], Colour.Rgb i)] -> ([(Int, V3 n)], [([Int], Colour.Rgb i)])
 off_clr_face_set_dat t =
   let p = nub (sort (concat (map fst t)))
       c = map snd t
@@ -486,7 +486,7 @@ off_header (v, f, e) = ["OFF", unwords (map show [v, f, e])]
   (Ccw triples of (x,y,z) coordinates, (r,g,b) colour)
   Off files are one-indexed.
 -}
-off_clr_face_set_fmt :: (RealFloat n, Show n, Ord n, Show i, Eq i) => Int -> [([V3 n], Rgb i)] -> [String]
+off_clr_face_set_fmt :: (RealFloat n, Show n, Ord n, Show i, Eq i) => Int -> [([V3 n], Colour.Rgb i)] -> [String]
 off_clr_face_set_fmt k t =
   let v_f (_, (x, y, z)) = unwords (map (Show.realfloat_pp k) [x, y, z])
       f_f (ix, (r, g, b)) = unwords (map show (length ix : ix) ++ map show [r, g, b])
@@ -494,7 +494,7 @@ off_clr_face_set_fmt k t =
   in concat [off_header (length v, length f, 0), map v_f v, map f_f f]
 
 -- | 'writeFile' of 'off_clr_face_set_fmt'
-off_clr_face_set_store :: (RealFloat n, Show n, Ord n, Show i, Eq i) => Int -> FilePath -> [([V3 n], Rgb i)] -> IO ()
+off_clr_face_set_store :: (RealFloat n, Show n, Ord n, Show i, Eq i) => Int -> FilePath -> [([V3 n], Colour.Rgb i)] -> IO ()
 off_clr_face_set_store k fn = writeFile fn . unlines . off_clr_face_set_fmt k
 
 -- * Cli
