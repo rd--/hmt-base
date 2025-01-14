@@ -77,11 +77,11 @@ tutte_gen_off3 o i =
   in (tutte_gen (v, e) (map snd fc) i, e)
 
 -- | Store tutte to Obj file.
-tutte_obj :: FilePath -> V_Loc -> [V2 Int] -> IO ()
-tutte_obj fn v e = do
-  let e' = map (\(p, q) -> ('l', [p, q])) e
+tutte_obj :: FilePath -> V_Loc -> [[Int]] -> IO ()
+tutte_obj fn v f = do
+  let f' = map (\x -> ('f', x)) f
       add_z (x, y) = (x, y, 0)
-  Obj.obj_store 4 fn (map (add_z . snd) v, e')
+  Obj.obj_store 4 fn (map (add_z . snd) v, f')
 
 -- | Store tutte to Svg file. opt=(size, margin, precision)
 tutte_svg :: (V2 Double, Double, Int) -> FilePath -> V_Loc -> [V2 Int] -> IO ()
@@ -91,14 +91,14 @@ tutte_svg opt fn v e = do
   Svg.svg_store_line_unif ((0, 0, 0), 1) fn opt ln
 
 -- | Store tutte to Json file.
-tutte_json :: FilePath -> V_Loc -> [V2 Int] -> IO ()
-tutte_json fn v e = do
+tutte_json :: FilePath -> V_Loc -> [[Int]] -> IO ()
+tutte_json fn v f = do
   let n = Json.double . Math.round_to 0.0001
       v' = map Json.int [1 .. length v]
       c = map (\(_,(x,y)) -> Json.array [n x, n y]) v
-      e' = map (\(i,j) -> Json.array [Json.int i, Json.int j]) e
+      f' = map (\l -> Json.array (map Json.int l)) f
       o = Json.object
         [("vertexList", Json.array v')
-        ,("edgeList", Json.array e')
-        ,("vertexCoordinates", Json.array c)]
+        ,("vertexCoordinates", Json.array c)
+        ,("faceList", Json.array f')]
   Json.writeFile fn o
