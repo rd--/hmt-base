@@ -1,6 +1,6 @@
+-- | Json (Javascript Object Notation)
 module Music.Theory.Json where
 
-import Data.Bifunctor {- base -}
 import Data.Maybe {- base -}
 import Data.Word {- base -}
 
@@ -137,16 +137,20 @@ object_lookup_err k o =
   let err = error ("object_lookup: " ++ k ++ " -- " ++ show o)
   in fromMaybe err (object_lookup k o)
 
+-- | Require value to be an object, unpack as a list of associations.
+associations :: Value -> [Association]
+associations v =
+  case v of
+    Json.Object x -> map (\(i, j) -> (Text.unpack i, j)) (Map.toList x)
+    _ -> error "associations?"
+
 {- | Require value to be an object, the entries of which can be parsed by _f_.
 
 >>> value_to_assoc_list value_to_int_list (decode_str "{\"x\": [1, 2], \"y\": [3, 4]}")
 [("x",[1,2]),("y",[3,4])]
 -}
 value_to_assoc_list :: (Value -> t) -> Value -> [(String, t)]
-value_to_assoc_list f v =
-  case v of
-    Json.Object x -> map (bimap Text.unpack f) (Map.toList x)
-    _ -> error "value_assoc_list?"
+value_to_assoc_list f = map (\(i, j) -> (i, f j)) .associations
 
 {- | Require value be a number and read as Double.
 
