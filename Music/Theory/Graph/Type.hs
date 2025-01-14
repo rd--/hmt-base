@@ -7,7 +7,7 @@ import Data.Maybe {- base -}
 
 import qualified Data.Graph as Graph {- containers -}
 
-import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- * Vertices
 
@@ -58,7 +58,7 @@ gr_degree (v, e) = (length v, length e)
 -- | Re-label graph given table.
 gr_relabel :: Eq t => [(t, u)] -> Gr t -> Gr u
 gr_relabel tbl (v, e) =
-  let get z = T.lookup_err z tbl
+  let get z = List.lookup_err z tbl
   in (map get v, map (bimap get get) e)
 
 -- | If (i,j) and (j,i) are both in E delete (j,i) where i < j.
@@ -121,7 +121,7 @@ gr_unlabel (v1, e1) =
   let n = length v1
       v2 = [0 .. n - 1]
       tbl = zip v2 v1
-      get k = T.reverse_lookup_err k tbl
+      get k = List.reverse_lookup_err k tbl
       e2 = map (bimap get get) e1
   in ((v2, e2), tbl)
 
@@ -168,8 +168,8 @@ edg_to_g ((nv, ne), e) =
 edg_parse :: [String] -> Edg
 edg_parse ln =
   let parse_int_list = map read . words
-      parse_int_pairs = T.adj2 2 . parse_int_list
-      parse_int_pair = T.unlist1_err . parse_int_pairs
+      parse_int_pairs = List.adj2 2 . parse_int_list
+      parse_int_pair = List.unlist1_err . parse_int_pairs
   in case ln of
       [m, e] -> (parse_int_pair m, parse_int_pairs e)
       _ -> error "edg_parse"
@@ -285,7 +285,7 @@ lbl_merge_seq = foldl1 lbl_merge
 lbl_canonical :: (Eq v, Ord v) => Lbl v e -> Lbl v e
 lbl_canonical (v1, e1) =
   let v2 = zip [0 ..] (nub (map snd v1))
-      reix i = T.reverse_lookup_err (T.lookup_err i v1) v2
+      reix i = List.reverse_lookup_err (List.lookup_err i v1) v2
       e2 = map (\((i, j), k) -> ((reix i, reix j), k)) e1
   in (v2, e2)
 
@@ -332,7 +332,7 @@ lbl_gr_to_lbl (v, e) =
   let n = length v
       v' = [0 .. n - 1]
       tbl = zip v' (map fst v)
-      get k = T.reverse_lookup_err k tbl
+      get k = List.reverse_lookup_err k tbl
       e' = map (\((p, q), r) -> ((get p, get q), r)) e
   in (zip v' (map snd v), e')
 

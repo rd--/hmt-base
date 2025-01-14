@@ -12,7 +12,9 @@ import qualified Music.Theory.Geometry.Obj as Obj {- hmt-base -}
 import qualified Music.Theory.Geometry.Off as Off {- hmt-base -}
 import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
 import qualified Music.Theory.Image.Svg as Svg {- hmt-base -}
+import qualified Music.Theory.Json as Json {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
+import qualified Music.Theory.Math as Math {- hmt-base -}
 
 {- | /k/ equally spaced points on unit circle
 
@@ -24,7 +26,9 @@ v_on_unit_circle k =
   let i = two_pi / fromIntegral k
   in map (\ph -> polar_to_rectangular (1, ph)) (take k [0, i ..])
 
--- | Vertex locations. [(Vertex,Coordinate)]
+{- | Vertex locations. [(Vertex,Coordinate)]
+Vertices are zero indexed.
+-}
 type V_Loc = [(Int, V2 Double)]
 
 {- | k = n-vertices, fc = face
@@ -79,9 +83,22 @@ tutte_obj fn v e = do
       add_z (x, y) = (x, y, 0)
   Obj.obj_store 4 fn (map (add_z . snd) v, e')
 
--- | Store tutte to Svg file.
+-- | Store tutte to Svg file. opt=(size, margin, precision)
 tutte_svg :: (V2 Double, Double, Int) -> FilePath -> V_Loc -> [V2 Int] -> IO ()
 tutte_svg opt fn v e = do
   let ix k = List.lookup_err k v
       ln = map (bimap ix ix) e
   Svg.svg_store_line_unif ((0, 0, 0), 1) fn opt ln
+
+-- | Store tutte to Json file.
+tutte_json :: FilePath -> V_Loc -> [V2 Int] -> IO ()
+tutte_json fn v e = do
+  let n = Json.double . Math.round_to 0.0001
+      v' = map Json.int [1 .. length v]
+      c = map (\(_,(x,y)) -> Json.array [n x, n y]) v
+      e' = map (\(i,j) -> Json.array [Json.int i, Json.int j]) e
+      o = Json.object
+        [("vertexList", Json.array v')
+        ,("edgeList", Json.array e')
+        ,("vertexCoordinates", Json.array c)]
+  Json.writeFile fn o

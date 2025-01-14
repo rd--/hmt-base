@@ -10,8 +10,8 @@ import Data.Bifunctor {- base -}
 import qualified Data.List.Split as Split {- split -}
 import qualified System.Process as Process {- process -}
 
-import qualified Music.Theory.Graph.Type as T {- hmt-base -}
-import qualified Music.Theory.List as T {- hmt-base -}
+import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
 
 -- * G6 (graph6)
 
@@ -26,39 +26,39 @@ g6_load fn = do
 g6_dsc_load :: FilePath -> IO [(String, String)]
 g6_dsc_load fn = do
   s <- readFile fn
-  let r = map (T.split_on_1_err "\t") (lines s)
+  let r = map (List.split_on_1_err "\t") (lines s)
   return r
 
 -- | Call nauty-listg to transform a sequence of G6. (debian = nauty)
-g6_to_edg :: [String] -> IO [T.Edg]
+g6_to_edg :: [String] -> IO [Graph.Edg]
 g6_to_edg g6 = do
   r <- Process.readProcess "nauty-listg" ["-q", "-l0", "-e"] (unlines g6)
-  return (map T.edg_parse (Split.chunksOf 2 (lines r)))
+  return (map Graph.edg_parse (Split.chunksOf 2 (lines r)))
 
--- | 'T.edg_to_g' of 'g6_to_edg'
-g6_to_g :: [String] -> IO [T.G]
-g6_to_g = fmap (map T.edg_to_g) . g6_to_edg
+-- | 'Graph.edg_to_g' of 'g6_to_edg'
+g6_to_g :: [String] -> IO [Graph.G]
+g6_to_g = fmap (map Graph.edg_to_g) . g6_to_edg
 
 -- | 'g6_to_edg' of 'g6_dsc_load'.
-g6_dsc_load_edg :: FilePath -> IO [(String, T.Edg)]
+g6_dsc_load_edg :: FilePath -> IO [(String, Graph.Edg)]
 g6_dsc_load_edg fn = do
   dat <- g6_dsc_load fn
   let (dsc, g6) = unzip dat
   gr <- g6_to_edg g6
   return (zip dsc gr)
 
--- | 'T.edg_to_g' of 'g6_dsc_load_edg'
-g6_dsc_load_gr :: FilePath -> IO [(String, T.G)]
-g6_dsc_load_gr = fmap (map (second T.edg_to_g)) . g6_dsc_load_edg
+-- | 'Graph.edg_to_g' of 'g6_dsc_load_edg'
+g6_dsc_load_gr :: FilePath -> IO [(String, Graph.G)]
+g6_dsc_load_gr = fmap (map (second Graph.edg_to_g)) . g6_dsc_load_edg
 
 {- | Generate the text format read by nauty-amtog.
 
 >>> let e = ((4,3),[(0,3),(1,3),(2,3)])
->>> let m = T.edg_to_adj_mtx_undir (0,1) e
+>>> let m = Graph.edg_to_adj_mtx_undir (0,1) e
 >>> adj_mtx_to_am m
 "n=4\nm\n0 0 0 1\n0 0 0 1\n0 0 0 1\n1 1 1 0\n\n"
 -}
-adj_mtx_to_am :: T.Adj_Mtx Int -> String
+adj_mtx_to_am :: Graph.Adj_Mtx Int -> String
 adj_mtx_to_am (nv, mtx) =
   unlines
     [ "n=" ++ show nv
@@ -69,21 +69,21 @@ adj_mtx_to_am (nv, mtx) =
 {- | Call nauty-amtog to transform a sequence of Adj_Mtx to G6.
 
 >>> let e = ((4,3),[(0,3),(1,3),(2,3)])
->>> let m = T.edg_to_adj_mtx_undir (0,1) e
+>>> let m = Graph.edg_to_adj_mtx_undir (0,1) e
 >>> adj_mtx_to_g6 [m,m]
 ["CF","CF"]
 -}
-adj_mtx_to_g6 :: [T.Adj_Mtx Int] -> IO [String]
+adj_mtx_to_g6 :: [Graph.Adj_Mtx Int] -> IO [String]
 adj_mtx_to_g6 adj = do
   r <- Process.readProcess "nauty-amtog" ["-q"] (unlines (map adj_mtx_to_am adj))
   return (lines r)
 
--- | 'adj_mtx_to_g6' of 'T.g_to_adj_mtx_undir'
-g_to_g6 :: [T.G] -> IO [String]
-g_to_g6 = adj_mtx_to_g6 . map (T.g_to_adj_mtx_undir (0, 1))
+-- | 'adj_mtx_to_g6' of 'Graph.g_to_adj_mtx_undir'
+g_to_g6 :: [Graph.G] -> IO [String]
+g_to_g6 = adj_mtx_to_g6 . map (Graph.g_to_adj_mtx_undir (0, 1))
 
 -- | 'writeFile' of 'g_to_g6'
-g_store_g6 :: FilePath -> [T.G] -> IO ()
+g_store_g6 :: FilePath -> [Graph.G] -> IO ()
 g_store_g6 fn gr = g_to_g6 gr >>= writeFile fn . unlines
 
 -- | Call nauty-labelg to canonise a set of graphs.
@@ -98,5 +98,5 @@ g6_labelg = fmap lines . Process.readProcess "nauty-labelg" ["-q"] . unlines
 >>> (g1 == g2,g3 == g4)
 (False,True)
 -}
-g_labelg :: [T.G] -> IO [T.G]
+g_labelg :: [Graph.G] -> IO [Graph.G]
 g_labelg g = g_to_g6 g >>= g6_labelg >>= g6_to_g

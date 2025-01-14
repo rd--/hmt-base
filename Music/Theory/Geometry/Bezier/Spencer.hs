@@ -3,7 +3,7 @@ module Music.Theory.Geometry.Bezier.Spencer where
 
 import Data.List {- base -}
 
-import Music.Theory.Geometry.Bezier {- hmt-base -}
+import qualified Music.Theory.Geometry.Bezier as Bezier {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 
@@ -101,7 +101,7 @@ spencer_dat c = if c then spencer_closed_dat else spencer_open_dat
 spencer_dat_to_bezier4 :: Fractional t => Spencer_Data t -> V4 (V2 t)
 spencer_dat_to_bezier4 d =
   case d of
-    ((p1, p2), Left c1) -> bezier_quadratic_to_cubic (p1, c1, p2)
+    ((p1, p2), Left c1) -> Bezier.bezier_quadratic_to_cubic (p1, c1, p2)
     ((p1, p2), Right (c1, c2)) -> (p1, c1, c2, p2)
 
 -- | /c/ = closed, /t/ = tension
