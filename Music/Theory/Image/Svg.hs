@@ -112,9 +112,9 @@ circle_elem (strk, fill) ((x, y), r) =
 >>> polyline_elem (Nothing,Just ((0,0,0),1)) [(0,100),(100,0)]
 "<polyline points=\"0.0,100.0 100.0,0.0\"  fill=\"black\"  />"
 -}
-polyline_elem :: Stroke_Fill -> [V2 R] -> String
-polyline_elem (strk, fill) ln =
-  let ln_ = unwords (map (\(x, y) -> printf "%f,%f" x y) ln)
+polyline_elem :: Int -> Stroke_Fill -> [V2 R] -> String
+polyline_elem k (strk, fill) ln =
+  let ln_ = unwords (map (\(x, y) -> printf "%.*f,%.*f" k x k y) ln)
   in printf
       "<polyline points=\"%s\" %s %s />"
       ln_
@@ -185,12 +185,12 @@ svg_store_line_unif u fn opt dat = svg_store_line fn opt (zip (repeat u) dat)
 type Svg_Polyline_Dat = [(Stroke_Fill, [V2 R])]
 
 -- | m=margin-%
-svg_store_polyline :: FilePath -> V2 R -> R -> Svg_Polyline_Dat -> IO ()
-svg_store_polyline fn sz m dat = do
+svg_store_polyline :: Int -> FilePath -> V2 R -> R -> Svg_Polyline_Dat -> IO ()
+svg_store_polyline k fn sz m dat = do
   let (p, ln) = unzip dat
       vw = svg_viewbox m (v2_bounds (concat ln))
-      txt = svg_begin_elem sz vw : zipWith polyline_elem p ln
+      txt = svg_begin_elem sz vw : zipWith (polyline_elem k) p ln
   writeFile fn (unlines (txt ++ [svg_end_elem]))
 
-svg_store_polyline_unif :: Stroke_Fill -> FilePath -> V2 R -> R -> [[V2 R]] -> IO ()
-svg_store_polyline_unif u fn sz m dat = svg_store_polyline fn sz m (zip (repeat u) dat)
+svg_store_polyline_unif :: Int -> Stroke_Fill -> FilePath -> V2 R -> R -> [[V2 R]] -> IO ()
+svg_store_polyline_unif k u fn sz m dat = svg_store_polyline k fn sz m (zip (repeat u) dat)

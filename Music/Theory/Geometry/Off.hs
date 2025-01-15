@@ -368,7 +368,7 @@ off_graph (_, (v, f)) = (zip [0 ..] v, zip (off_edge_set f) (repeat ()))
 off_hist :: Ord t => [t] -> [(t, Int)]
 off_hist = let f x = (List.head_err x, length x) in map f . group . sort
 
--- | Vertex histogram (VERTEX,N-ENTRIES)
+-- | Vertex histogram (Vertex,N-Entries)
 off_vertex_hist :: [Off_Face] -> [(Int, Int)]
 off_vertex_hist = off_hist . concatMap snd
 
