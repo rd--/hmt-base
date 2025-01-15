@@ -104,22 +104,29 @@ circle_elem (strk, fill) ((x, y), r) =
     (maybe "" stroke_attr strk)
     (fill_attr_m fill)
 
-{- | <https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline>
-
->>> polyline_elem (Just ((0,0,255),1),Nothing) [(0,100),(100,0)]
-"<polyline points=\"0.0,100.0 100.0,0.0\" stroke=\"#0000ff\"  fill=\"none\" />"
-
->>> polyline_elem (Nothing,Just ((0,0,0),1)) [(0,100),(100,0)]
-"<polyline points=\"0.0,100.0 100.0,0.0\"  fill=\"black\"  />"
--}
-polyline_elem :: Int -> Stroke_Fill -> [V2 R] -> String
-polyline_elem k (strk, fill) ln =
+poly_elem :: String -> Int -> Stroke_Fill -> [V2 R] -> String
+poly_elem nm k (strk, fill) ln =
   let ln_ = unwords (map (\(x, y) -> printf "%.*f,%.*f" k x k y) ln)
   in printf
-      "<polyline points=\"%s\" %s %s />"
+      "<%s points=\"%s\" %s %s />"
+      nm
       ln_
       (maybe "" stroke_attr strk)
       (fill_attr_m fill)
+
+{- | <https://developer.mozilla.org/en-US/docs/Web/SVG/Element/polyline>
+
+>>> polyline_elem 1 (Just ((0,0,255),1),Nothing) [(0,100),(100,0)]
+"<polyline points=\"0.0,100.0 100.0,0.0\" stroke=\"#0000ff\"  fill=\"none\" />"
+
+>>> polyline_elem 1 (Nothing,Just ((0,0,0),1)) [(0,100),(100,0)]
+"<polyline points=\"0.0,100.0 100.0,0.0\"  fill=\"black\"  />"
+-}
+polyline_elem :: Int -> Stroke_Fill -> [V2 R] -> String
+polyline_elem = poly_elem "polyline"
+
+polygon_elem :: Int -> Stroke_Fill -> [V2 R] -> String
+polygon_elem = poly_elem "polygon"
 
 -- | <https://svgwg.org/specs/paths/#PathDataCubicBezierCommands>
 bezier4_elem :: Stroke -> V4 (V2 R) -> String

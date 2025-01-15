@@ -53,6 +53,9 @@ obj_pre_parse_entry s =
 
 >>> obj_read_float 1E-14 "9.253255885689386e-18"
 0.0
+
+>>> obj_read_float 1E-14 "0.0000"
+0.0
 -}
 obj_read_float :: Double -> String -> Double
 obj_read_float epsilon s =
