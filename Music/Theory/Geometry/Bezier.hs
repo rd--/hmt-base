@@ -17,6 +17,9 @@ bezier_quadratic_to_cubic (q1, q2, q3) =
 
 {- | Calculate B(i,n) at t.
 
+>>> bernstein_base (3, 4) 0.5
+0.25
+
 >>> let f = map (\t -> map (\b -> bernstein_base b t) [(0,3),(1,3),(2,3),(3,3)])
 >>> f [0,0.5,1] == [[1,0,0,0],[1/8,6/16,6/16,1/8],[0,0,0,1]]
 True
@@ -34,7 +37,14 @@ bernstein_base (i, n) t =
       r = fromIntegral
   in r (n `c` i) * (t ^ i) * ((1 - t) ^ (n - i))
 
--- | Calculate bezier curve at /t/ for sequence /p/.
+{- | Calculate bezier curve at /t/ for sequence /p/.  /t/ is in (0, 1).
+
+> import Sound.Sc3.Plot
+> let p = [16,115,212,312,273]
+> let q = [106,182,0,75,151]
+> let f x = map (bezier_curve x) [0,0.01 .. 1]
+> plot_p1_ln [f p, f q]
+-}
 bezier_curve :: Num a => [a] -> a -> a
 bezier_curve p t =
   let n = length p - 1
@@ -43,8 +53,12 @@ bezier_curve p t =
 {- | 'bezier_curve' at 'V2'.
 
 > import Sound.Sc3.Plot
+> let f z = map (bezier_curve_v2 z) [0,0.01 .. 1]
 > let p = [(16,106),(115,182),(212,0),(312,75),(273,151)]
-> plot_p2_ln [p,map (bezier_curve_v2 p) [0,0.01 .. 1]]
+> plot_p2_ln [p,f p]
+
+> let q = [(0,0),(1,1),(2,-1),(3,0),(5,2),(6,-1),(7,3)]
+> plot_p2_ln [q,f (take 4 q) ++ f (drop 3 q)]
 -}
 bezier_curve_v2 :: Num a => [V2 a] -> a -> V2 a
 bezier_curve_v2 p t = let (x, y) = unzip p in (bezier_curve x t, bezier_curve y t)
@@ -76,7 +90,9 @@ bezier4 :: Num n => V4 n -> n -> n
 bezier4 p t = v4_foldl (+) (v4_mul p (bezier4_bases t))
 
 bezier4_v2 :: Num n => V4 (V2 n) -> n -> V2 n
-bezier4_v2 ((x1, y1), (x2, y2), (x3, y3), (x4, y4)) mu = (bezier4 (x1, x2, x3, x4) mu, bezier4 (y1, y2, y3, y4) mu)
+bezier4_v2 ((x1, y1), (x2, y2), (x3, y3), (x4, y4)) mu =
+  (bezier4 (x1, x2, x3, x4) mu
+  ,bezier4 (y1, y2, y3, y4) mu)
 
 bezier4_v3 :: Num n => V4 (V3 n) -> n -> V3 n
 bezier4_v3 ((x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)) mu =

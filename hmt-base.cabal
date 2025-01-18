@@ -66,6 +66,7 @@ Library
                    Music.Theory.Geometry.Bezier.Spencer
                    Music.Theory.Geometry.Bivector
                    Music.Theory.Geometry.Functions
+                   Music.Theory.Geometry.Hermite
                    Music.Theory.Geometry.Hex
                    Music.Theory.Geometry.Matrix
                    Music.Theory.Geometry.Obj

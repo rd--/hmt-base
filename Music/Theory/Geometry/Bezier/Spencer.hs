@@ -1,4 +1,7 @@
--- | <http://scaledinnovation.com/analytics/splines/aboutSplines.html>
+{- | R. Spencer "Spline Interpolation"
+
+<http://scaledinnovation.com/analytics/splines/aboutSplines.html>
+-}
 module Music.Theory.Geometry.Bezier.Spencer where
 
 import Data.List {- base -}
@@ -14,6 +17,18 @@ import qualified Music.Theory.List as List {- hmt-base -}
 (p3,p4,p5) -> (c5,c6)
 
 p1 c1 p2 c2 c3 p3 c4 c5 p4 ...
+
+>>> spencer_control_points (-0.5) ((0,0), (1, 1), (2, 0))
+((1.5,1.0),(0.5,1.0))
+
+>>> spencer_control_points 0.0 ((0,0), (1, 1), (2, 0))
+((1.0,1.0),(1.0,1.0))
+
+>>> spencer_control_points 0.5 ((0,0), (1, 1), (2, 0))
+((0.5,1.0),(1.5,1.0))
+
+>>> spencer_control_points 0.75 ((0,0), (1, 1), (2, 0))
+((0.25,1.0),(1.75,1.0))
 -}
 spencer_control_points :: Floating t => t -> V3 (V2 t) -> V2 (V2 t)
 spencer_control_points t ((x0, y0), (x1, y1), (x2, y2)) =
