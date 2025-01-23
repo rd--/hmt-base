@@ -5,12 +5,12 @@ import Data.Bits {- base -}
 import qualified Numeric {- base -}
 import Text.Printf {- base -}
 
-import Music.Theory.Geometry.Vector {- hmt-base -}
+import qualified Music.Theory.Geometry.Vector as Vector {- hmt-base -}
 
 -- * Tuples
 
-type Rgb t = V3 t
-type Rgba t = V4 t
+type Rgb t = Vector.V3 t
+type Rgba t = Vector.V4 t
 
 {- | Unpack 24-bit Rgb value to 8-bit Rgb triple.
 
