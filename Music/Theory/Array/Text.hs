@@ -64,8 +64,12 @@ table_opt_pipe = (True, True, False, " | ", False)
 {- | Pretty-print table.  Table is in row order.
 
 >>> let tbl = [["1","2","3","4"],["a","bc","def"],["ghij","klm","no","p"]]
->>> table_pp (True,True,True," ",True) tbl
-["   1    2    3    4","---- ---- ---- ----","   a   bc  def","ghij  klm   no    p","---- ---- ---- ----"]
+>>> putStr $ unlines $ table_pp (True,True,True," ",True) tbl
+   1    2    3    4
+---- ---- ---- ----
+   a   bc  def
+ghij  klm   no    p
+---- ---- ---- ----
 
 >>> table_pp (False,False,True," ",False) tbl
 ["1    2    3    4","a    bc   def","ghij klm  no   p"]
@@ -91,9 +95,24 @@ table_pp (has_hdr, pad_left, eq_width, col_sep, print_eot) dat =
 
 >>> table_pp_show table_opt_simple [[1..4],[5..8],[9..12]]
 ["1  2  3  4","- -- -- --","5  6  7  8","9 10 11 12","- -- -- --"]
+
+>>> putStr $ unlines $ table_pp_show table_opt_plain [[1..4],[5..8],[9..12]]
+1  2  3  4
+5  6  7  8
+9 10 11 12
 -}
 table_pp_show :: Show t => Text_Table_Opt -> Array.Table t -> [String]
 table_pp_show opt = table_pp opt . map (map show)
+
+{- | Write plain text table to stdout.
+
+>>> table_wr_plain [[1..4],[5..8],[9..12]]
+1  2  3  4
+5  6  7  8
+9 10 11 12
+-}
+table_wr_plain :: Show t => Array.Table t -> IO ()
+table_wr_plain = putStr . unlines . table_pp_show table_opt_plain
 
 {- | Variant in column order (ie. 'transpose').
 

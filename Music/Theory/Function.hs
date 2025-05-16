@@ -111,7 +111,7 @@ infixr 8 .:, .::, .:::, .::::, .:::::
 
 -- * Bimap
 
--- | Apply f to both sides of p, , ie. 'Data.Bifunctor.bimap' /f/ /f/.  This is the generic version of bimap1.
+-- | Apply f to both sides of p, ie. 'Data.Bifunctor.bimap' /f/ /f/.  This is the generic version of bimap1.
 bimap1f :: Bifunctor p => (a -> b) -> p a a -> p b b
 bimap1f f = bimap f f
 
