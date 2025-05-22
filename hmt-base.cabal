@@ -48,6 +48,7 @@ Library
                    Music.Theory.Bool
                    Music.Theory.Braille
                    Music.Theory.Byte
+                   Music.Theory.ByteString
                    Music.Theory.Combinations
                    Music.Theory.Colour
                    Music.Theory.Concurrent
@@ -65,6 +66,7 @@ Library
                    Music.Theory.Geometry.Bezier
                    Music.Theory.Geometry.Bezier.Spencer
                    Music.Theory.Geometry.Bivector
+                   Music.Theory.Geometry.Cartography.Projections
                    Music.Theory.Geometry.Functions
                    Music.Theory.Geometry.Hermite
                    Music.Theory.Geometry.Hex

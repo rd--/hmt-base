@@ -1037,6 +1037,14 @@ Just 'b'
 reverse_lookup :: Eq v => v -> [(k, v)] -> Maybe k
 reverse_lookup k = fmap fst . find ((== k) . snd)
 
+-- | Reverse (value,key) lookup.
+reverse_lookup' :: Eq k => k -> [(v,k)] -> Maybe v
+reverse_lookup' k = lookup k . map (\(p,q) -> (q,p))
+
+-- | 'drop' from right.
+drop_right :: Int -> [a] -> [a]
+drop_right n = reverse . drop n . reverse
+
 -- | Erroring variant.
 reverse_lookup_err :: Eq v => v -> [(k, v)] -> k
 reverse_lookup_err k = fromMaybe (error "reverse_lookup") . reverse_lookup k
@@ -1169,11 +1177,11 @@ drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 {- | 'dropWhile' from both ends of a list.
 
 >>> import Data.Char
->>> trim isSpace " string "
+>>> trimWhile isSpace " string "
 "string"
 -}
-trim :: (a -> Bool) -> [a] -> [a]
-trim f = reverse . dropWhile f . reverse . dropWhile f
+trimWhile :: (a -> Bool) -> [a] -> [a]
+trimWhile f = reverse . dropWhile f . reverse . dropWhile f
 
 {- | 'take' from right.
 

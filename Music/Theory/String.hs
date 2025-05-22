@@ -140,3 +140,13 @@ False
 -}
 spacePrefixed :: Int -> String -> Bool
 spacePrefixed k = isPrefixOf (replicate k ' ')
+
+{- | Remove spaces from both ends of input.
+
+>>> stringTrim " string "
+"string"
+-}
+stringTrim :: String -> String
+stringTrim =
+    let f = dropWhile Data.Char.isSpace
+    in f . reverse . f . reverse
