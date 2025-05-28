@@ -239,18 +239,18 @@ kavrayskiy_vii (φ,λ) =
 
 -- | Johann Heinrich Lambert, 1772; conformal conic.
 --
--- λ0 = reference longitude,
--- φ0 = reference latitude,
--- φ1 and φ2 = standard parallels
+-- λ0 = reference longitude (0),
+-- φ0 = reference latitude (0),
+-- φ1 (π/2) and φ2 (π/2) = standard parallels
 lambert_conformal_conic :: R -> R -> R -> R -> P -> P
 lambert_conformal_conic φ0 φ1 φ2 λ0 (φ,λ) =
     let atan' p a = (atan a) ** p
         tan' p a = (tan a) ** p
         n = let z = π/4 + φ2/2
             in log (cos φ1 * Geometry.sec φ2) / log (tan z * atan z)
+        f = (cos φ1 * tan' n (π/4 + φ1/2)) / n
         ρ = f * atan' n (π/4 + φ/4)
         ρ0 = f * atan' n (π/4 + φ0/2)
-        f = (cos φ1 * tan' n (π/4 + φ1/2)) / n
         x = ρ * sin (n * (λ - λ0))
         y = ρ0 - ρ * cos (n * (λ - λ0))
     in (x,y)

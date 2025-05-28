@@ -343,6 +343,9 @@ type T10 a = (a, a, a, a, a, a, a, a, a, a)
 t10_to_list :: T10 t -> [t]
 t10_to_list (p, q, r, s, t, u, v, w, x, y) = [p, q, r, s, t, u, v, w, x, y]
 
+t10_from_list :: [t] -> T10 t
+t10_from_list l = case l of [p, q, r, s, t, u, v, w, x, y] -> (p, q, r, s, t, u, v, w, x, y); _ -> error "t10_from_list?"
+
 t10_map :: (p -> q) -> T10 p -> T10 q
 t10_map f (p, q, r, s, t, u, v, w, x, y) = (f p, f q, f r, f s, f t, f u, f v, f w, f x, f y)
 

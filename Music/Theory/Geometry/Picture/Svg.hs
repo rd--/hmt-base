@@ -160,8 +160,8 @@ svg_attr_pp (name, value) = concat [name, "=\"", value, "\""]
 
 {- | Svg element pretty printer
 
-> let pen = Pen 0.25 (0,0,0,1) no_dash
-> let line = Line pen ((0, 0), (100, 100))
+> let pen = Picture.Pen 0.25 (0,0,0,1) Picture.no_dash
+> let line = Picture.Line pen ((0, 0), (100, 100))
 > let element = picture_to_svg_elem 20 [line]
 > putStr $ svg_elem_pp element
 -}
