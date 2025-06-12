@@ -13,6 +13,7 @@ clean:
 
 push-all:
 	r.gitlab-push.sh hmt-base
+	r.github-push.sh hmt-base
 
 push-tags:
 	r.gitlab-push.sh hmt-base --tags
