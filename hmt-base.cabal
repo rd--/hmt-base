@@ -82,6 +82,7 @@ Library
                    Music.Theory.Geometry.Projection
                    Music.Theory.Geometry.Projection.Gl
                    Music.Theory.Geometry.Quaternion
+                   Music.Theory.Geometry.Surface
                    Music.Theory.Geometry.Tutte
                    Music.Theory.Geometry.Vector
                    Music.Theory.Graph

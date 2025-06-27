@@ -12,8 +12,13 @@ import qualified Music.Theory.Math.Convert as Math.Convert {- hmt-base -}
 -- | Real, alias for 'Double'.  (R = Real, not Rational)
 type R = Double
 
+-- | Real modulo
 rmod :: R -> R -> R
 rmod = Data.Fixed.mod'
+
+-- | Hyperbolic secant
+sech :: Floating t => t -> t
+sech x = 1 / cosh x
 
 -- | Integer, alias for 'Integer'.
 type I = Integer
