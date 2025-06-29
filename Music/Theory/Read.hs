@@ -32,6 +32,9 @@ Nothing
 
 >>> read_maybe "1.0" :: Maybe Float
 Just 1.0
+
+>>> read_maybe "-3.141" :: Maybe Double
+Just (-3.141)
 -}
 read_maybe :: Read a => String -> Maybe a
 read_maybe = reads_to_read_precise reads
@@ -48,7 +51,11 @@ read_def x s = fromMaybe x (read_maybe s)
 read_err_msg :: Read a => String -> String -> a
 read_err_msg msg s = fromMaybe (error ("read_err: " ++ msg ++ ": " ++ s)) (read_maybe s)
 
--- | Default message.
+{- | Default message.
+
+>>> read_err "-0.5" :: Double
+-0.5
+-}
 read_err :: Read a => String -> a
 read_err = read_err_msg "read_maybe failed"
 
@@ -137,12 +144,24 @@ delete_trailing_point s =
     '.' : s' -> reverse s'
     _ -> s
 
+{- | Allow elided 0 before decimal place.
+
+>>> map read_fractional_allow_leading_point ["-.5",".5"]
+[-0.5,0.5]
+-}
+read_fractional_allow_leading_point :: (Read n, Fractional n) => String -> n
+read_fractional_allow_leading_point s =
+  case s of
+    '-' : '.' : s' -> read_err ('-' : '0' : '.' : s')
+    '.' : _ -> read_err ('0' : s)
+    _ -> read_err s
+
 {- | 'read_err' disallows trailing decimal points.
 
->>> map read_fractional_allow_trailing_point_err ["123.","123.4"] :: [Double]
+>>> map read_fractional_allow_trailing_point_err ["123.","123.4"]
 [123.0,123.4]
 -}
-read_fractional_allow_trailing_point_err :: Read n => String -> n
+read_fractional_allow_trailing_point_err :: (Read n, Fractional n) => String -> n
 read_fractional_allow_trailing_point_err = read_err . delete_trailing_point
 
 -- * Plain type specialisations
@@ -163,7 +182,20 @@ read_integer = read_err
 read_int :: String -> Int
 read_int = read_err
 
--- | Type specialised 'read_maybe'.
+{- | Type specialised 'read_maybe'.
+
+>>> read_maybe_double "0.5"
+Just 0.5
+
+>>> read_maybe_double ".5"
+Nothing
+
+>>> read_maybe_double "5.0"
+Just 5.0
+
+>>> read_maybe_double "5."
+Nothing
+-}
 read_maybe_double :: String -> Maybe Double
 read_maybe_double = read_maybe
 
