@@ -686,6 +686,18 @@ line_line_intersection ((x1, y1), (x2, y2)) ((x3, y3), (x4, y4)) =
 
 -- * Circle
 
+{- | /n/ points on a circle centered at /o/ with initial /theta/ and /r/.
+
+>>> map v2_round (circlePoints 7 (0,0) 100 (pi / 5))
+[(81,59),(4,100),(-75,66),(-98,-18),(-47,-88),(39,-92),(96,-27)]
+-}
+circlePoints :: (Enum n, RealFloat n, Integral i) => i -> V2 n -> n -> n -> [V2 n]
+circlePoints n o r theta =
+    let m = fromIntegral n
+        incr = (2 * pi) / m
+        mk_pt i = (r, theta + (i * incr))
+    in [v2_add o (polar_to_rectangular (mk_pt i)) | i <- [0 .. m - 1]]
+
 {- | Distances along a line, given as Pt and Vc, that it intersects with a circle.
 
 >>> let o = (0,0)

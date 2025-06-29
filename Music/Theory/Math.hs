@@ -54,19 +54,36 @@ constrain (l, r) =
       both n i j x = up n i (down n j x)
   in both (r - l) l r
 
--- | 'mod' 5.
+{- | 'mod' 5.
+
+>>> map mod5 [-1,0,1,4,5,6]
+[4,0,1,4,0,1]
+-}
 mod5 :: Integral i => i -> i
 mod5 n = n `mod` 5
 
+{- | 'mod' 7.
+
+>>> map mod7 [-1,0,1,6,7,8]
+[6,0,1,6,0,1]
+-}
 -- | 'mod' 7.
 mod7 :: Integral i => i -> i
 mod7 n = n `mod` 7
 
--- | 'mod' 12.
+{- | 'mod' 12.
+
+>>> map mod12 [-1,0,1,11,12,13]
+[11,0,1,11,0,1]
+-}
 mod12 :: Integral i => i -> i
 mod12 n = n `mod` 12
 
--- | 'mod' 16.
+{- | 'mod' 16.
+
+>>> map mod16 [-1,0,1,15,16,17]
+[15,0,1,15,0,1]
+-}
 mod16 :: Integral i => i -> i
 mod16 n = n `mod` 16
 

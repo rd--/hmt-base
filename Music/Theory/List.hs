@@ -1750,6 +1750,14 @@ minmax inp =
     [] -> error "minmax: null"
     x : xs -> let mm p (l, r) = (min p l, max p r) in foldr mm (x, x) xs
 
+{- | minmax in two passes.
+
+>>> min_max "minmax"
+('a','x')
+-}
+min_max :: Ord t => [t] -> (t, t)
+min_max l = (minimum l, maximum l)
+
 {- | Append /k/ to the right of /l/ until result has /n/ places.
 Truncates long input lists.
 

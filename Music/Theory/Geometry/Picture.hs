@@ -38,7 +38,7 @@ data Mark r
   | Polygon (Either (Pen r) Colour) [V2 r]
   | Circle (Either (Pen r) Colour) (Centre_Radius r)
   | Arc (Pen r) (Centre_Radius r) r r
-  | Dot (Colour) (Centre_Radius r)
+  | Dot Colour (Centre_Radius r)
   deriving (Eq, Show)
 
 type Picture r = [Mark r]
