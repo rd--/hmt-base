@@ -638,6 +638,10 @@ True
 v3_rotate_z :: Floating n => n -> V3 n -> V3 n
 v3_rotate_z theta = v3_on_xy (v2_rotate theta)
 
+-- | Rotate on /x/ by /i/, then on /y/ by /j/, then on /z/ by /k/.
+v3_rotate_xyz :: Floating n => V3 n -> V3 n -> V3 n
+v3_rotate_xyz (i, j, k) = v3_rotate_z k . v3_rotate_y j . v3_rotate_x i
+
 v3_max_abs :: (Ord t, Num t) => V3 t -> t
 v3_max_abs (x, y, z) = max (max (abs x) (abs y)) (abs z)
 
