@@ -12,14 +12,26 @@ module Music.Theory.Geometry.Ply where
 
 import Data.List {- base -}
 
-import qualified Music.Theory.Graph.Type as T {- hmt-base -}
-import qualified Music.Theory.List as T {- hmt-base -}
-import qualified Music.Theory.Show as T {- hmt-base -}
+import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
+import qualified Music.Theory.List as List {- hmt-base -}
+import qualified Music.Theory.Show as Show {- hmt-base -}
 
 {- | Ascii Ply-1.0 header for object of (n-vertices,n-faces,n-edges).
      Faces and edges are (r,g,b) coloured.
 
-> putStrLn $ unlines $ ply_header (8,6,0)
+>>> putStr $ unlines $ ply_header (8,6,0)
+ply
+format ascii 1.0
+element vertex 8
+property float x
+property float y
+property float z
+element face 6
+property list uchar int vertex_index
+property uchar red
+property uchar green
+property uchar blue
+end_header
 -}
 ply_header :: (Int, Int, Int) -> [String]
 ply_header (n_v, n_f, n_e) =
@@ -59,9 +71,9 @@ ply_header (n_v, n_f, n_e) =
      It is an error (not checked) for there to be no edges.
      Ply files are zero-indexed.
 -}
-v3_graph_to_ply_clr :: Int -> T.Lbl (Double, Double, Double) (Int, Int, Int) -> [String]
+v3_graph_to_ply_clr :: Int -> Graph.Lbl (Double, Double, Double) (Int, Int, Int) -> [String]
 v3_graph_to_ply_clr k (v, e) =
-  let v_pp (_, (x, y, z)) = unwords (map (T.double_pp k) [x, y, z])
+  let v_pp (_, (x, y, z)) = unwords (map (Show.double_pp k) [x, y, z])
       e_pp ((i, j), (r, g, b)) = unwords (map show [i, j, r, g, b])
   in concat
       [ ply_header (length v, 0, length e)
@@ -79,7 +91,7 @@ ply_face_set_dat t =
   let p = nub (sort (concatMap fst t))
       c = map snd t
       v = zip [0 ..] p
-      f = map (map (`T.reverse_lookup_err` v) . fst) t
+      f = map (map (`List.reverse_lookup_err` v) . fst) t
   in (v, zip f c)
 
 {- | Format a set of coloured faces as an Ply file.
