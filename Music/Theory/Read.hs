@@ -156,13 +156,23 @@ read_fractional_allow_leading_point s =
     '.' : _ -> read_err ('0' : s)
     _ -> read_err s
 
-{- | 'read_err' disallows trailing decimal points.
+{- | Allows trailing decimal points.
 
 >>> map read_fractional_allow_trailing_point_err ["123.","123.4"]
-[123.0,123.4]
+[123.0,123.4,0.4]
 -}
 read_fractional_allow_trailing_point_err :: (Read n, Fractional n) => String -> n
 read_fractional_allow_trailing_point_err = read_err . delete_trailing_point
+
+{- | Allows leading and trailing decimal points.
+
+>>> map read_fractional_allow_elided_zero_err ["123.","123.4",".4"]
+[123.0,123.4,0.4]
+-}
+read_fractional_allow_elided_zero_err :: (Read n, Fractional n) => String -> n
+read_fractional_allow_elided_zero_err =
+  read_fractional_allow_leading_point
+  . delete_trailing_point
 
 -- * Plain type specialisations
 

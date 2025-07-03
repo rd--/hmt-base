@@ -7,6 +7,7 @@ import Data.Maybe {- base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
 import qualified Music.Theory.Colour as Colour {- hmt-base -}
+import qualified Music.Theory.Graph.Type as Graph {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
 
@@ -17,8 +18,10 @@ type Line_Width r = r
 -- | (dash,no-dash)
 type Dash r = ([r], r)
 
+-- | Colour
 type Colour = Colour.Rgba Double
 
+-- | No dash
 no_dash :: Num r => Dash r
 no_dash = ([], 0)
 
@@ -147,7 +150,7 @@ picture_ln mk =
      Vertices are compared using the given equality function (ie. '~=')
      Deletes duplicate vertices and edges, which are un-directed.
 -}
-picture_ln_gr :: (Ord n, Ord c) => (n -> n -> Bool) -> [(c, [n])] -> ([(Int, n)], [(V2 Int, c)])
+picture_ln_gr :: (Ord n, Ord c) => (n -> n -> Bool) -> [(c, [n])] -> Graph.Lbl n c
 picture_ln_gr eq_f ln =
   let v = nubBy eq_f (sort (concatMap snd ln))
       v_ix x = fromMaybe (error "picture_ln_gr?") (findIndex (eq_f x) v)
@@ -158,7 +161,7 @@ picture_ln_gr eq_f ln =
   in (zip [0 ..] v, e)
 
 -- | 'picture_ln_gr' of 'picture_ln' of '~='
-picture_gr :: (Floating n, Ord n) => Picture n -> ([(Int, V2 n)], [(V2 Int, Colour)])
+picture_gr :: (Floating n, Ord n) => Picture n -> Graph.Lbl (V2 n) Colour
 picture_gr =
   let eq (i, j) (p, q) = i Math.~= p && j Math.~= q
   in picture_ln_gr eq . picture_ln
