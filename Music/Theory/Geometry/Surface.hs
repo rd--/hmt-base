@@ -11,11 +11,12 @@ p ^. q = p ^ q
 -- | V2 -> V3
 type Surface t = V2 t -> V3 t
 
--- | 0 <= u < 2 pi, -1 <= v < 1
+-- | Möbius strip, 0 <= u < 2 pi, -1 <= v < 1
 moebius :: Floating t => t -> Surface t
 moebius r (u, v) =
-  let x = (r + (v / 2) * cos (u / 2)) * cos u
-      y = (r + (v / 2) * cos (u / 2)) * sin u
+  let a = r + ((v / 2) * cos (u / 2))
+      x = a * cos u
+      y = a * sin u
       z = (v / 2) * sin (u / 2)
   in (x, y, z)
 
@@ -205,3 +206,15 @@ trefoil (u, v) =
 
 pseudosphere_A :: Floating t => Surface t
 pseudosphere_A (u, v) = (sech u * cos v, sech u * sin v, u - tanh u)
+
+{- | Plueckers Conoid
+
+<https://en.wikipedia.org/wiki/Pl%C3%BCcker%27s_conoid>
+<https://mathworld.wolfram.com/PlueckersConoid.html>
+-}
+plueckersConoid :: Floating t => t -> Surface t
+plueckersConoid n (u, v) =
+  let x = v * cos(u)
+      y = v * sin(u)
+      z = sin(n * u)
+  in (x, y, z)

@@ -8,11 +8,11 @@ import Data.Char {- base -}
 import Data.List {- base -}
 import Numeric {- base -}
 
-import qualified Text.CSV.Lazy.String as C {- lazy-csv -}
+import qualified Text.CSV.Lazy.String as Csv {- lazy-csv -}
 
-import qualified Music.Theory.Io as T {- hmt-base -}
+import qualified Music.Theory.Io as Io {- hmt-base -}
 import qualified Music.Theory.List as List {- hmt-base -}
-import qualified Music.Theory.Read as T {- hmt-base -}
+import qualified Music.Theory.Read as Read {- hmt-base -}
 
 {- $setup
 >>> let tblFn = "/home/rohan/data/unicode.org/Public/11.0.0/ucd/UnicodeData.txt"
@@ -123,9 +123,9 @@ True
 -}
 unicode_data_table_read :: FilePath -> IO Unicode_Table
 unicode_data_table_read fn = do
-  s <- T.read_file_utf8 fn
-  let t = C.fromCSVTable (C.csvTable (C.parseDSV False ';' s))
-      f x = (T.read_hex_err (List.head_err x), List.second_err x)
+  s <- Io.read_file_utf8 fn
+  let t = Csv.fromCSVTable (Csv.csvTable (Csv.parseDSV False ';' s))
+      f x = (Read.read_hex_err (List.head_err x), List.second_err x)
   return (map f t)
 
 unicode_table_block :: (Unicode_Index, Unicode_Index) -> Unicode_Table -> Unicode_Table
