@@ -17,7 +17,7 @@ import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
 import qualified Music.Theory.Math.Prime as Prime {- hmt -}
 
-{- | <http://oeis.org/A000005>
+{- | <http://oeis.org/A000002>
 
 Kolakoski sequence: a(n) is length of n-th run; a(1) = 1; sequence consists just of 1's and 2's.
 (Formerly M0190 N0070)
@@ -316,7 +316,7 @@ True
 a000225 :: Num n => [n]
 a000225 = iterate ((+ 1) . (* 2)) 0
 
-{- | <http://oeis.org/000285>
+{- | <http://oeis.org/A000285>
 
 a(0) = 1, a(1) = 4, and a(n) = a(n-1) + a(n-2) for n >= 2. (Formerly M3246 N1309)
 
@@ -1360,6 +1360,28 @@ a036562 = 1 : map a036562_n [0 ..]
 
 a036562_n :: Integer -> Integer
 a036562_n n = 4 ^ (n + 1) + 3 * 2 ^ n + 1
+
+{- | <http://oeis.org/A038219>
+
+The Ehrenfeucht-Mycielski sequence (0,1-version): a maximally unpredictable sequence.
+
+>>> [0,1,0,0,1,1,0,1,0,1,1,1,0,0,0,1,0,0,0,0,1,1,1,1,0,1,1,0,0,1,0,1,0,0,1,0,0,1,1] `List.isPrefixOf` a038219
+True
+-}
+a038219 :: [Integer]
+a038219 =
+ let f us =
+        let vs = Maybe.fromJust (List.find (`List.isInfixOf` init us) (List.tails us))
+            a' = let b e =
+                       case e of
+                         [] -> error "impossible"
+                         ((xs, ys):xyss) ->
+                           if vs `List.isSuffixOf` xs
+                           then 1 - head ys
+                           else b xyss
+                 in b (reverse (map (`List.splitAt` us) [0 .. length us - 1]))
+        in a' : f (us ++ [a'])
+ in 0 : f [0]
 
 {- | <http://oeis.org/A046042>
 
