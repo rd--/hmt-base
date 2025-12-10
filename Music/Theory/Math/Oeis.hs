@@ -15,7 +15,7 @@ import qualified Data.MemoCombinators as Memo {- data-memocombinators -}
 
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
-import qualified Music.Theory.Math.Prime as Prime {- hmt -}
+import qualified Music.Theory.Math.Prime as Prime {- hmt-base -}
 
 {- | <http://oeis.org/A000002>
 
@@ -1371,16 +1371,16 @@ True
 a038219 :: [Integer]
 a038219 =
  let f us =
-        let vs = Maybe.fromJust (List.find (`List.isInfixOf` init us) (List.tails us))
-            a' = let b e =
-                       case e of
-                         [] -> error "impossible"
-                         ((xs, ys):xyss) ->
-                           if vs `List.isSuffixOf` xs
-                           then 1 - head ys
-                           else b xyss
-                 in b (reverse (map (`List.splitAt` us) [0 .. length us - 1]))
-        in a' : f (us ++ [a'])
+        let vs = Maybe.fromJust (List.find (`List.isInfixOf` (List.init us)) (List.tails us))
+            a = let b e =
+                      case e of
+                        [] -> error "impossible"
+                        ((xs, ys):xyss) ->
+                          if vs `List.isSuffixOf` xs
+                          then 1 - List.head ys
+                          else b xyss
+                in b (List.reverse (List.map (`List.splitAt` us) [0 .. List.length us - 1]))
+        in a : f (us ++ [a])
  in 0 : f [0]
 
 {- | <http://oeis.org/A046042>
