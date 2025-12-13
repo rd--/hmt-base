@@ -159,7 +159,7 @@ read_fractional_allow_leading_point s =
 {- | Allows trailing decimal points.
 
 >>> map read_fractional_allow_trailing_point_err ["123.","123.4"]
-[123.0,123.4,0.4]
+[123.0,123.4]
 -}
 read_fractional_allow_trailing_point_err :: (Read n, Fractional n) => String -> n
 read_fractional_allow_trailing_point_err = read_err . delete_trailing_point

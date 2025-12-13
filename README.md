@@ -23,6 +23,6 @@ related:
 
 ```
 $ make doctest
-Examples: 1285  Tried: 1285  Errors: 0  Failures: 0
+Examples: 1337  Tried: 1337  Errors: 0  Failures: 0
 $
 ```
