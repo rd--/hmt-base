@@ -108,6 +108,7 @@ Library
                    Music.Theory.Math.Predicate
                    Music.Theory.Math.Prime
                    Music.Theory.Math.Prime.List
+                   Music.Theory.Math.Z
                    Music.Theory.Maybe
                    Music.Theory.Monad
                    Music.Theory.Opt
