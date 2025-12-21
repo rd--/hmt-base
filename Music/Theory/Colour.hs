@@ -5,6 +5,7 @@ import Data.Bits {- base -}
 import qualified Numeric {- base -}
 import Text.Printf {- base -}
 
+import qualified Music.Theory.Array.Csv as Csv {- hmt-base -}
 import qualified Music.Theory.Geometry.Vector as Vector {- hmt-base -}
 
 -- * Tuples
@@ -41,8 +42,8 @@ rgb8_to_hex_str (r, g, b) = printf "#%02x%02x%02x" r g b
 >>> rgb8_to_rgb (0, 128, 255) == (0, 128/255, 1)
 True
 -}
-rgb8_to_rgb :: (Real r, Ord t, Floating t) => Rgb r -> Rgb t
-rgb8_to_rgb (r, g, b) = (realToFrac r / 255, realToFrac g / 255, realToFrac b / 255)
+rgb8_to_rgb :: (Real r, Fractional t) => Rgb r -> Rgb t
+rgb8_to_rgb = clr_normalise 255
 
 {- | Rgb (0-1) to Rgb (0-255)
 
@@ -78,3 +79,31 @@ hex_colour_parse s =
       ['#', r, g, b] -> (p [r, r], p [g, g], p [b, b])
       ['#', r1, r2, g1, g2, b1, b2] -> (p [r1, r2], p [g1, g2], p [b1, b2])
       _ -> error "hex_colour_parse: not hex triple?"
+
+-- * Generalised
+
+{- | Normalise colour by dividing each component by /m/.
+
+>>> clr_normalise 255 (hex_colour_parse "#ff0066")
+(1.0,0.0,0.4)
+-}
+clr_normalise :: (Real r, Fractional f) => f -> (r, r, r) -> (f, f, f)
+clr_normalise m (r, g, b) = let f x = realToFrac x / m in (f r, f g, f b)
+
+-- * Csv
+
+{- | Read (name,red,green,blue) CSV table.
+
+>>> let fn = "/home/rohan/sw/hsc3-data/data/colour/svg.csv"
+>>> tbl <- clr_read_csv_rgb24_table fn
+>>> lookup "powderblue" tbl
+Just (176,224,230)
+-}
+clr_read_csv_rgb24_table :: FilePath -> IO [(String, Rgb Int)]
+clr_read_csv_rgb24_table fn = do
+  tbl <- Csv.csv_table_read_def id fn
+  let f e =
+        case e of
+          [nm, r, g, b] -> (nm, (read r, read g, read b))
+          _ -> error "clr_read_csv_rgb24_table"
+  return (map f tbl)
