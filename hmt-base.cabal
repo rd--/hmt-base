@@ -132,10 +132,8 @@ Library
                    Music.Theory.Set.Set
                    Music.Theory.Show
                    Music.Theory.String
-                   Music.Theory.Time
                    Music.Theory.Time.Duration
                    Music.Theory.Time.Notation
-                   Music.Theory.Time.Seq
                    Music.Theory.Traversable
                    Music.Theory.Tree
                    Music.Theory.Tuple
