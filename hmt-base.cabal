@@ -38,7 +38,8 @@ Library
                    time
   Default-Language:Haskell2010
   GHC-Options:     -Wall -Wno-x-partial -Wno-incomplete-uni-patterns
-  Exposed-modules: Music.Theory.Array
+  Exposed-modules: Music.Theory.Amplitude
+                   Music.Theory.Array
                    Music.Theory.Array.Cell_Ref
                    Music.Theory.Array.Csv
                    Music.Theory.Array.Json
@@ -131,8 +132,10 @@ Library
                    Music.Theory.Set.Set
                    Music.Theory.Show
                    Music.Theory.String
+                   Music.Theory.Time
                    Music.Theory.Time.Duration
                    Music.Theory.Time.Notation
+                   Music.Theory.Time.Seq
                    Music.Theory.Traversable
                    Music.Theory.Tree
                    Music.Theory.Tuple
