@@ -405,7 +405,7 @@ v2_signed_area (x1, y1) (x2, y2) = (x1 * y2) - (y1 * x2)
 
 -- * 3-Vector (V3)
 
--- | 3-element vector.
+-- | 3-element vector, equal to Tuple.T3 where each place has an equal type.
 type V3 n = (n, n, n)
 
 v3_x, v3_y, v3_z :: V3 n -> n
