@@ -1,11 +1,11 @@
-GL_GIT=git@gitlab.com:rd--/hmt-base.git
-GL_HTTP=https://gitlab.com/rd--/hmt-base.git
-
 all:
 	echo "hmt-base"
 
 mk-cmd:
 	(cd cmd; make)
+
+install:
+	cabal v1-install --allow-newer
 
 clean:
 	rm -Rf dist dist-newstyle *~

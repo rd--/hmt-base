@@ -17,7 +17,7 @@ related:
 [obj](http://rohandrape.net/?t=hmt-base&e=md/obj.md),
 [ply](http://rohandrape.net/?t=hmt-base&e=md/ply.md)
 
-© [rohan drape](http://rohandrape.net/), 2006-2025, [gpl](http://gnu.org/copyleft/).
+© [rohan drape](http://rohandrape.net/), 2006-2026, [gpl](http://gnu.org/copyleft/).
 
 * * *
 
