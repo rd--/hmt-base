@@ -7,6 +7,10 @@ import Data.Maybe {- base -}
 from_just :: String -> Maybe a -> a
 from_just err = fromMaybe (error err)
 
+-- | Apply /f/ to Just x, else return ().
+when_just :: Monad m => (a -> m ()) -> Maybe a -> m ()
+when_just f = maybe (return ()) f
+
 {- | Variant of unzip.
 
 >>> maybe_unzip [Just (1,'a'),Nothing,Just (3,'c')]
