@@ -16,6 +16,10 @@ v2_x, v2_y :: V2 n -> n
 v2_x = fst
 v2_y = snd
 
+-- | To list
+v2_to_list :: V2 n -> [n]
+v2_to_list (x, y) = [x, y]
+
 -- | (~=) at x & y.
 v2_approx_eq :: (Floating n, Ord n) => V2 n -> V2 n -> Bool
 v2_approx_eq (x1, y1) (x2, y2) = (x1 Math.~= x2) && (y1 Math.~= y2)
@@ -280,6 +284,9 @@ v2_linlin_rng src dst = v2_linlin_rng_sep (src, src) (dst, dst)
 
 >>> v2_linlin_set_u ((-1,1),(-1,1)) [(-100,0),(0,100),(0,25)]
 [(-1.0,0.0),(0.0,1.0),(0.0,0.25)]
+
+>>> v2_linlin_set_u ((0,1),(0,1)) [(0,0),(1/6,1/3),(1/3,2/3)]
+[(0.0,0.0),(0.25,0.5),(0.5,1.0)]
 -}
 v2_linlin_set_u :: (Fractional n, Ord n) => V2 (V2 n) -> [V2 n] -> [V2 n]
 v2_linlin_set_u r2 c =
@@ -293,6 +300,9 @@ v2_linlin_set_u r2 c =
 
 >>> v2_linlin_set_c ((-10,10),(0,10)) [(-100,0),(0,100),(-25,25)]
 [(-10.0,0.0),(10.0,10.0),(5.0,2.5)]
+
+>>> v2_linlin_set_c ((0,1),(0,1)) [(0,0),(1/6,1/3),(1/3,2/3)]
+[(0.0,0.0),(0.5,0.5),(1.0,1.0)]
 -}
 v2_linlin_set_c :: (Fractional n, Ord n) => V2 (V2 n) -> [V2 n] -> [V2 n]
 v2_linlin_set_c r2 c = map (v2_linlin_rng_sep (v2_extent_c c) r2) c
