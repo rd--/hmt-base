@@ -218,11 +218,18 @@ v2_bounds c = let r = unzip c in (v2_map minimum r, v2_map maximum r)
 v2_bounds_join :: (Num t, Ord t) => V2 (V2 t) -> V2 (V2 t) -> V2 (V2 t)
 v2_bounds_join ((x0, y0), (x1, y1)) ((x2, y2), (x3, y3)) = ((min x0 x2, min y0 y2), (max x1 x3, max y1 y3))
 
--- | 'v2_min' of left and 'v2_max' of right bound, i.e. minima and maxima of all x and y together.
+{- | 'v2_min' of left and 'v2_max' of right bound, i.e. minima and maxima of all x and y together.
+
+>>> v2_extent_u [(40,0),(0,40),(13,11),(-8,4)]
+(-8,40)
+-}
 v2_extent_u :: Ord t => [V2 t] -> V2 t
 v2_extent_u = bimap v2_min v2_max . v2_bounds
 
 {- | (x-min,x-max) and (y-min,y-max) of set of V2.
+
+>>> v2_extent_c [(40,0),(0,40),(13,11),(-8,4)]
+((-8,40),(0,40))
 
 >>> v2_extent_c [(-50,100),(50,0),(0,25)]
 ((-50,50),(0,100))
@@ -249,7 +256,8 @@ v2_linlin_muladd_sep (x_src, y_src) (x_dst, y_dst) =
 
 {- | Linear map of V2 given (x,y) input and output ranges.
 
->>> map (v2_linlin_rng_sep ((-10,40),(0,80)) ((0,1),(0,1))) [(40,0),(0,40),(13,11),(-10,4)] == [(1,0),(0.2,0.5),(0.46,0.1375),(0,0.05)]
+>>> let r = [(1,0),(0.2,0.5),(0.46,0.1375),(0,0.05)]
+>>> map (v2_linlin_rng_sep ((-10,40),(0,80)) ((0,1),(0,1))) [(40,0),(0,40),(13,11),(-10,4)] == r
 True
 -}
 v2_linlin_rng_sep :: Fractional n => V2 (V2 n) -> V2 (V2 n) -> V2 n -> V2 n
@@ -529,7 +537,11 @@ v3_minimum = foldr1 (v3_zip min)
 v3_maximum :: Ord n => [V3 n] -> V3 n
 v3_maximum = foldr1 (v3_zip max)
 
--- | (v3_minimum,v3_maximum) of set.
+{- | (v3_minimum,v3_maximum) of set.
+
+>>> v3_bounds [(3, 2, 1), (1, 2, 3)]
+((1,2,1),(3,2,3))
+-}
 v3_bounds :: Ord t => [V3 t] -> V2 (V3 t)
 v3_bounds c = let r = unzip3 c in (v3_map minimum r, v3_map maximum r)
 

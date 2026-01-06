@@ -4,7 +4,7 @@ module Music.Theory.Geometry.Bivector where
 import Music.Theory.Geometry.Matrix {- hmt-base -}
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
-import Music.Theory.Math (sqr {- hmt-base -})
+import qualified Music.Theory.Math as Math {- hmt-base -}
 
 -- * 2-Bivector (Bv2)
 
@@ -85,7 +85,7 @@ rt3_reverse (a, b01, b02, b12) = (a, -b01, -b02, -b12)
 -- | Length Squared
 rt3_length_sq :: Num n => Rt3 n -> n
 rt3_length_sq (a, b01, b02, b12) =
-  sqr a + sqr b01 + sqr b02 + sqr b12
+  Math.sqr a + Math.sqr b01 + Math.sqr b02 + Math.sqr b12
 
 -- | Length
 rt3_length :: Floating n => Rt3 n -> n
