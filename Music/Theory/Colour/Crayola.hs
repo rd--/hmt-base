@@ -7,6 +7,9 @@ import qualified Data.Colour.SRGB as Srgb {- colour -}
 
 >>> length crayola_colour_table
 165
+
+> import Music.Theory.Colour
+> map (\(a, b) -> (a, hex_colour_parse b)) crayola_colour_table
 -}
 crayola_colour_table :: [(String, String)]
 crayola_colour_table =
