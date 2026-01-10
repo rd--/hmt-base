@@ -59,11 +59,18 @@ ncs_c (_,c,_) = c
 ncs_phi :: Ncs -> Hue
 ncs_phi (_,_,phi) = phi
 
--- | Whiteness (0 -- 100)
+{- | Whiteness (0 -- 100)
+
+>>> ncs_w (ncs_parse "1560-Y80R")
+25
+-}
 ncs_w :: Ncs -> I
 ncs_w (s,c,_) = 100 - c - s
 
 {- | Saturation (0 -- 1)
+
+>>> ncs_m (ncs_parse "1560-Y80R")
+0.7058823529411765
 
 >>> ncs_m (ncs_parse "2030-Y90R")
 0.375
