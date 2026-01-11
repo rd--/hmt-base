@@ -1,3 +1,4 @@
+-- | Concurrency (threads)
 module Music.Theory.Concurrent where
 
 import Control.Concurrent {- base -}
