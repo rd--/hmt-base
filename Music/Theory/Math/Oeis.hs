@@ -1567,6 +1567,30 @@ a058265 = map (fromIntegral . Char.digitToInt) "18392867552141611325518525646532
 a058265_k :: Floating n => n
 a058265_k = (1 / 3) * (1 + (19 + 3 * sqrt 33) ** (1 / 3) + (19 - 3 * sqrt 33) ** (1 / 3))
 
+{- | <https://oeis.org/A058840>
+
+From Renyi's "beta expansion of 1 in base 3/2": sequence gives y(0), y(1), ...
+
+>>> [1,1,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0] `isPrefixOf` a058840
+-}
+a058840 :: [Integer]
+a058840 =
+  let f x =
+        let q = (3 % 2) * x
+            (r, y) = if q > 1 then (q - 1, 1) else (q, 0)
+        in y : f r
+  in 1 : f 1
+
+
+{- | <https://oeis.org/A058841>
+
+From Renyi's "beta expansion of 1 in base 3/2": sequence gives lengths of runs of 0's in A058840.
+
+>>> [0,1,5,2,2,1,9,6,4,6,2,2,1,11,3,2,7,2,5,4,6,3,3,5,2,4,7,7,2,5,3,4,2,3,5,5,2,2,2,2,4,3,10,5,5,2,1,6,1,5,2,3,2,3,3,2,9,6,9,6,8,2,7,5,3,2,2,4,3,1,14,9,3,6,7,3,2,2,3,4,3,2,6,4,2] `isPrefixOf` a058841
+-}
+a058841 :: [Int]
+a058841 = 0 : (map length (filter ((== 0) . head) (List.group a058840)))
+
 {- | <http://oeis.org/A060588>
 
 If the final two digits of n written in base 3 are the same then this digit, otherwise mod 3-sum of these two digits.
