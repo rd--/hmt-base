@@ -91,8 +91,9 @@ bezier4 p t = v4_foldl (+) (v4_mul p (bezier4_bases t))
 
 bezier4_v2 :: Num n => V4 (V2 n) -> n -> V2 n
 bezier4_v2 ((x1, y1), (x2, y2), (x3, y3), (x4, y4)) mu =
-  (bezier4 (x1, x2, x3, x4) mu
-  ,bezier4 (y1, y2, y3, y4) mu)
+  ( bezier4 (x1, x2, x3, x4) mu
+  , bezier4 (y1, y2, y3, y4) mu
+  )
 
 bezier4_v3 :: Num n => V4 (V3 n) -> n -> V3 n
 bezier4_v3 ((x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)) mu =

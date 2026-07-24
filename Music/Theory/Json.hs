@@ -150,7 +150,7 @@ associations v =
 [("x",[1,2]),("y",[3,4])]
 -}
 value_to_assoc_list :: (Value -> t) -> Value -> [(String, t)]
-value_to_assoc_list f = map (\(i, j) -> (i, f j)) .associations
+value_to_assoc_list f = map (\(i, j) -> (i, f j)) . associations
 
 {- | Require value be a number and read as Double.
 

@@ -85,7 +85,7 @@ int_to_r = fromIntegral
 n_triples :: Int -> (Int, Int)
 n_triples k =
   let b = ceiling (int_to_r k ** (1 / 3))
-      n = b ^ (3::Int)
+      n = b ^ (3 :: Int)
   in (b, n)
 
 n_triples_r :: Int -> (R, R)
@@ -168,11 +168,12 @@ farthest_first_traversal f g l =
   let step lhs rhs =
         case rhs of
           [] -> []
-          _ -> let (e, rhs') = most_distant_item f g lhs rhs
-               in e : step (e : lhs) rhs'
+          _ ->
+            let (e, rhs') = most_distant_item f g lhs rhs
+            in e : step (e : lhs) rhs'
   in case l of
-       e : l' -> e : step [e] l'
-       _ -> error "farthest_first_traversal"
+      e : l' -> e : step [e] l'
+      _ -> error "farthest_first_traversal"
 
 {- | Distance sort
 

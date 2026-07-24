@@ -49,15 +49,15 @@ type Ncs = (I, I, Hue)
 
 -- | Blackness (0 -- 100)
 ncs_s :: Ncs -> I
-ncs_s (s,_,_) = s
+ncs_s (s, _, _) = s
 
 -- | Chromaticness (0 -- 100)
 ncs_c :: Ncs -> I
-ncs_c (_,c,_) = c
+ncs_c (_, c, _) = c
 
 -- | Hue
 ncs_phi :: Ncs -> Hue
-ncs_phi (_,_,phi) = phi
+ncs_phi (_, _, phi) = phi
 
 {- | Whiteness (0 -- 100)
 
@@ -65,7 +65,7 @@ ncs_phi (_,_,phi) = phi
 25
 -}
 ncs_w :: Ncs -> I
-ncs_w (s,c,_) = 100 - c - s
+ncs_w (s, c, _) = 100 - c - s
 
 {- | Saturation (0 -- 1)
 
@@ -76,14 +76,14 @@ ncs_w (s,c,_) = 100 - c - s
 0.375
 -}
 ncs_m :: Ncs -> R
-ncs_m (s,c,_) = i_to_r c / (100 - i_to_r s)
+ncs_m (s, c, _) = i_to_r c / (100 - i_to_r s)
 
 -- | Lightness (0 -- 1)
 ncs_v :: Ncs -> R
-ncs_v (s,c,_) =
+ncs_v (s, c, _) =
   if c == 0
-  then (100 - i_to_r s) / 100
-  else undefined
+    then (100 - i_to_r s) / 100
+    else undefined
 
 i_to_r :: I -> R
 i_to_r = fromIntegral
@@ -105,9 +105,9 @@ ncs_parse :: String -> Ncs
 ncs_parse text =
   case text of
     'S' : text' -> ncs_parse text'
-    _ -> case Data.List.Split.splitPlaces [2::Int,2,1,1,2,1] text of
-           [s,c,"-",[a],h,[b]] -> (read s, read c, (a, read h, b))
-           _ -> error "ncs_parse"
+    _ -> case Data.List.Split.splitPlaces [2 :: Int, 2, 1, 1, 2, 1] text of
+      [s, c, "-", [a], h, [b]] -> (read s, read c, (a, read h, b))
+      _ -> error "ncs_parse"
 
 -- | Ncs to Hsv
 ncs_to_hsv :: Ncs -> Colour.Hsv I

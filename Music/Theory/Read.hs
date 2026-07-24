@@ -172,7 +172,7 @@ read_fractional_allow_trailing_point_err = read_err . delete_trailing_point
 read_fractional_allow_elided_zero_err :: (Read n, Fractional n) => String -> n
 read_fractional_allow_elided_zero_err =
   read_fractional_allow_leading_point
-  . delete_trailing_point
+    . delete_trailing_point
 
 -- * Plain type specialisations
 

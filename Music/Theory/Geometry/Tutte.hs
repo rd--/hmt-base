@@ -95,10 +95,12 @@ tutte_json :: FilePath -> V_Loc -> [[Int]] -> IO ()
 tutte_json fn v f = do
   let n = Json.double . Math.round_to 0.0001
       v' = map Json.int [1 .. length v]
-      c = map (\(_,(x,y)) -> Json.array [n x, n y]) v
+      c = map (\(_, (x, y)) -> Json.array [n x, n y]) v
       f' = map (\l -> Json.array (map Json.int l)) f
-      o = Json.object
-        [("vertexList", Json.array v')
-        ,("vertexCoordinates", Json.array c)
-        ,("faceList", Json.array f')]
+      o =
+        Json.object
+          [ ("vertexList", Json.array v')
+          , ("vertexCoordinates", Json.array c)
+          , ("faceList", Json.array f')
+          ]
   Json.writeFile fn o

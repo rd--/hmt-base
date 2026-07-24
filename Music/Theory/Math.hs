@@ -67,6 +67,7 @@ mod5 n = n `mod` 5
 >>> map mod7 [-1,0,1,6,7,8]
 [6,0,1,6,0,1]
 -}
+
 -- | 'mod' 7.
 mod7 :: Integral i => i -> i
 mod7 n = n `mod` 7

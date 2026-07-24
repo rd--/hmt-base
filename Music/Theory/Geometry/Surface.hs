@@ -1,8 +1,9 @@
 -- | Surface functions, V2->V3
 module Music.Theory.Geometry.Surface where
 
-import Music.Theory.Math (sech) {- hmt-base -}
-import Music.Theory.Geometry.Vector (V2, V3) {- hmt-base -}
+{- hmt-base -}
+import Music.Theory.Geometry.Vector (V2, V3 {- hmt-base -})
+import Music.Theory.Math (sech)
 
 -- | Quieten compiler
 (^.) :: Num t => t -> Int -> t
@@ -214,7 +215,7 @@ pseudosphere_A (u, v) = (sech u * cos v, sech u * sin v, u - tanh u)
 -}
 plueckersConoid :: Floating t => t -> Surface t
 plueckersConoid n (u, v) =
-  let x = v * cos(u)
-      y = v * sin(u)
-      z = sin(n * u)
+  let x = v * cos (u)
+      y = v * sin (u)
+      z = sin (n * u)
   in (x, y, z)

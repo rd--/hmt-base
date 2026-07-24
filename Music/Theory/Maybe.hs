@@ -1,11 +1,11 @@
 -- | Extensions to "Data.Maybe".
 module Music.Theory.Maybe where
 
-import Data.Maybe {- base -}
+import qualified Data.Maybe {- base -}
 
 -- | Variant with error text.
 from_just :: String -> Maybe a -> a
-from_just err = fromMaybe (error err)
+from_just err = Data.Maybe.fromMaybe (error err)
 
 -- | Apply /f/ to Just x, else return ().
 when_just :: Monad m => (a -> m ()) -> Maybe a -> m ()

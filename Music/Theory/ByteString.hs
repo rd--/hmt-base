@@ -18,10 +18,11 @@ import qualified Data.ByteString.Lazy as ByteString.Lazy {- bytestring -}
 -}
 bs_split_places :: [Int] -> ByteString.ByteString -> [ByteString.ByteString]
 bs_split_places i b =
-    case i of
-      [] -> []
-      x:xs -> let (l,r) = ByteString.splitAt (fromIntegral x) b
-              in l : bs_split_places xs r
+  case i of
+    [] -> []
+    x : xs ->
+      let (l, r) = ByteString.splitAt (fromIntegral x) b
+      in l : bs_split_places xs r
 
 {- | ByteString to Ascii string.
 
@@ -58,10 +59,11 @@ lbs_section l r = ByteString.Lazy.take (r - l + 1) . ByteString.Lazy.drop l
 -- | ByteString variant of Data.List.Split.splitPlaces
 lbs_split_places :: [Int] -> ByteString.Lazy.ByteString -> [ByteString.Lazy.ByteString]
 lbs_split_places i b =
-    case i of
-      [] -> []
-      x:xs -> let (l,r) = ByteString.Lazy.splitAt (fromIntegral x) b
-              in l : lbs_split_places xs r
+  case i of
+    [] -> []
+    x : xs ->
+      let (l, r) = ByteString.Lazy.splitAt (fromIntegral x) b
+      in l : lbs_split_places xs r
 
 {- | Lazy ByteString to Ascii string.
 

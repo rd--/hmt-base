@@ -148,5 +148,5 @@ spacePrefixed k = isPrefixOf (replicate k ' ')
 -}
 stringTrim :: String -> String
 stringTrim =
-    let f = dropWhile Data.Char.isSpace
-    in f . reverse . f . reverse
+  let f = dropWhile Data.Char.isSpace
+  in f . reverse . f . reverse

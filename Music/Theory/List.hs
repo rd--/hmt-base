@@ -1,11 +1,11 @@
 -- | List functions.
 module Music.Theory.List where
 
-import Data.Bifunctor {- base -}
-import Data.Function {- base -}
+import qualified Data.Bifunctor {- base -}
+import qualified Data.Function {- base -}
 import Data.List {- base -}
-import Data.Maybe {- base -}
-import Data.Ord {- base -}
+import qualified Data.Maybe {- base -}
+import qualified Data.Ord {- base -}
 
 import qualified Safe {- safe -}
 
@@ -15,6 +15,7 @@ import qualified Data.List.Split as Split {- split -}
 import qualified Data.Tree as Tree {- containers -}
 
 import qualified Music.Theory.Either as Either {- hmt-base -}
+import qualified Music.Theory.Maybe as Maybe {- hmt-base -}
 
 -- * Ghc
 
@@ -136,7 +137,7 @@ unbracket x =
 
 -- | Erroring variant.
 unbracket_err :: [t] -> (t, [t], t)
-unbracket_err = fromMaybe (error "unbracket") . unbracket
+unbracket_err = Maybe.from_just "unbracket" . unbracket
 
 -- * Split
 
@@ -210,7 +211,7 @@ split_on_1 e l =
 
 -- | Erroring variant.
 split_on_1_err :: Eq t => [t] -> [t] -> ([t], [t])
-split_on_1_err e = fromMaybe (error "split_on_1") . split_on_1 e
+split_on_1_err e = Maybe.from_just "split_on_1" . split_on_1 e
 
 {- | Split function that splits only once, ie. a variant of 'break'.
 
@@ -225,7 +226,7 @@ split1 c l =
 
 -- | Erroring variant.
 split1_err :: (Eq a, Show a) => a -> [a] -> ([a], [a])
-split1_err e s = fromMaybe (error (show ("split1", e, s))) (split1 e s)
+split1_err e s = Maybe.from_just (show ("split1", e, s)) (split1 e s)
 
 {- | If length is not even the second "half" is longer.
 
@@ -331,7 +332,7 @@ rotate_starting_from x l =
 -- | Erroring variant.
 rotate_starting_from_err :: Eq a => a -> [a] -> [a]
 rotate_starting_from_err x =
-  fromMaybe (error "rotate_starting_from: non-element")
+  Maybe.from_just "rotate_starting_from: non-element"
     . rotate_starting_from x
 
 {- | Sequence of /n/ adjacent elements, moving forward by /k/ places.
@@ -611,7 +612,7 @@ histogram_fill :: (Ord a, Enum a) => [(a, Int)] -> [(a, Int)]
 histogram_fill h =
   let k = map fst h
       e = [minimum k .. maximum k]
-      f x = fromMaybe 0 (lookup x h)
+      f x = Data.Maybe.fromMaybe 0 (lookup x h)
   in zip e (map f e)
 
 {- | Given two histograms p & q (sorted by key) make composite
@@ -766,7 +767,7 @@ strip_prefix lhs rhs =
 
 -- | 'error' of 'stripPrefix'
 strip_prefix_err :: Eq t => [t] -> [t] -> [t]
-strip_prefix_err pfx = fromMaybe (error "strip_prefix") . strip_prefix pfx
+strip_prefix_err pfx = Maybe.from_just "strip_prefix" . strip_prefix pfx
 
 -- * Association lists
 
@@ -776,7 +777,7 @@ strip_prefix_err pfx = fromMaybe (error "strip_prefix") . strip_prefix pfx
 [[(0,'a')],[(1,'b'),(2,'b')],[(3,'c')]]
 -}
 group_by_on :: (x -> x -> Bool) -> (t -> x) -> [t] -> [[t]]
-group_by_on eq f = groupBy (eq `on` f)
+group_by_on eq f = groupBy (eq `Data.Function.on` f)
 
 {- | 'group_by_on' of '=='.
 
@@ -808,7 +809,7 @@ collate_adjacent = collate_on_adjacent fst snd
 
 -- | Data.List.sortOn, which however hugs doesn't know of.
 sort_on :: Ord b => (a -> b) -> [a] -> [a]
-sort_on f = map snd . sortBy (comparing fst) . map (\x -> let y = f x in y `seq` (y, x))
+sort_on f = map snd . sortBy (Data.Ord.comparing fst) . map (\x -> let y = f x in y `seq` (y, x))
 
 {- | 'sortOn' prior to 'collate_on_adjacent'.
 
@@ -979,11 +980,11 @@ subsequence = isInfixOf
 
 -- | Erroring variant of 'findIndex'.
 findIndex_err :: (a -> Bool) -> [a] -> Int
-findIndex_err f = fromMaybe (error "findIndex?") . findIndex f
+findIndex_err f = Maybe.from_just "findIndex" . findIndex f
 
 -- | Erroring variant of 'elemIndex'.
 elemIndex_err :: Eq a => a -> [a] -> Int
-elemIndex_err x = fromMaybe (error "ix_of") . elemIndex x
+elemIndex_err x = Maybe.from_just "elemIndex" . elemIndex x
 
 {- | Variant of 'elemIndices' that requires /e/ to be unique in /p/.
 
@@ -997,15 +998,15 @@ elem_index_unique e p =
 
 -- | Lookup that errors and prints message and key.
 lookup_err_msg :: (Eq k, Show k) => String -> k -> [(k, v)] -> v
-lookup_err_msg err k = fromMaybe (error (err ++ ": " ++ show k)) . lookup k
+lookup_err_msg err k = Maybe.from_just (err ++ ": " ++ show k) . lookup k
 
 -- | Error variant.
 lookup_err :: Eq k => k -> [(k, v)] -> v
-lookup_err n = fromMaybe (error "lookup") . lookup n
+lookup_err n = Maybe.from_just "lookup" . lookup n
 
 -- | 'lookup' variant with default value.
 lookup_def :: Eq k => k -> v -> [(k, v)] -> v
-lookup_def k d = fromMaybe d . lookup k
+lookup_def k d = Data.Maybe.fromMaybe d . lookup k
 
 -- | If /l/ is empty 'Nothing', else 'Just' /l/.
 non_empty :: [t] -> Maybe [t]
@@ -1021,7 +1022,7 @@ lookup_set k = non_empty . map snd . filter ((== k) . fst)
 
 -- | Erroring variant.
 lookup_set_err :: Eq k => k -> [(k, v)] -> [v]
-lookup_set_err k = fromMaybe (error "lookup_set?") . lookup_set k
+lookup_set_err k = Maybe.from_just "lookup_set" . lookup_set k
 
 {- | Reverse lookup.
 
@@ -1038,8 +1039,8 @@ reverse_lookup :: Eq v => v -> [(k, v)] -> Maybe k
 reverse_lookup k = fmap fst . find ((== k) . snd)
 
 -- | Reverse (value,key) lookup.
-reverse_lookup' :: Eq k => k -> [(v,k)] -> Maybe v
-reverse_lookup' k = lookup k . map (\(p,q) -> (q,p))
+reverse_lookup' :: Eq k => k -> [(v, k)] -> Maybe v
+reverse_lookup' k = lookup k . map (\(p, q) -> (q, p))
 
 -- | 'drop' from right.
 drop_right :: Int -> [a] -> [a]
@@ -1047,7 +1048,7 @@ drop_right n = reverse . drop n . reverse
 
 -- | Erroring variant.
 reverse_lookup_err :: Eq v => v -> [(k, v)] -> k
-reverse_lookup_err k = fromMaybe (error "reverse_lookup") . reverse_lookup k
+reverse_lookup_err k = Maybe.from_just "reverse_lookup" . reverse_lookup k
 
 {-
 reverse_lookup :: Eq b => b -> [(a,b)] -> Maybe a
@@ -1059,7 +1060,7 @@ reverse_lookup key ls =
 
 -- | Erroring variant of 'find'.
 find_err :: (t -> Bool) -> [t] -> t
-find_err f = fromMaybe (error "find") . find f
+find_err f = Maybe.from_just "find" . find f
 
 {- | Basis of 'find_bounds_scl', indicates if /x/ is to the left or right of the list, and if to the right whether equal or not.
 'Right' values will be correct if the list is not ascending, however 'Left' values only make sense for ascending ranges.
@@ -1183,7 +1184,7 @@ drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 trimWhile :: (a -> Bool) -> [a] -> [a]
 trimWhile f = reverse . dropWhile f . reverse . dropWhile f
 
-{- | 'take' from right.
+{- | 'take' from right, ie. take last `n`.
 
 >>> take_right 3 "taking"
 "ing"
@@ -1207,7 +1208,15 @@ takeWhileRight p = reverse . takeWhile p . reverse
 take_while_right :: (a -> Bool) -> [a] -> [a]
 take_while_right p =
   snd
-    . foldr (\x xys -> (if p x && fst xys then bimap id (x :) else bimap (const False) id) xys) (True, [])
+    . foldr
+      ( \x xys ->
+          ( if p x && fst xys
+              then Data.Bifunctor.bimap id (x :)
+              else Data.Bifunctor.bimap (const False) id
+          )
+            xys
+      )
+      (True, [])
 
 {- | Variant of 'take' that allows 'Nothing' to indicate the complete list.
 
@@ -1278,7 +1287,7 @@ separate_last' x =
 True
 -}
 separate_last :: [a] -> ([a], a)
-separate_last = fmap (fromMaybe (error "separate_last")) . separate_last'
+separate_last = fmap (Maybe.from_just "separate_last") . separate_last'
 
 {- | Replace directly repeated elements with 'Nothing'.
 
@@ -1378,7 +1387,7 @@ group_ranges =
 [[Just 1],[Nothing,Nothing],[Just 4,Just 5]]
 -}
 group_just :: [Maybe a] -> [[Maybe a]]
-group_just = group_on isJust
+group_just = group_on Data.Maybe.isJust
 
 {- | Predicate to determine if all elements of the list are '=='.
 
@@ -1402,7 +1411,7 @@ all_eq = (== 1) . length . nub
 [('A','x'),('C','y')]
 -}
 nub_on :: Eq b => (a -> b) -> [a] -> [a]
-nub_on f = nubBy ((==) `on` f)
+nub_on f = nubBy ((==) `Data.Function.on` f)
 
 {- | 'group_on' of 'sortOn'.
 
@@ -1445,7 +1454,7 @@ two_stage_compare f g p q =
 
 -- | 'compare' 'on' of 'two_stage_compare'
 two_stage_compare_on :: (Ord i, Ord j) => (t -> i) -> (t -> j) -> t -> t -> Ordering
-two_stage_compare_on f g = two_stage_compare (compare `on` f) (compare `on` g)
+two_stage_compare_on f g = two_stage_compare (compare `Data.Function.on` f) (compare `Data.Function.on` g)
 
 {- | Sequence of comparison functions, continue comparing until not EQ.
 
@@ -1465,7 +1474,7 @@ n_stage_compare l p q =
 
 -- | 'compare' 'on' of 'two_stage_compare'
 n_stage_compare_on :: Ord i => [t -> i] -> t -> t -> Ordering
-n_stage_compare_on l = n_stage_compare (map (compare `on`) l)
+n_stage_compare_on l = n_stage_compare (map (compare `Data.Function.on`) l)
 
 {- | Sort sequence /a/ based on ordering of sequence /b/.
 
@@ -1512,11 +1521,11 @@ merge_by = List.Ordered.mergeBy
 
 -- | 'merge_by' 'compare' 'on'.
 merge_on :: Ord x => (a -> x) -> [a] -> [a] -> [a]
-merge_on f = merge_by (compare `on` f)
+merge_on f = merge_by (compare `Data.Function.on` f)
 
 -- | 'List.Ordered.mergeBy' of 'two_stage_compare'.
 merge_by_two_stage :: Ord b => (a -> b) -> Compare_F c -> (a -> c) -> [a] -> [a] -> [a]
-merge_by_two_stage f cmp g = List.Ordered.mergeBy (two_stage_compare (compare `on` f) (cmp `on` g))
+merge_by_two_stage f cmp g = List.Ordered.mergeBy (two_stage_compare (compare `Data.Function.on` f) (cmp `Data.Function.on` g))
 
 -- | Alias for 'List.Ordered.merge'
 merge :: Ord a => [a] -> [a] -> [a]
@@ -1588,7 +1597,7 @@ find_adj f xs =
 True
 -}
 is_ascending :: Ord a => [a] -> Bool
-is_ascending = isNothing . find_adj (>=)
+is_ascending = Data.Maybe.isNothing . find_adj (>=)
 
 {- | 'find_adj' of '>'
 
@@ -1596,7 +1605,7 @@ is_ascending = isNothing . find_adj (>=)
 ["A","AA","AB","ABB","ABC"]
 -}
 is_non_descending :: Ord a => [a] -> Bool
-is_non_descending = isNothing . find_adj (>)
+is_non_descending = Data.Maybe.isNothing . find_adj (>)
 
 {- | Variant of `elem` that operates on a sorted list, halting.
 This is 'List.Ordered.member'.
@@ -1633,7 +1642,7 @@ elemIndex_ordered e =
 
 -- | 'zipWith' variant equivalent to 'mapMaybe' (ie. 'catMaybes' of 'zipWith')
 zip_with_maybe :: (a -> b -> Maybe c) -> [a] -> [b] -> [c]
-zip_with_maybe f lhs = catMaybes . zipWith f lhs
+zip_with_maybe f lhs = Data.Maybe.catMaybes . zipWith f lhs
 
 -- | 'zipWith' variant that extends shorter side using given value.
 zip_with_ext :: t -> u -> (t -> u -> v) -> [t] -> [u] -> [v]
@@ -1854,7 +1863,7 @@ unlist1 l =
 
 -- | Erroring variant.
 unlist1_err :: [t] -> t
-unlist1_err = fromMaybe (error "unlist1") . unlist1
+unlist1_err = Maybe.from_just "unlist1" . unlist1
 
 -- * Tree
 
@@ -1929,7 +1938,7 @@ operate_ixs :: Bool -> [Int] -> [a] -> [a]
 operate_ixs mode k =
   let sel = if mode then notElem else elem
       f (n, e) = if n `sel` k then Nothing else Just e
-  in mapMaybe f . zip [0 ..]
+  in Data.Maybe.mapMaybe f . zip [0 ..]
 
 {- | Select elements at set of indices.
 
@@ -2013,7 +2022,7 @@ at_cyclic l n =
   let m = IntMap.fromList (zip [0 ..] l)
       k = IntMap.size m
       n' = n `mod` k
-  in fromMaybe (error "cyc_at") (IntMap.lookup n' m)
+  in Maybe.from_just "at_cyclic" (IntMap.lookup n' m)
 
 {- | Index list from the end, assuming the list is longer than n + 1.
 

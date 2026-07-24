@@ -729,16 +729,6 @@ True
 a003269 :: Num n => [n]
 a003269 = 0 : 1 : 1 : 1 : zipWith (+) a003269 (drop 3 a003269)
 
-{- | <http://oeis.org/A003520>
-
-a(n) = a(n-1) + a(n-5); a(0) = ... = a(4) = 1.
-
->>> [1,1,1,1,1,2,3,4,5,6,8,11,15,20,26,34,45,60,80,106,140,185,245,325,431] `List.isPrefixOf` a003520
-True
--}
-a003520 :: Num n => [n]
-a003520 = 1 : 1 : 1 : 1 : 1 : zipWith (+) a003520 (drop 4 a003520)
-
 {- | <http://oeis.org/A003462>
 
 a(n) = (3^n - 1)/2. (Formerly M3463)
@@ -751,6 +741,16 @@ a003462 = iterate ((+ 1) . (* 3)) 0
 
 a003462_n :: Integer -> Integer
 a003462_n = (`div` 2) . (subtract 1) . (3 ^)
+
+{- | <http://oeis.org/A003520>
+
+a(n) = a(n-1) + a(n-5); a(0) = ... = a(4) = 1.
+
+>>> [1,1,1,1,1,2,3,4,5,6,8,11,15,20,26,34,45,60,80,106,140,185,245,325,431] `List.isPrefixOf` a003520
+True
+-}
+a003520 :: Num n => [n]
+a003520 = 1 : 1 : 1 : 1 : 1 : zipWith (+) a003520 (drop 4 a003520)
 
 {- | <http://oeis.org/A003586>
 
@@ -852,6 +852,21 @@ a005185 =
       zadd = zipWith (+)
       zsub = zipWith (-)
   in 1 : 1 : zadd (map ix (zsub [3 ..] a005185)) (map ix (zsub [3 ..] (List.tail_err a005185)))
+
+{- | <https://oeis.org/A005229>
+
+a(1) = a(2) = 1; for n > 2, a(n) = a(a(n-2)) + a(n - a(n-2)).
+(Formerly M0441)		39
+
+>>> [1, 1, 2, 3, 3, 4, 5, 6, 6, 7, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 15, 16, 16, 17, 17, 18, 19, 19, 20, 20, 21, 22, 23, 24, 24, 25, 26, 26, 27, 28, 29, 29, 30, 30, 30, 31, 32, 33, 34, 35, 36, 36, 37, 37, 38, 39, 39, 40, 41, 42, 43, 43, 44, 45, 45, 45, 46] `List.isPrefixOf` a005229
+True
+
+> plot_p1_pt [take 1000 a005229]
+-}
+a005229 :: [Int]
+a005229 =
+  let f = ((+) `Function.on` (\n -> a005229 !! (n - 1)))
+  in 1 : 1 : zipWith f a005229 (zipWith (-) [3 ..] a005229)
 
 {- | <https://oeis.org/A005448>
 
@@ -1082,6 +1097,24 @@ a010049 =
       c _ _ = error "A010049"
   in uncurry c (splitAt 1 a000045)
 
+{- | <https://oeis.org/A010051>
+
+Characteristic function of primes: 1 if n is prime, else 0.
+
+>>> [0,1,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1] `List.isPrefixOf` a010051
+True
+-}
+a010051_n :: Integer -> Integer
+a010051_n n = a010051 `List.genericIndex` (n - 1)
+
+a010051 :: [Integer]
+a010051 =
+  let ch z =
+        case z of
+          (i, ps'@(p : ps)) -> Just (if i == p then 1 else 0, (i + 1, if i == p then ps else ps'))
+          _ -> error "a010051"
+  in List.unfoldr ch (1, a000040)
+
 {- | <https://oeis.org/A010060>
 
 Thue-Morse sequence: let A_k denote the first 2^k terms; then A_0 = 0 and for k >= 0, A_{k+1} = A_k B_k, where B_k is obtained from A_k by interchanging 0's and 1's.
@@ -1287,6 +1320,16 @@ a029635_tbl =
   let f r = zipWith (+) (0 : r) (r ++ [0])
   in [2] : iterate f [1, 2]
 
+{- | <http://oeis.org/A033307>
+
+Decimal expansion of Champernowne constant (or Mahler's number), formed by concatenating the positive integers.
+
+>>> [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9] `List.isPrefixOf` a033307
+True
+-}
+a033307 :: [Int]
+a033307 = concatMap (map (read . return) . show) [1 ..]
+
 {- | <http://oeis.org/A030308>
 
 Triangle T(n,k): Write n in base 2, reverse order of digits, to get the n-th row
@@ -1318,16 +1361,6 @@ a033622_n n =
   if even n
     then 9 * 2 ^ n - 9 * 2 ^ (n `div` 2) + 1
     else 8 * 2 ^ n - 6 * 2 ^ ((n + 1) `div` 2) + 1
-
-{- | <http://oeis.org/A033307>
-
-Decimal expansion of Champernowne constant (or Mahler's number), formed by concatenating the positive integers.
-
->>> [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9] `List.isPrefixOf` a033307
-True
--}
-a033307 :: [Int]
-a033307 = concatMap (map (read . return) . show) [1 ..]
 
 {- | <http://oeis.org/A033812>
 
@@ -1370,18 +1403,19 @@ True
 -}
 a038219 :: [Integer]
 a038219 =
- let f us =
+  let f us =
         let vs = Maybe.fromJust (List.find (`List.isInfixOf` (List.init us)) (List.tails us))
-            a = let b e =
-                      case e of
-                        [] -> error "impossible"
-                        ((xs, ys):xyss) ->
-                          if vs `List.isSuffixOf` xs
+            a =
+              let b e =
+                    case e of
+                      [] -> error "impossible"
+                      ((xs, ys) : xyss) ->
+                        if vs `List.isSuffixOf` xs
                           then 1 - List.head ys
                           else b xyss
-                in b (List.reverse (List.map (`List.splitAt` us) [0 .. List.length us - 1]))
+              in b (List.reverse (List.map (`List.splitAt` us) [0 .. List.length us - 1]))
         in a : f (us ++ [a])
- in 0 : f [0]
+  in 0 : f [0]
 
 {- | <http://oeis.org/A046042>
 
@@ -1475,21 +1509,6 @@ True
 a051037 :: Integral n => [n]
 a051037 = map (`div` 30) a143207
 
-{- | <https://oeis.org/A005229>
-
-a(1) = a(2) = 1; for n > 2, a(n) = a(a(n-2)) + a(n - a(n-2)).
-(Formerly M0441)		39
-
->>> [1, 1, 2, 3, 3, 4, 5, 6, 6, 7, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 15, 16, 16, 17, 17, 18, 19, 19, 20, 20, 21, 22, 23, 24, 24, 25, 26, 26, 27, 28, 29, 29, 30, 30, 30, 31, 32, 33, 34, 35, 36, 36, 37, 37, 38, 39, 39, 40, 41, 42, 43, 43, 44, 45, 45, 45, 46] `List.isPrefixOf` a005229
-True
-
-> plot_p1_pt [take 1000 a005229]
--}
-a005229 :: [Int]
-a005229 =
-  let f = ((+) `Function.on` (\n -> a005229 !! (n - 1)))
-  in 1 : 1 : zipWith f a005229 (zipWith (-) [3 ..] a005229)
-
 {- | <http://oeis.org/A053121>
 
 Catalan triangle (with 0's) read by rows.
@@ -1580,7 +1599,6 @@ a058840 =
             (r, y) = if q > 1 then (q - 1, 1) else (q, 0)
         in y : f r
   in 1 : f 1
-
 
 {- | <https://oeis.org/A058841>
 
@@ -1796,24 +1814,6 @@ a098550 =
                 else g xs
         in g ws
   in 1 : 2 : 3 : f 2 3 [4 ..]
-
-{- | <https://oeis.org/A010051>
-
-Characteristic function of primes: 1 if n is prime, else 0.
-
->>> [0,1,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1] `List.isPrefixOf` a010051
-True
--}
-a010051_n :: Integer -> Integer
-a010051_n n = a010051 `List.genericIndex` (n - 1)
-
-a010051 :: [Integer]
-a010051 =
-  let ch z =
-        case z of
-          (i, ps'@(p : ps)) -> Just (if i == p then 1 else 0, (i + 1, if i == p then ps else ps'))
-          _ -> error "a010051"
-  in List.unfoldr ch (1, a000040)
 
 {- | <http://oeis.org/A105809>
 
@@ -2196,6 +2196,30 @@ True
 a164555 :: Integral t => [t]
 a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
 
+{- | <https://oeis.org/A181391>
+
+Van Eck's sequence: For n >= 1, if there exists an m < n such that a(m) = a(n), take the largest such m and set a(n+1) = n-m; otherwise a(n+1) = 0. Start with a(1)=0.
+
+>>> [0, 0, 1, 0, 2, 0, 2, 2, 1, 6, 0, 5, 0, 2, 6, 5, 4, 0, 5, 3, 0, 3, 2, 9, 0, 4, 9, 3, 6, 14, 0, 6, 3, 5, 15, 0, 5, 3, 5, 2, 17, 0, 6, 11, 0, 3, 8, 0, 3, 3, 1, 42, 0, 5, 15, 20, 0, 4, 32, 0, 3, 11, 18, 0, 4, 7, 0, 3, 7, 3, 2, 31, 0, 6, 31, 3, 6, 3, 2, 8, 33, 0, 9, 56, 0, 3, 8, 7, 19, 0, 5, 37, 0, 3, 8, 8, 1] `List.isPrefixOf` a181391
+True
+-}
+a181391 :: [Int]
+a181391 =
+  let g xs =
+        let m = 1 + Maybe.fromMaybe (-1) (List.findIndex (== head xs) $ tail xs)
+        in Just (m, m : xs)
+  in 0 : (List.unfoldr g [0])
+
+{- | <https://oeis.org/A212804>
+
+Expansion of (1 - x)/(1 - x - x^2).
+
+>>> [1,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `List.isPrefixOf` a212804
+True
+-}
+a212804 :: Integral n => [n]
+a212804 = 1 : a000045
+
 {- | <https://oeis.org/A229037>
 
 The "forest fire": sequence of positive integers where each is chosen to be as small as possible subject to the condition that no three terms a(j), a(j+k), a(j+2k) (for any j and k) form an arithmetic progression.
@@ -2231,30 +2255,6 @@ a242179 = concat a242179_tbl
 
 a242179_tbl :: Integral t => [[t]]
 a242179_tbl = iterate (concatMap (\x -> [-x, x])) [1]
-
-{- | <https://oeis.org/A181391>
-
-Van Eck's sequence: For n >= 1, if there exists an m < n such that a(m) = a(n), take the largest such m and set a(n+1) = n-m; otherwise a(n+1) = 0. Start with a(1)=0.
-
->>> [0, 0, 1, 0, 2, 0, 2, 2, 1, 6, 0, 5, 0, 2, 6, 5, 4, 0, 5, 3, 0, 3, 2, 9, 0, 4, 9, 3, 6, 14, 0, 6, 3, 5, 15, 0, 5, 3, 5, 2, 17, 0, 6, 11, 0, 3, 8, 0, 3, 3, 1, 42, 0, 5, 15, 20, 0, 4, 32, 0, 3, 11, 18, 0, 4, 7, 0, 3, 7, 3, 2, 31, 0, 6, 31, 3, 6, 3, 2, 8, 33, 0, 9, 56, 0, 3, 8, 7, 19, 0, 5, 37, 0, 3, 8, 8, 1] `List.isPrefixOf` a181391
-True
--}
-a181391 :: [Int]
-a181391 =
-  let g xs =
-        let m = 1 + Maybe.fromMaybe (-1) (List.findIndex (== head xs) $ tail xs)
-        in Just (m, m : xs)
-  in 0 : (List.unfoldr g [0])
-
-{- | <https://oeis.org/A212804>
-
-Expansion of (1 - x)/(1 - x - x^2).
-
->>> [1,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `List.isPrefixOf` a212804
-True
--}
-a212804 :: Integral n => [n]
-a212804 = 1 : a000045
 
 {- | <https://oeis.org/A245553>
 
