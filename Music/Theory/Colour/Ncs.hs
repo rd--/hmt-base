@@ -90,7 +90,8 @@ i_to_r = fromIntegral
 
 {- | Parse Ncs string
 
->>> ncs_to_rgb8 (ncs_parse "S0580-Y10R")
+>>> ncs_parse "S0580-Y10R"
+(5,80,('Y',10,'R'))
 
 >>> ncs_parse "S2030-Y90R"
 (20,30,('Y',90,'R'))
@@ -109,7 +110,7 @@ ncs_parse text =
       [s, c, "-", [a], h, [b]] -> (read s, read c, (a, read h, b))
       _ -> error "ncs_parse"
 
--- | Ncs to Hsv
+-- | Ncs to Hsv (not implemented)
 ncs_to_hsv :: Ncs -> Colour.Hsv I
 ncs_to_hsv = undefined
 

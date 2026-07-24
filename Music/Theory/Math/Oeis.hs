@@ -1,19 +1,20 @@
 -- | The On-Line Encyclopedia of Integer Sequences, <http://oeis.org/>
 module Music.Theory.Math.Oeis where
 
-import qualified Data.Bits as Bits {- base -}
-import qualified Data.Char as Char {- base -}
-import qualified Data.Function as Function {- base -}
-import qualified Data.List as List {- base -}
-import qualified Data.Maybe as Maybe {- base -}
+import qualified Data.Bits {- base -}
+import qualified Data.Char {- base -}
+import qualified Data.Function {- base -}
+import qualified Data.List {- base -}
+import qualified Data.Maybe {- base -}
 import Data.Ratio {- base -}
+
+import qualified Safe {- safe -}
 
 import qualified Data.IntMap as IntMap {- containers -}
 import qualified Data.Set as Set {- containers -}
 
 import qualified Data.MemoCombinators as Memo {- data-memocombinators -}
 
-import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
 import qualified Music.Theory.Math.Prime as Prime {- hmt-base -}
 
@@ -22,7 +23,7 @@ import qualified Music.Theory.Math.Prime as Prime {- hmt-base -}
 Kolakoski sequence: a(n) is length of n-th run; a(1) = 1; sequence consists just of 1's and 2's.
 (Formerly M0190 N0070)
 
->>> [1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 2] `List.isPrefixOf` a000002
+>>> [1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 2] `Data.List.isPrefixOf` a000002
 True
 -}
 a000002 :: Integral n => [n]
@@ -32,7 +33,7 @@ a000002 = 1 : 2 : drop 2 ((concat . zipWith replicate a000002 . cycle) [1, 2])
 
 d(n) (also called tau(n) or sigma_0(n)), the number of divisors of n. (Formerly M0246 N0086)
 
->>> [1, 2, 2, 3, 2, 4, 2, 4, 3, 4, 2, 6, 2, 4, 4, 5, 2, 6, 2, 6, 4, 4, 2, 8, 3, 4, 4, 6, 2, 8, 2, 6, 4, 4, 4, 9, 2, 4, 4, 8, 2, 8, 2, 6, 6, 4, 2, 10, 3, 6, 4, 6, 2, 8, 4, 8, 4, 4, 2, 12, 2, 4, 6, 7, 4, 8, 2, 6, 4, 8, 2, 12, 2, 4, 6, 6, 4, 8, 2, 10, 5, 4, 2, 12, 4, 4, 4, 8, 2, 12, 4, 6, 4, 4, 4, 12, 2, 6, 6, 9, 2, 8, 2, 8] `List.isPrefixOf` a000005
+>>> [1, 2, 2, 3, 2, 4, 2, 4, 3, 4, 2, 6, 2, 4, 4, 5, 2, 6, 2, 6, 4, 4, 2, 8, 3, 4, 4, 6, 2, 8, 2, 6, 4, 4, 4, 9, 2, 4, 4, 8, 2, 8, 2, 6, 6, 4, 2, 10, 3, 6, 4, 6, 2, 8, 4, 8, 4, 4, 2, 12, 2, 4, 6, 7, 4, 8, 2, 6, 4, 8, 2, 12, 2, 4, 6, 6, 4, 8, 2, 10, 5, 4, 2, 12, 4, 4, 4, 8, 2, 12, 4, 6, 4, 4, 4, 12, 2, 6, 6, 9, 2, 8, 2, 8] `Data.List.isPrefixOf` a000005
 True
 -}
 a000005 :: Integral n => [n]
@@ -42,14 +43,14 @@ a000005 = map (product . map (+ 1) . a124010_row) [1 ..]
 
 Euler totient function phi(n): count numbers <= n and prime to n.
 
->>> [1,1,2,2,4,2,6,4,6,4,10,4,12,6,8,8,16,6,18,8,12,10,22,8,20,12] `List.isPrefixOf` a000010
+>>> [1,1,2,2,4,2,6,4,6,4,10,4,12,6,8,8,16,6,18,8,12,10,22,8,20,12] `Data.List.isPrefixOf` a000010
 True
 -}
 a000010 :: Integral n => [n]
 a000010 = map a000010_n [1 ..]
 
 a000010_n :: Integral n => n -> n
-a000010_n n = List.genericLength (filter (== 1) (map (gcd n) [1 .. n]))
+a000010_n n = Data.List.genericLength (filter (== 1) (map (gcd n) [1 .. n]))
 
 {- | <http://oeis.org/A000012>
 
@@ -62,7 +63,7 @@ a000012 = repeat 1
 
 Number of n-bead necklaces with 2 colors when turning over is not allowed; also number of output sequences from a simple n-stage cycling shift register; also number of binary irreducible polynomials whose degree divides n.
 
->>> [1,2,3,4,6,8,14,20,36,60,108,188,352,632,1182,2192,4116,7712,14602,27596] `List.isPrefixOf` a000031
+>>> [1,2,3,4,6,8,14,20,36,60,108,188,352,632,1182,2192,4116,7712,14602,27596] `Data.List.isPrefixOf` a000031
 True
 -}
 a000031 :: Integral n => [n]
@@ -80,17 +81,17 @@ a000031_n n =
 
 Lucas numbers beginning at 2: L(n) = L(n-1) + L(n-2), L(0) = 2, L(1) = 1. (Formerly M0155)
 
->>> [2,1,3,4,7,11,18,29,47,76,123,199,322,521,843,1364,2207,3571,5778,9349,15127] `List.isPrefixOf` a000032
+>>> [2,1,3,4,7,11,18,29,47,76,123,199,322,521,843,1364,2207,3571,5778,9349,15127] `Data.List.isPrefixOf` a000032
 True
 -}
 a000032 :: Num n => [n]
-a000032 = 2 : 1 : zipWith (+) a000032 (List.tail_err a000032)
+a000032 = 2 : 1 : zipWith (+) a000032 (Safe.tailErr a000032)
 
 {- | <http://oeis.org/A000040>
 
 The prime numbers.
 
->>> [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103] `List.isPrefixOf` a000040
+>>> [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103] `Data.List.isPrefixOf` a000040
 True
 -}
 a000040 :: Integral n => [n]
@@ -111,7 +112,7 @@ a000040 =
 
 a(n) is the number of partitions of n (the partition numbers).
 
->>> [1,1,2,3,5,7,11,15,22,30,42,56,77,101,135,176,231,297,385,490,627,792,1002,1255] `List.isPrefixOf` a000041
+>>> [1,1,2,3,5,7,11,15,22,30,42,56,77,101,135,176,231,297,385,490,627,792,1002,1255] `Data.List.isPrefixOf` a000041
 True
 -}
 a000041 :: Num n => [n]
@@ -125,17 +126,17 @@ a000041 =
 
 Fibonacci numbers
 
->>> [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `List.isPrefixOf` a000045
+>>> [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `Data.List.isPrefixOf` a000045
 True
 -}
 a000045 :: Num n => [n]
-a000045 = 0 : 1 : zipWith (+) a000045 (List.tail_err a000045)
+a000045 = 0 : 1 : zipWith (+) a000045 (Safe.tailErr a000045)
 
 {- | <http://oeis.org/A000051>
 
 a(n) = 2^n + 1
 
->>> [2,3,5,9,17,33,65,129,257,513,1025,2049,4097,8193,16385,32769,65537,131073] `List.isPrefixOf` a000051
+>>> [2,3,5,9,17,33,65,129,257,513,1025,2049,4097,8193,16385,32769,65537,131073] `Data.List.isPrefixOf` a000051
 True
 -}
 a000051 :: Num n => [n]
@@ -145,7 +146,7 @@ a000051 = iterate (subtract 1 . (* 2)) 2
 
 Sylvester's sequence: a(n+1) = a(n)^2 - a(n) + 1, with a(0) = 2.
 
->>> [2, 3, 7, 43, 1807, 3263443, 10650056950807, 113423713055421844361000443, 12864938683278671740537145998360961546653259485195807] `List.isPrefixOf` a000058
+>>> [2, 3, 7, 43, 1807, 3263443, 10650056950807, 113423713055421844361000443, 12864938683278671740537145998360961546653259485195807] `Data.List.isPrefixOf` a000058
 True
 -}
 a000058 :: [Integer]
@@ -155,42 +156,42 @@ a000058 = iterate a002061_n 2
 
 a(n) = Fibonacci(n) - 1.
 
->>> [0,0,1,2,4,7,12,20,33,54,88,143,232,376,609,986,1596,2583,4180,6764,10945,17710] `List.isPrefixOf` a000071
+>>> [0,0,1,2,4,7,12,20,33,54,88,143,232,376,609,986,1596,2583,4180,6764,10945,17710] `Data.List.isPrefixOf` a000071
 True
 -}
 a000071 :: Num n => [n]
-a000071 = map (subtract 1) (List.tail_err a000045)
+a000071 = map (subtract 1) (Safe.tailErr a000045)
 
 {- | <http://oeis.org/A000073>
 
 Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) for n >= 3 with a(0) = a(1) = 0 and a(2) = 1.
 
->>> [0,0,1,1,2,4,7,13,24,44,81,149,274,504,927,1705,3136,5768,10609,19513,35890] `List.isPrefixOf` a000073
+>>> [0,0,1,1,2,4,7,13,24,44,81,149,274,504,927,1705,3136,5768,10609,19513,35890] `Data.List.isPrefixOf` a000073
 True
 -}
 a000073 :: Num n => [n]
-a000073 = 0 : 0 : 1 : zipWith (+) a000073 (List.tail_err (zipWith (+) a000073 (List.tail_err a000073)))
+a000073 = 0 : 0 : 1 : zipWith (+) a000073 (Safe.tailErr (zipWith (+) a000073 (Safe.tailErr a000073)))
 
 {- | <http://oeis.org/A000078>
 
 Tetranacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) + a(n-4) with a(0)=a(1)=a(2)=0, a(3)=1.
 
->>> [0,0,0,1,1,2,4,8,15,29,56,108,208,401,773,1490,2872,5536,10671,20569,39648] `List.isPrefixOf` a000078
+>>> [0,0,0,1,1,2,4,8,15,29,56,108,208,401,773,1490,2872,5536,10671,20569,39648] `Data.List.isPrefixOf` a000078
 True
 -}
 a000078 :: Num n => [n]
 a000078 =
-  let f xs = let y = (sum . List.head_err . List.transpose . take 4 . List.tails) xs in y : f (y : xs)
+  let f xs = let y = (sum . Safe.headErr . Data.List.transpose . take 4 . Data.List.tails) xs in y : f (y : xs)
   in 0 : 0 : 0 : f [0, 0, 0, 1]
 
 {- | <http://oeis.org/A000079>
 
 Powers of 2: a(n) = 2^n. (Formerly M1129 N0432)
 
->>> [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536] `List.isPrefixOf` a000079
+>>> [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536] `Data.List.isPrefixOf` a000079
 True
 
->>> [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536] `List.isPrefixOf` map (2 ^) [0..]
+>>> [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536] `Data.List.isPrefixOf` map (2 ^) [0..]
 True
 -}
 a000079 :: Num n => [n]
@@ -200,17 +201,17 @@ a000079 = iterate (* 2) 1
 
 Number of self-inverse permutations on n letters, also known as involutions; number of standard Young tableaux with n cells.
 
->>> [1,1,2,4,10,26,76,232,764,2620,9496,35696,140152,568504,2390480,10349536] `List.isPrefixOf` a000085
+>>> [1,1,2,4,10,26,76,232,764,2620,9496,35696,140152,568504,2390480,10349536] `Data.List.isPrefixOf` a000085
 True
 -}
 a000085 :: Integral n => [n]
-a000085 = 1 : 1 : zipWith (+) (zipWith (*) [1 ..] a000085) (List.tail_err a000085)
+a000085 = 1 : 1 : zipWith (+) (zipWith (*) [1 ..] a000085) (Safe.tailErr a000085)
 
 {- | <http://oeis.org/A000108>
 
 Catalan numbers: C(n) = binomial(2n,n)/(n+1) = (2n)!/(n!(n+1)!).
 
->>> [1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012,742900,2674440,9694845] `List.isPrefixOf` a000108
+>>> [1,1,2,5,14,42,132,429,1430,4862,16796,58786,208012,742900,2674440,9694845] `Data.List.isPrefixOf` a000108
 True
 -}
 a000108 :: Num n => [n]
@@ -220,7 +221,7 @@ a000108 = map last (iterate (scanl1 (+) . (++ [0])) [1])
 
 1's-counting sequence: number of 1's in binary expansion of n (or the binary weight of n).
 
->>> [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,1,2,2,3,2,3,3] `List.isPrefixOf` a000120
+>>> [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,1,2,2,3,2,3,3] `Data.List.isPrefixOf` a000120
 True
 -}
 a000120 :: Integral i => [i]
@@ -231,7 +232,7 @@ a000120 = let r = [0] : (map . map) (+ 1) (scanl1 (++) r) in concat r
 Factorial numbers: n! = 1*2*3*4*...*n
 (order of symmetric group S_n, number of permutations of n letters).
 
->>> [1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600,6227020800] `List.isPrefixOf` a000142
+>>> [1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600,6227020800] `Data.List.isPrefixOf` a000142
 True
 -}
 a000142 :: (Enum n, Num n) => [n]
@@ -241,7 +242,7 @@ a000142 = 1 : zipWith (*) [1 ..] a000142
 
 Double factorial of even numbers: (2n)!! = 2^n*n!. (Formerly M1878 N0742)
 
->>> [1, 2, 8, 48, 384, 3840, 46080, 645120, 10321920, 185794560, 3715891200, 81749606400, 1961990553600] `List.isPrefixOf` a000165
+>>> [1, 2, 8, 48, 384, 3840, 46080, 645120, 10321920, 185794560, 3715891200, 81749606400, 1961990553600] `Data.List.isPrefixOf` a000165
 True
 -}
 a000165 :: (Enum n, Num n) => [n]
@@ -251,7 +252,7 @@ a000165 = 1 : zipWith (*) [2, 4 ..] a000165
 
 Lower Wythoff sequence (a Beatty sequence): a(n) = floor(n*phi), where phi = (1+sqrt(5))/2 = A001622
 
->>> [1,3,4,6,8,9,11,12,14,16,17,19,21,22,24,25,27,29,30,32,33,35,37,38,40,42] `List.isPrefixOf` a000201
+>>> [1,3,4,6,8,9,11,12,14,16,17,19,21,22,24,25,27,29,30,32,33,35,37,38,40,42] `Data.List.isPrefixOf` a000201
 True
 
 > import Sound.Sc3.Plot
@@ -259,7 +260,7 @@ True
 -}
 a000201 :: Integral n => [n]
 a000201 =
-  let f (x : xs) (y : ys) = y : f xs (List.delete (x + y) ys)
+  let f (x : xs) (y : ys) = y : f xs (Data.List.delete (x + y) ys)
       f _ _ = error "a000201"
   in f [1 ..] [1 ..]
 
@@ -267,27 +268,27 @@ a000201 =
 
 Lucas numbers (beginning with 1): L(n) = L(n-1) + L(n-2) with L(1) = 1, L(2) = 3
 
->>> [1,3,4,7,11,18,29,47,76,123,199,322,521,843,1364,2207,3571,5778,9349,15127] `List.isPrefixOf` a000204
+>>> [1,3,4,7,11,18,29,47,76,123,199,322,521,843,1364,2207,3571,5778,9349,15127] `Data.List.isPrefixOf` a000204
 True
 -}
 a000204 :: Num n => [n]
-a000204 = 1 : 3 : zipWith (+) a000204 (List.tail_err a000204)
+a000204 = 1 : 3 : zipWith (+) a000204 (Safe.tailErr a000204)
 
 {- | <http://oeis.org/A000213>
 
 Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3) with a(0)=a(1)=a(2)=1.
 
->>> [1,1,1,3,5,9,17,31,57,105,193,355,653,1201,2209,4063,7473,13745,25281,46499]  `List.isPrefixOf` a000213
+>>> [1,1,1,3,5,9,17,31,57,105,193,355,653,1201,2209,4063,7473,13745,25281,46499]  `Data.List.isPrefixOf` a000213
 True
 -}
 a000213 :: Num n => [n]
-a000213 = 1 : 1 : 1 : zipWith (+) a000213 (List.tail_err (zipWith (+) a000213 (List.tail_err a000213)))
+a000213 = 1 : 1 : 1 : zipWith (+) a000213 (Safe.tailErr (zipWith (+) a000213 (Safe.tailErr a000213)))
 
 {- | <https://oeis.org/A000215>
 
 Fermat numbers: a(n) = 2^(2^n) + 1.
 
->>> [3, 5, 17, 257, 65537, 4294967297, 18446744073709551617, 340282366920938463463374607431768211457] `List.isPrefixOf` a000215
+>>> [3, 5, 17, 257, 65537, 4294967297, 18446744073709551617, 340282366920938463463374607431768211457] `Data.List.isPrefixOf` a000215
 True
 -}
 a000215 :: [Integer]
@@ -300,7 +301,7 @@ a000215_n = (+ 1) . (2 ^) . (2 ^)
 
 Triangular numbers: a(n) = binomial(n+1,2) = n(n+1)/2 = 0 + 1 + 2 + ... + n.
 
->>> [0,1,3,6,10,15,21,28,36,45,55,66,78,91,105,120,136,153,171,190,210,231,253,276] `List.isPrefixOf` a000217
+>>> [0,1,3,6,10,15,21,28,36,45,55,66,78,91,105,120,136,153,171,190,210,231,253,276] `Data.List.isPrefixOf` a000217
 True
 -}
 a000217 :: (Enum n, Num n) => [n]
@@ -310,7 +311,7 @@ a000217 = scanl1 (+) [0 ..]
 
 a(n) = 2^n - 1 (Sometimes called Mersenne numbers, although that name is usually reserved for A001348)
 
->>> [0,1,3,7,15,31,63,127,255,511,1023,2047,4095,8191,16383,32767,65535] `List.isPrefixOf` a000225
+>>> [0,1,3,7,15,31,63,127,255,511,1023,2047,4095,8191,16383,32767,65535] `Data.List.isPrefixOf` a000225
 True
 -}
 a000225 :: Num n => [n]
@@ -320,17 +321,17 @@ a000225 = iterate ((+ 1) . (* 2)) 0
 
 a(0) = 1, a(1) = 4, and a(n) = a(n-1) + a(n-2) for n >= 2. (Formerly M3246 N1309)
 
->>> [1,4,5,9,14,23,37,60,97,157,254,411,665,1076,1741,2817,4558,7375,11933,19308] `List.isPrefixOf` a000285
+>>> [1,4,5,9,14,23,37,60,97,157,254,411,665,1076,1741,2817,4558,7375,11933,19308] `Data.List.isPrefixOf` a000285
 True
 -}
 a000285 :: Num n => [n]
-a000285 = 1 : 4 : zipWith (+) a000285 (List.tail_err a000285)
+a000285 = 1 : 4 : zipWith (+) a000285 (Safe.tailErr a000285)
 
 {- | <http://oeis.org/A000290>
 
 The squares of the non-negative integers.
 
->>> [0,1,4,9,16,25,36,49,64,81,100] `List.isPrefixOf` a000290
+>>> [0,1,4,9,16,25,36,49,64,81,100] `Data.List.isPrefixOf` a000290
 True
 -}
 a000290 :: Integral n => [n]
@@ -340,7 +341,7 @@ a000290 = let square n = n * n in map square [0 ..]
 
 Tetrahedral (or triangular pyramidal) numbers: a(n) = C(n+2,3) = n*(n+1)*(n+2)/6.
 
->>> [0,1,4,10,20,35,56,84,120,165,220,286,364,455,560,680,816,969,1140,1330,1540] `List.isPrefixOf` a000292
+>>> [0,1,4,10,20,35,56,84,120,165,220,286,364,455,560,680,816,969,1140,1330,1540] `Data.List.isPrefixOf` a000292
 True
 -}
 a000292 :: (Enum n, Num n) => [n]
@@ -350,7 +351,7 @@ a000292 = scanl1 (+) a000217
 
 Powers of 4: a(n) = 4^n.
 
->>> [1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864, 268435456, 1073741824, 4294967296, 17179869184, 68719476736, 274877906944, 1099511627776, 4398046511104, 17592186044416, 70368744177664, 281474976710656] `List.isPrefixOf` a000302
+>>> [1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864, 268435456, 1073741824, 4294967296, 17179869184, 68719476736, 274877906944, 1099511627776, 4398046511104, 17592186044416, 70368744177664, 281474976710656] `Data.List.isPrefixOf` a000302
 True
 -}
 a000302 :: Integral i => [i]
@@ -360,7 +361,7 @@ a000302 = iterate (* 4) 1
 
 Hexagonal numbers: a(n) = n*(2*n-1). (Formerly M4108 N1705)
 
->>> [0,1,6,15,28,45,66,91,120,153,190,231,276,325,378,435,496,561,630,703,780,861] `List.isPrefixOf` a000384
+>>> [0,1,6,15,28,45,66,91,120,153,190,231,276,325,378,435,496,561,630,703,780,861] `Data.List.isPrefixOf` a000384
 True
 -}
 a000384 :: Integral n => [n]
@@ -371,7 +372,7 @@ a000384 = scanl (+) 0 a016813
 Normalized total height of all nodes in all rooted trees with n labeled nodes.
 (Formerly M4558 N1940)		21
 
->>> [0, 1, 8, 78, 944, 13800, 237432, 4708144, 105822432, 2660215680, 73983185000, 2255828154624, 74841555118992, 2684366717713408, 103512489775594200, 4270718991667353600, 187728592242564421568, 8759085548690928992256, 432357188322752488126152, 22510748754252398927872000] `List.isPrefixOf` a000435
+>>> [0, 1, 8, 78, 944, 13800, 237432, 4708144, 105822432, 2660215680, 73983185000, 2255828154624, 74841555118992, 2684366717713408, 103512489775594200, 4270718991667353600, 187728592242564421568, 8759085548690928992256, 432357188322752488126152, 22510748754252398927872000] `Data.List.isPrefixOf` a000435
 True
 -}
 a000435 :: [Integer]
@@ -386,7 +387,7 @@ a000435_n n =
 
 The cubes: a(n) = n^3.
 
->>> [0,1,8,27,64,125,216,343,512,729,1000,1331,1728,2197,2744,3375,4096,4913,5832] `List.isPrefixOf` a000578
+>>> [0,1,8,27,64,125,216,343,512,729,1000,1331,1728,2197,2744,3375,4096,4913,5832] `Data.List.isPrefixOf` a000578
 True
 -}
 a000578 :: Num n => [n]
@@ -394,13 +395,13 @@ a000578 =
   0
     : 1
     : 8
-    : zipWith (+) (map (+ 6) a000578) (map (* 3) (List.tail_err (zipWith (-) (List.tail_err a000578) a000578)))
+    : zipWith (+) (map (+ 6) a000578) (map (* 3) (Safe.tailErr (zipWith (-) (Safe.tailErr a000578) a000578)))
 
 {- | <http://oeis.org/A000583>
 
 Fourth powers: a(n) = n^4.
 
->>> [0,1,16,81,256,625,1296,2401,4096,6561,10000,14641,20736,28561,38416,50625] `List.isPrefixOf` a000583
+>>> [0,1,16,81,256,625,1296,2401,4096,6561,10000,14641,20736,28561,38416,50625] `Data.List.isPrefixOf` a000583
 True
 -}
 a000583 :: Integral n => [n]
@@ -410,20 +411,20 @@ a000583 = scanl (+) 0 a005917
 
 Fubini numbers: number of preferential arrangements of n labeled elements; or number of weak orders on n labeled elements; or number of ordered partitions of [n].
 
->>> [1,1,3,13,75,541,4683,47293,545835,7087261,102247563,1622632573,28091567595] `List.isPrefixOf` a000670
+>>> [1,1,3,13,75,541,4683,47293,545835,7087261,102247563,1622632573,28091567595] `Data.List.isPrefixOf` a000670
 True
 -}
 a000670 :: Integral n => [n]
 a000670 =
   let f xs (bs : bss) = let y = sum (zipWith (*) xs bs) in y : f (y : xs) bss
       f _ _ = error "a000670d"
-  in 1 : f [1] (map List.tail_err (List.tail_err a007318_tbl))
+  in 1 : f [1] (map Safe.tailErr (Safe.tailErr a007318_tbl))
 
 {- | <https://oeis.org/A000796>
 
 Decimal expansion of Pi (or digits of Pi).
 
->>> [3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5,0,2,8,8,4,1,9] `List.isPrefixOf` a000796
+>>> [3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5,0,2,8,8,4,1,9] `Data.List.isPrefixOf` a000796
 True
 
 > pi :: Data.Number.Fixed.Fixed Data.Number.Fixed.Prec500
@@ -444,7 +445,7 @@ a000796 =
 
 Narayana's cows sequence.
 
->>> [1,1,1,2,3,4,6,9,13,19,28,41,60] `List.isPrefixOf` a000930
+>>> [1,1,1,2,3,4,6,9,13,19,28,41,60] `Data.List.isPrefixOf` a000930
 True
 -}
 a000930 :: Num n => [n]
@@ -454,17 +455,17 @@ a000930 = 1 : 1 : 1 : zipWith (+) a000930 (drop 2 a000930)
 
 Padovan sequence (or Padovan numbers): a(n) = a(n-2) + a(n-3) with a(0) = 1, a(1) = a(2) = 0.
 
->>> [1,0,0,1,0,1,1,1,2,2,3,4,5,7,9,12,16,21,28,37,49,65,86,114,151,200,265] `List.isPrefixOf` a000931
+>>> [1,0,0,1,0,1,1,1,2,2,3,4,5,7,9,12,16,21,28,37,49,65,86,114,151,200,265] `Data.List.isPrefixOf` a000931
 True
 -}
 a000931 :: Num n => [n]
-a000931 = 1 : 0 : 0 : zipWith (+) a000931 (List.tail_err a000931)
+a000931 = 1 : 0 : 0 : zipWith (+) a000931 (Safe.tailErr a000931)
 
 {- | <https://oeis.org/A001008>
 
 Numerators of harmonic numbers H(n) = Sum_{i=1..n} 1/i
 
->>> [1,3,11,25,137,49,363,761,7129,7381,83711,86021,1145993,1171733,1195757,2436559] `List.isPrefixOf` a001008
+>>> [1,3,11,25,137,49,363,761,7129,7381,83711,86021,1145993,1171733,1195757,2436559] `Data.List.isPrefixOf` a001008
 True
 -}
 a001008 :: Integral i => [i]
@@ -477,7 +478,7 @@ n-bead necklaces with beads of 2 colors when turning over is not
 allowed and with primitive period n; number of binary Lyndon words of
 length n.
 
->>> [1,2,1,2,3,6,9,18,30,56,99,186,335,630,1161,2182,4080,7710,14532,27594,52377,99858,190557,364722,698870] `List.isPrefixOf` a001037
+>>> [1,2,1,2,3,6,9,18,30,56,99,186,335,630,1161,2182,4080,7710,14532,27594,52377,99858,190557,364722,698870] `Data.List.isPrefixOf` a001037
 True
 -}
 a001037 :: Integral n => [n]
@@ -490,7 +491,7 @@ a001037_n n = if n == 0 then 1 else (sum (map (\d -> (2 ^ d) * a008683_n (n `div
 
 Decimal expansion of e.
 
->>> [2,7,1,8,2,8,1,8,2,8,4,5,9,0,4,5,2,3,5,3,6,0,2,8,7,4,7,1,3,5,2,6,6,2,4,9,7,7,5] `List.isPrefixOf` a001113
+>>> [2,7,1,8,2,8,1,8,2,8,4,5,9,0,4,5,2,3,5,3,6,0,2,8,7,4,7,1,3,5,2,6,6,2,4,9,7,7,5] `Data.List.isPrefixOf` a001113
 True
 
 > exp 1 :: Data.Number.Fixed.Fixed Data.Number.Fixed.Prec500
@@ -511,7 +512,7 @@ a001113 =
 
 Double factorial of odd numbers: a(n) = (2*n-1)!! = 1*3*5*...*(2*n-1). (Formerly M3002 N1217)
 
->>> [1,1,3,15,105,945,10395,135135,2027025,34459425,654729075,13749310575] `List.isPrefixOf` a001147
+>>> [1,1,3,15,105,945,10395,135135,2027025,34459425,654729075,13749310575] `Data.List.isPrefixOf` a001147
 True
 -}
 a001147 :: Integral t => [t]
@@ -521,7 +522,7 @@ a001147 = 1 : zipWith (*) [1, 3 ..] a001147
 
 Number of partitions of n into squares.
 
->>> [1,1,1,1,2,2,2,2,3,4,4,4,5,6,6,6,8,9,10,10,12,13,14,14,16,19,20,21,23,26,27,28] `List.isPrefixOf` a001156
+>>> [1,1,1,1,2,2,2,2,3,4,4,4,5,6,6,6,8,9,10,10,12,13,14,14,16,19,20,21,23,26,27,28] `Data.List.isPrefixOf` a001156
 True
 -}
 a001156 :: Num n => [n]
@@ -529,45 +530,45 @@ a001156 =
   let p _ 0 = 1
       p ks'@(k : ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A001156"
-  in map (p (List.tail_err a000290)) [0 :: Integer ..]
+  in map (p (Safe.tailErr a000290)) [0 :: Integer ..]
 
 {- | <https://oeis.org/A001333>
 
 Numerators of continued fraction convergents to sqrt(2).
 
->>> [1,1,3,7,17,41,99,239,577,1393,3363,8119,19601,47321,114243,275807,665857] `List.isPrefixOf` a001333
+>>> [1,1,3,7,17,41,99,239,577,1393,3363,8119,19601,47321,114243,275807,665857] `Data.List.isPrefixOf` a001333
 True
 -}
 a001333 :: Num n => [n]
-a001333 = 1 : 1 : zipWith (+) a001333 (map (* 2) (List.tail_err a001333))
+a001333 = 1 : 1 : zipWith (+) a001333 (map (* 2) (Safe.tailErr a001333))
 
 {- | <https://oeis.org/A001462>
 
 Golomb's sequence: a(n) is the number of times n occurs, starting with a(1) = 1.
 (Formerly M0257 N0091)
 
->>> [1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 19] `List.isPrefixOf` a001462
+>>> [1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 19] `Data.List.isPrefixOf` a001462
 True
 -}
 a001462 :: Integral n => [n]
 a001462 =
-  let g x = (List.genericReplicate (a001462_n x) x) ++ g (x + 1)
+  let g x = (Data.List.genericReplicate (a001462_n x) x) ++ g (x + 1)
   in 1 : 2 : 2 : g 3
 
 a001462_n :: Integral n => n -> n
-a001462_n n = a001462 `List.genericIndex` (n - 1)
+a001462_n n = a001462 `Data.List.genericIndex` (n - 1)
 
 {- | <http://oeis.org/A001622>
 
 Decimal expansion of golden ratio phi (or tau) = (1 + sqrt(5))/2.
 
->>> [1,6,1,8,0,3,3,9,8,8,7,4,9,8,9,4,8,4,8,2,0,4,5,8,6,8,3,4,3,6,5,6,3,8,1,1,7,7,2] `List.isPrefixOf` a001622
+>>> [1,6,1,8,0,3,3,9,8,8,7,4,9,8,9,4,8,4,8,2,0,4,5,8,6,8,3,4,3,6,5,6,3,8,1,1,7,7,2] `Data.List.isPrefixOf` a001622
 True
 
 > a001622_k :: Data.Number.Fixed.Fixed Data.Number.Fixed.Prec500
 -}
 a001622 :: Num n => [n]
-a001622 = map (fromIntegral . Char.digitToInt) "161803398874989484820458683436563811772030917980576286213544862270526046281890244970720720418939113748475408807538689175212663386222353693179318006076672635443338908659593958290563832266131992829026788067520876689250171169620703222104321626954862629631361443814975870122034080588795445474924618569536486444924104432077134494704956584678850987433944221254487706647809158846074998871240076521705751797883416625624940758906970400028121042762177111777805315317141011704666599146697987317613560067087480711" ++ error "A001622"
+a001622 = map (fromIntegral . Data.Char.digitToInt) "161803398874989484820458683436563811772030917980576286213544862270526046281890244970720720418939113748475408807538689175212663386222353693179318006076672635443338908659593958290563832266131992829026788067520876689250171169620703222104321626954862629631361443814975870122034080588795445474924618569536486444924104432077134494704956584678850987433944221254487706647809158846074998871240076521705751797883416625624940758906970400028121042762177111777805315317141011704666599146697987317613560067087480711" ++ error "A001622"
 
 a001622_k :: Floating n => n
 a001622_k = (1 + sqrt 5) / 2
@@ -576,27 +577,27 @@ a001622_k = (1 + sqrt 5) / 2
 
 a(n) = a(n-1) + a(n-2) + a(n-3), a(0)=3, a(1)=1, a(2)=3.
 
->>> [3,1,3,7,11,21,39,71,131,241,443,815,1499,2757,5071,9327,17155,31553,58035,106743] `List.isPrefixOf` a001644
+>>> [3,1,3,7,11,21,39,71,131,241,443,815,1499,2757,5071,9327,17155,31553,58035,106743] `Data.List.isPrefixOf` a001644
 True
 -}
 a001644 :: Num n => [n]
-a001644 = 3 : 1 : 3 : zipWith3 (((+) .) . (+)) a001644 (List.tail_err a001644) (drop 2 a001644)
+a001644 = 3 : 1 : 3 : zipWith3 (((+) .) . (+)) a001644 (Safe.tailErr a001644) (drop 2 a001644)
 
 {- | <https://oeis.org/A001653>
 
 Numbers k such that 2*k^2 - 1 is a square.
 
->>> [1, 5, 29, 169, 985, 5741, 33461, 195025, 1136689, 6625109, 38613965, 225058681, 1311738121, 7645370045, 44560482149] `List.isPrefixOf` a001653
+>>> [1, 5, 29, 169, 985, 5741, 33461, 195025, 1136689, 6625109, 38613965, 225058681, 1311738121, 7645370045, 44560482149] `Data.List.isPrefixOf` a001653
 True
 -}
 a001653 :: [Integer]
-a001653 = 1 : 5 : zipWith (-) (map (* 6) (List.tail_err a001653)) a001653
+a001653 = 1 : 5 : zipWith (-) (map (* 6) (Safe.tailErr a001653)) a001653
 
 {- | <http://oeis.org/A001687>
 
 a(n) = a(n-2) + a(n-5).
 
->>> [0,1,0,1,0,1,1,1,2,1,3,2,4,4,5,7,7,11,11,16,18,23,29,34,45,52,68,81,102,126,154] `List.isPrefixOf` a001687
+>>> [0,1,0,1,0,1,1,1,2,1,3,2,4,4,5,7,7,11,11,16,18,23,29,34,45,52,68,81,102,126,154] `Data.List.isPrefixOf` a001687
 True
 -}
 a001687 :: Num n => [n]
@@ -606,10 +607,10 @@ a001687 = 0 : 1 : 0 : 1 : 0 : zipWith (+) a001687 (drop 3 a001687)
 
 Centered square numbers: a(n) = 2*n*(n+1)+1. Sums of two consecutive squares. Also, consider all Pythagorean triples (X, Y, Z=Y+1) ordered by increasing Z; then sequence gives Z values.
 
->>> [1,5,13,25,41,61,85,113,145,181,221,265,313,365,421,481,545,613,685,761,841,925,1013,1105,1201,1301] `List.isPrefixOf` a001844
+>>> [1,5,13,25,41,61,85,113,145,181,221,265,313,365,421,481,545,613,685,761,841,925,1013,1105,1201,1301] `Data.List.isPrefixOf` a001844
 True
 
->>> let k = 999 in take k a001844 == zipWith (+) (take k a000290) (List.tail_err a000290)
+>>> let k = 999 in take k a001844 == zipWith (+) (take k a000290) (Safe.tailErr a000290)
 True
 -}
 a001844 :: Integral n => [n]
@@ -619,7 +620,7 @@ a001844 = map (\n -> 2 * n * (n + 1) + 1) [0 ..]
 
 Upper Wythoff sequence (a Beatty sequence): a(n) = floor(n*phi^2), where phi = (1+sqrt(5))/2
 
->>> [2,5,7,10,13,15,18,20,23,26,28,31,34,36,39,41,44,47,49,52,54,57,60,62,65] `List.isPrefixOf` a001950
+>>> [2,5,7,10,13,15,18,20,23,26,28,31,34,36,39,41,44,47,49,52,54,57,60,62,65] `Data.List.isPrefixOf` a001950
 True
 -}
 a001950 :: Integral n => [n]
@@ -629,7 +630,7 @@ a001950 = zipWith (+) a000201 [1 ..]
 
 Central polygonal numbers: a(n) = n^2 - n + 1.
 
->>> [1, 1, 3, 7, 13, 21, 31, 43, 57, 73, 91, 111, 133, 157, 183, 211, 241, 273, 307, 343, 381, 421, 463, 507, 553, 601] `List.isPrefixOf` a002061
+>>> [1, 1, 3, 7, 13, 21, 31, 43, 57, 73, 91, 111, 133, 157, 183, 211, 241, 273, 307, 343, 381, 421, 463, 507, 553, 601] `Data.List.isPrefixOf` a002061
 True
 -}
 a002061 :: [Integer]
@@ -642,14 +643,14 @@ a002061_n n = n * (n - 1) + 1
 
 Primes of the form 4*k + 3.
 
->>> [3,7,11,19,23,31,43,47,59,67,71,79,83,103,107,127,131,139,151,163,167,179,191,199,211,223,227,239,251] `List.isPrefixOf` a002145
+>>> [3,7,11,19,23,31,43,47,59,67,71,79,83,103,107,127,131,139,151,163,167,179,191,199,211,223,227,239,251] `Data.List.isPrefixOf` a002145
 True
 -}
 a002145 :: [Integer]
 a002145 = filter ((== 1) . a010051_n) [3, 7 ..]
 
 a002145_n :: Integer -> Integer
-a002145_n n = a002145 `List.genericIndex` (n - 1)
+a002145_n n = a002145 `Data.List.genericIndex` (n - 1)
 
 {- | <http://oeis.org/A002267>
 
@@ -662,21 +663,21 @@ a002267 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 47, 59, 71]
 
 Stern's diatomic series (or Stern-Brocot sequence)
 
->>> [0,1,1,2,1,3,2,3,1,4,3,5,2,5,3,4,1,5,4,7,3,8,5,7,2,7,5,8,3,7,4,5] `List.isPrefixOf` a002487
+>>> [0,1,1,2,1,3,2,3,1,4,3,5,2,5,3,4,1,5,4,7,3,8,5,7,2,7,5,8,3,7,4,5] `Data.List.isPrefixOf` a002487
 True
 -}
 a002487 :: Num n => [n]
 a002487 =
   let f (a : a') (b : b') = a + b : a : f a' b'
       f _ _ = error "a002487"
-      x = 1 : 1 : f (List.tail_err x) x
+      x = 1 : 1 : f (Safe.tailErr x) x
   in 0 : x
 
 {- | <https://oeis.org/A002858>
 
 Ulam numbers: a(1) = 1; a(2) = 2; for n>2, a(n) = least number > a(n-1) which is a unique sum of two distinct earlier terms.
 
->>> [1, 2, 3, 4, 6, 8, 11, 13, 16, 18, 26, 28, 36, 38, 47, 48, 53, 57, 62, 69, 72, 77, 82, 87, 97, 99, 102, 106, 114, 126] `List.isPrefixOf` a002858
+>>> [1, 2, 3, 4, 6, 8, 11, 13, 16, 18, 26, 28, 36, 38, 47, 48, 53, 57, 62, 69, 72, 77, 82, 87, 97, 99, 102, 106, 114, 126] `Data.List.isPrefixOf` a002858
 True
 -}
 a002858 :: [Integer]
@@ -698,7 +699,7 @@ ulam n u us =
 
 Number of partitions of n into cubes.
 
->>> [1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,5,5,5,5,5,6,6,6,7,7,7,7] `List.isPrefixOf` a003108
+>>> [1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,5,5,5,5,5,6,6,6,7,7,7,7] `Data.List.isPrefixOf` a003108
 True
 -}
 a003108 :: Num n => [n]
@@ -706,7 +707,7 @@ a003108 =
   let p _ 0 = 1
       p ks'@(k : ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A003108"
-  in map (p (List.tail_err a000578)) [0 :: Integer ..]
+  in map (p (Safe.tailErr a000578)) [0 :: Integer ..]
 
 a003215_n :: Num n => n -> n
 a003215_n n = 3 * n * (n + 1) + 1
@@ -715,7 +716,7 @@ a003215_n n = 3 * n * (n + 1) + 1
 
 Hex (or centered hexagonal) numbers: 3*n*(n+1)+1 (crystal ball sequence for hexagonal lattice).
 
->>> [1,7,19,37,61,91,127,169,217,271,331,397,469,547,631,721,817,919,1027,1141] `List.isPrefixOf` a003215
+>>> [1,7,19,37,61,91,127,169,217,271,331,397,469,547,631,721,817,919,1027,1141] `Data.List.isPrefixOf` a003215
 True
 -}
 a003215 :: (Enum n, Num n) => [n]
@@ -723,7 +724,7 @@ a003215 = map a003215_n [0 ..]
 
 {- | <http://oeis.org/A003269>
 
->>> [0,1,1,1,1,2,3,4,5,7,10,14,19,26,36,50,69,95,131,181,250,345,476,657] `List.isPrefixOf` a003269
+>>> [0,1,1,1,1,2,3,4,5,7,10,14,19,26,36,50,69,95,131,181,250,345,476,657] `Data.List.isPrefixOf` a003269
 True
 -}
 a003269 :: Num n => [n]
@@ -733,7 +734,7 @@ a003269 = 0 : 1 : 1 : 1 : zipWith (+) a003269 (drop 3 a003269)
 
 a(n) = (3^n - 1)/2. (Formerly M3463)
 
->>> [0, 1, 4, 13, 40, 121, 364, 1093, 3280, 9841, 29524, 88573, 265720, 797161, 2391484, 7174453] `List.isPrefixOf` a003462
+>>> [0, 1, 4, 13, 40, 121, 364, 1093, 3280, 9841, 29524, 88573, 265720, 797161, 2391484, 7174453] `Data.List.isPrefixOf` a003462
 True
 -}
 a003462 :: [Integer]
@@ -746,7 +747,7 @@ a003462_n = (`div` 2) . (subtract 1) . (3 ^)
 
 a(n) = a(n-1) + a(n-5); a(0) = ... = a(4) = 1.
 
->>> [1,1,1,1,1,2,3,4,5,6,8,11,15,20,26,34,45,60,80,106,140,185,245,325,431] `List.isPrefixOf` a003520
+>>> [1,1,1,1,1,2,3,4,5,6,8,11,15,20,26,34,45,60,80,106,140,185,245,325,431] `Data.List.isPrefixOf` a003520
 True
 -}
 a003520 :: Num n => [n]
@@ -756,7 +757,7 @@ a003520 = 1 : 1 : 1 : 1 : 1 : zipWith (+) a003520 (drop 4 a003520)
 
 3-smooth numbers: numbers of the form 2^i*3^j with i, j >= 0
 
->>> [1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24, 27, 32, 36, 48, 54, 64, 72, 81, 96, 108, 128, 144, 162] `List.isPrefixOf` a003586
+>>> [1, 2, 3, 4, 6, 8, 9, 12, 16, 18, 24, 27, 32, 36, 48, 54, 64, 72, 81, 96, 108, 128, 144, 162] `Data.List.isPrefixOf` a003586
 True
 -}
 a003586 :: [Integer]
@@ -768,19 +769,19 @@ a003586 =
 
 The infinite Fibonacci word (start with 0, apply 0->01, 1->0, take limit).
 
->>> [0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0] `List.isPrefixOf` a003849
+>>> [0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0] `Data.List.isPrefixOf` a003849
 True
 -}
 a003849 :: Num n => [n]
 a003849 =
-  let fws = [1] : [0] : zipWith (++) fws (List.tail_err fws)
-  in List.tail_err (concat fws)
+  let fws = [1] : [0] : zipWith (++) fws (Safe.tailErr fws)
+  in Safe.tailErr (concat fws)
 
 {- | <http://oeis.org/A004001>
 
 Hofstadter-Conway sequence: a(n) = a(a(n-1)) + a(n-a(n-1)) with a(1) = a(2) = 1.
 
->>> [1,1,2,2,3,4,4,4,5,6,7,7,8,8,8,8,9,10,11,12,12,13,14,14,15,15,15,16,16,16,16,16] `List.isPrefixOf` a004001
+>>> [1,1,2,2,3,4,4,4,5,6,7,7,8,8,8,8,9,10,11,12,12,13,14,14,15,15,15,16,16,16,16,16] `Data.List.isPrefixOf` a004001
 True
 
 > plot_p1_ln [take 250 a004001]
@@ -797,7 +798,7 @@ a004001 =
 
 a(n) = 2^(2n+1).
 
->>> [2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, 2147483648, 8589934592, 34359738368, 137438953472, 549755813888, 2199023255552, 8796093022208, 35184372088832, 140737488355328, 562949953421312] `List.isPrefixOf` a004171
+>>> [2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, 2147483648, 8589934592, 34359738368, 137438953472, 549755813888, 2199023255552, 8796093022208, 35184372088832, 140737488355328, 562949953421312] `Data.List.isPrefixOf` a004171
 True
 -}
 a004171 :: Integral i => [i]
@@ -816,13 +817,13 @@ True
 <https://arxiv.org/pdf/1402.3091.pdf>
 -}
 a004718 :: Num n => [n]
-a004718 = 0 : concat (List.transpose [map (+ 1) a004718, map negate (List.tail_err a004718)])
+a004718 = 0 : concat (Data.List.transpose [map (+ 1) a004718, map negate (Safe.tailErr a004718)])
 
 {- | <http://oeis.org/A005132>
 
 Recamán's sequence (or Recaman's sequence): a(0) = 0; for n > 0, a(n) = a(n-1) - n if nonnegative and not already in the sequence, otherwise a(n) = a(n-1) + n.
 
->>> [0, 1, 3, 6, 2, 7, 13, 20, 12, 21, 11, 22, 10, 23, 9, 24, 8, 25, 43, 62, 42, 63, 41, 18, 42, 17, 43, 16, 44, 15, 45, 14, 46, 79, 113, 78, 114, 77, 39, 78, 38, 79, 37, 80, 36, 81, 35, 82, 34, 83, 33, 84, 32, 85, 31, 86, 30, 87, 29, 88, 28, 89, 27, 90, 26, 91, 157, 224, 156, 225, 155] `List.isPrefixOf` a005132
+>>> [0, 1, 3, 6, 2, 7, 13, 20, 12, 21, 11, 22, 10, 23, 9, 24, 8, 25, 43, 62, 42, 63, 41, 18, 42, 17, 43, 16, 44, 15, 45, 14, 46, 79, 113, 78, 114, 77, 39, 78, 38, 79, 37, 80, 36, 81, 35, 82, 34, 83, 33, 84, 32, 85, 31, 86, 30, 87, 29, 88, 28, 89, 27, 90, 26, 91, 157, 224, 156, 225, 155] `Data.List.isPrefixOf` a005132
 True
 
 > plot_p1_ln [take 200 (a005132 :: [Int])]
@@ -841,7 +842,7 @@ a005132 =
 
 Hofstadter Q-sequence: a(1) = a(2) = 1; a(n) = a(n-a(n-1)) + a(n-a(n-2)) for n > 2.
 
->>> [1,1,2,3,3,4,5,5,6,6,6,8,8,8,10,9,10,11,11,12,12,12,12,16,14,14,16,16,16,16,20] `List.isPrefixOf` a005185
+>>> [1,1,2,3,3,4,5,5,6,6,6,8,8,8,10,9,10,11,11,12,12,12,12,16,14,14,16,16,16,16,20] `Data.List.isPrefixOf` a005185
 True
 
 > plot_p1_pt [take 5000 a005185]
@@ -851,31 +852,31 @@ a005185 =
   let ix n = a005185 !! (n - 1)
       zadd = zipWith (+)
       zsub = zipWith (-)
-  in 1 : 1 : zadd (map ix (zsub [3 ..] a005185)) (map ix (zsub [3 ..] (List.tail_err a005185)))
+  in 1 : 1 : zadd (map ix (zsub [3 ..] a005185)) (map ix (zsub [3 ..] (Safe.tailErr a005185)))
 
 {- | <https://oeis.org/A005229>
 
 a(1) = a(2) = 1; for n > 2, a(n) = a(a(n-2)) + a(n - a(n-2)).
 (Formerly M0441)		39
 
->>> [1, 1, 2, 3, 3, 4, 5, 6, 6, 7, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 15, 16, 16, 17, 17, 18, 19, 19, 20, 20, 21, 22, 23, 24, 24, 25, 26, 26, 27, 28, 29, 29, 30, 30, 30, 31, 32, 33, 34, 35, 36, 36, 37, 37, 38, 39, 39, 40, 41, 42, 43, 43, 44, 45, 45, 45, 46] `List.isPrefixOf` a005229
+>>> [1, 1, 2, 3, 3, 4, 5, 6, 6, 7, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 15, 16, 16, 17, 17, 18, 19, 19, 20, 20, 21, 22, 23, 24, 24, 25, 26, 26, 27, 28, 29, 29, 30, 30, 30, 31, 32, 33, 34, 35, 36, 36, 37, 37, 38, 39, 39, 40, 41, 42, 43, 43, 44, 45, 45, 45, 46] `Data.List.isPrefixOf` a005229
 True
 
 > plot_p1_pt [take 1000 a005229]
 -}
 a005229 :: [Int]
 a005229 =
-  let f = ((+) `Function.on` (\n -> a005229 !! (n - 1)))
+  let f = ((+) `Data.Function.on` (\n -> a005229 !! (n - 1)))
   in 1 : 1 : zipWith f a005229 (zipWith (-) [3 ..] a005229)
 
 {- | <https://oeis.org/A005448>
 
 Centered triangular numbers: a(n) = 3n(n-1)/2 + 1.
 
->>> [1,4,10,19,31,46,64,85,109,136,166,199,235,274,316,361,409,460,514,571,631,694] `List.isPrefixOf` a005448
+>>> [1,4,10,19,31,46,64,85,109,136,166,199,235,274,316,361,409,460,514,571,631,694] `Data.List.isPrefixOf` a005448
 True
 
->>> map a005448_n [1 .. 1000] `List.isPrefixOf` a005448
+>>> map a005448_n [1 .. 1000] `Data.List.isPrefixOf` a005448
 True
 -}
 a005448 :: Integral n => [n]
@@ -888,12 +889,12 @@ a005448_n n = 3 * n * (n - 1) `div` 2 + 1
 
 Number of fractions in Farey series of order n.
 
->>> [1,2,3,5,7,11,13,19,23,29,33,43,47,59,65,73,81,97,103,121,129,141,151] `List.isPrefixOf` a005728
+>>> [1,2,3,5,7,11,13,19,23,29,33,43,47,59,65,73,81,97,103,121,129,141,151] `Data.List.isPrefixOf` a005728
 True
 -}
 a005728 :: Integral i => [i]
 a005728 =
-  let phi n = List.genericLength (filter (== 1) (map (gcd n) [1 .. n]))
+  let phi n = Data.List.genericLength (filter (== 1) (map (gcd n) [1 .. n]))
       f n = if n == 0 then 1 else f (n - 1) + phi n
   in map f [0 :: Integer ..]
 
@@ -914,7 +915,7 @@ a005811 =
 
 Rhombic dodecahedral numbers: a(n) = n^4 - (n - 1)^4.
 
->>> [1,15,65,175,369,671,1105,1695,2465,3439,4641,6095,7825,9855,12209,14911,17985] `List.isPrefixOf` a005917
+>>> [1,15,65,175,369,671,1105,1695,2465,3439,4641,6095,7825,9855,12209,14911,17985] `Data.List.isPrefixOf` a005917
 True
 -}
 a005917 :: Integral n => [n]
@@ -926,10 +927,10 @@ a005917 =
 
 a(n) = n*(n^2 + 1)/2.
 
->>> [0,1,5,15,34,65,111,175,260,369,505,671,870,1105,1379,1695,2056,2465,2925,3439] `List.isPrefixOf` a006003
+>>> [0,1,5,15,34,65,111,175,260,369,505,671,870,1105,1379,1695,2056,2465,2925,3439] `Data.List.isPrefixOf` a006003
 True
 
->>> map a006003_n [0 .. 1000] `List.isPrefixOf` a006003
+>>> map a006003_n [0 .. 1000] `Data.List.isPrefixOf` a006003
 True
 -}
 a006003 :: Integral n => [n]
@@ -942,7 +943,7 @@ a006003_n n = n * (n ^ (2 :: Int) + 1) `div` 2
 
 Total number of odd entries in first n rows of Pascal's triangle: a(0) = 0, a(1) = 1, a(2k) = 3*a(k), a(2k+1) = 2*a(k) + a(k+1).
 
->>> [0,1,3,5,9,11,15,19,27,29,33,37,45,49,57,65,81,83,87,91,99,103,111,119,135,139] `List.isPrefixOf` a006046
+>>> [0,1,3,5,9,11,15,19,27,29,33,37,45,49,57,65,81,83,87,91,99,103,111,119,135,139] `Data.List.isPrefixOf` a006046
 True
 
 > import Sound.Sc3.Plot
@@ -952,7 +953,7 @@ True
 True
 -}
 a006046 :: [Int]
-a006046 = map (sum . concat) (List.inits a047999_tbl)
+a006046 = map (sum . concat) (Data.List.inits a047999_tbl)
 
 {- | <http://oeis.org/A006052>
 
@@ -968,7 +969,7 @@ a006052 = [1, 0, 1, 880, 275305224]
 
 The "amusical permutation" of the nonnegative numbers: a(2n)=3n, a(4n+1)=3n+1, a(4n-1)=3n-1.
 
->>> [0,1,3,2,6,4,9,5,12,7,15,8,18,10,21,11,24,13,27,14,30,16,33,17,36,19,39,20,42,22,45,23,48,25] `List.isPrefixOf` a006368
+>>> [0,1,3,2,6,4,9,5,12,7,15,8,18,10,21,11,24,13,27,14,30,16,33,17,36,19,39,20,42,22,45,23,48,25] `Data.List.isPrefixOf` a006368
 True
 
 > plot_p1_ln [take 100 (a006368 :: [Int])]
@@ -987,20 +988,20 @@ a006368 =
 
 Number of halving and tripling steps to reach 1 in '3x+1' problem, or -1 if 1 is never reached.
 
->>> [0,1,7,2,5,8,16,3,19,6,14,9,9,17,17,4,12,20,20,7,7,15,15,10,23] `List.isPrefixOf` a006577
+>>> [0,1,7,2,5,8,16,3,19,6,14,9,9,17,17,4,12,20,20,7,7,15,15,10,23] `Data.List.isPrefixOf` a006577
 True
 -}
 a006577 :: [Int]
 a006577 = map a006577_n [1 ..]
 
 a006577_n :: Integer -> Int
-a006577_n n = Maybe.fromJust (List.findIndex (n `elem`) a127824_tbl)
+a006577_n n = Data.Maybe.fromJust (Data.List.findIndex (n `elem`) a127824_tbl)
 
 {- | <http://oeis.org/A006842>
 
 Triangle read by rows: row n gives numerators of Farey series of order n.
 
->>> [0,1,0,1,1,0,1,1,2,1,0,1,1,1,2,3,1,0,1,1,1,2,1,3,2,3,4,1,0,1,1,1,1,2,1,3] `List.isPrefixOf` a006842
+>>> [0,1,0,1,1,0,1,1,2,1,0,1,1,1,2,3,1,0,1,1,1,2,1,3,2,3,4,1,0,1,1,1,1,2,1,3] `Data.List.isPrefixOf` a006842
 True
 
 > plot_p1_imp [take 200 (a006842 :: [Int])]
@@ -1013,7 +1014,7 @@ a006842 = map numerator (concatMap Math.farey [1 ..])
 
 Triangle read by rows: row n gives denominators of Farey series of order n
 
->>> [1,1,1,2,1,1,3,2,3,1,1,4,3,2,3,4,1,1,5,4,3,5,2,5,3,4,5,1,1,6,5,4,3,5,2,5] `List.isPrefixOf` a006843
+>>> [1,1,1,2,1,1,3,2,3,1,1,4,3,2,3,4,1,1,5,4,3,5,2,5,3,4,5,1,1,6,5,4,3,5,2,5] `Data.List.isPrefixOf` a006843
 True
 
 > plot_p1_imp [take 200 (a006843 :: [Int])]
@@ -1026,7 +1027,7 @@ a006843 = map denominator (concatMap Math.farey [1 ..])
 
 Pascal's triangle read by rows
 
->>> [[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1],[1,5,10,10,5,1]] `List.isPrefixOf` a007318_tbl
+>>> [[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1],[1,5,10,10,5,1]] `Data.List.isPrefixOf` a007318_tbl
 True
 -}
 a007318 :: Integral i => [i]
@@ -1041,20 +1042,20 @@ a007318_tbl =
 
 Triangle of Stirling numbers of the second kind, S2(n,k), n >= 1, 1 <= k <= n.
 
->>> [1,1,1,1,3,1,1,7,6,1,1,15,25,10,1,1,31,90,65,15,1,1,63,301,350,140,21,1] `List.isPrefixOf` a008277
+>>> [1,1,1,1,3,1,1,7,6,1,1,15,25,10,1,1,31,90,65,15,1,1,63,301,350,140,21,1] `Data.List.isPrefixOf` a008277
 True
 -}
 a008277 :: (Enum n, Num n) => [n]
 a008277 = concat a008277_tbl
 
 a008277_tbl :: (Enum n, Num n) => [[n]]
-a008277_tbl = map List.tail_err a048993_tbl
+a008277_tbl = map Safe.tailErr a048993_tbl
 
 {- | <http://oeis.org/A008278>
 
 Triangle of Stirling numbers of 2nd kind, S(n,n-k+1), n >= 1, 1<=k<=n.
 
->>> [1,1,1,1,3,1,1,6,7,1,1,10,25,15,1,1,15,65,90,31,1,1,21,140,350,301,63,1] `List.isPrefixOf` a008278
+>>> [1,1,1,1,3,1,1,6,7,1,1,10,25,15,1,1,15,65,90,31,1,1,21,140,350,301,63,1] `Data.List.isPrefixOf` a008278
 True
 -}
 a008278 :: (Enum n, Num n) => [n]
@@ -1071,7 +1072,7 @@ a008278_tbl =
 
 Möbius (or Moebius) function mu(n). mu(1) = 1; mu(n) = (-1)^k if n is the product of k different primes; otherwise mu(n) = 0.
 
->>> [1,-1,-1,0,-1,1,-1,0,0,1,-1,0,-1,1,1,0,-1,0,-1,0,1,1,-1,0,0,1,0,0,-1,-1,-1,0,1] `List.isPrefixOf` a008683
+>>> [1,-1,-1,0,-1,1,-1,0,0,1,-1,0,-1,1,1,0,-1,0,-1,0,1,1,-1,0,0,1,0,0,-1,-1,-1,0,1] `Data.List.isPrefixOf` a008683
 True
 -}
 a008683 :: Integral n => [n]
@@ -1088,7 +1089,7 @@ a008683_n =
 
 Second-order Fibonacci numbers.
 
->>> [0,1,1,3,5,10,18,33,59,105,185,324,564,977,1685,2895,4957,8462,14406,24465,41455] `List.isPrefixOf` a010049
+>>> [0,1,1,3,5,10,18,33,59,105,185,324,564,977,1685,2895,4957,8462,14406,24465,41455] `Data.List.isPrefixOf` a010049
 True
 -}
 a010049 :: Num n => [n]
@@ -1101,11 +1102,11 @@ a010049 =
 
 Characteristic function of primes: 1 if n is prime, else 0.
 
->>> [0,1,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1] `List.isPrefixOf` a010051
+>>> [0,1,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1] `Data.List.isPrefixOf` a010051
 True
 -}
 a010051_n :: Integer -> Integer
-a010051_n n = a010051 `List.genericIndex` (n - 1)
+a010051_n n = a010051 `Data.List.genericIndex` (n - 1)
 
 a010051 :: [Integer]
 a010051 =
@@ -1113,36 +1114,36 @@ a010051 =
         case z of
           (i, ps'@(p : ps)) -> Just (if i == p then 1 else 0, (i + 1, if i == p then ps else ps'))
           _ -> error "a010051"
-  in List.unfoldr ch (1, a000040)
+  in Data.List.unfoldr ch (1, a000040)
 
 {- | <https://oeis.org/A010060>
 
 Thue-Morse sequence: let A_k denote the first 2^k terms; then A_0 = 0 and for k >= 0, A_{k+1} = A_k B_k, where B_k is obtained from A_k by interchanging 0's and 1's.
 
->>> [0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0] `List.isPrefixOf` a010060
+>>> [0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0] `Data.List.isPrefixOf` a010060
 True
 -}
 a010060 :: [Integer]
 a010060 =
   let interleave (x : xs) ys = x : interleave ys xs
       interleave [] _ = error "a010060?"
-  in 0 : interleave (map (1 -) a010060) (List.tail_err a010060)
+  in 0 : interleave (map (1 -) a010060) (Safe.tailErr a010060)
 
 {- | <https://oeis.org/A014081>
 
 a(n) is the number of occurrences of '11' in binary expansion of n.
 
->>> [0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 1, 1, 1, 2, 3, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 1, 2, 2, 2, 3, 4, 0, 0, 0, 1, 0, 0, 1, 2] `List.isPrefixOf` a014081
+>>> [0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 1, 1, 1, 2, 3, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 1, 2, 2, 2, 3, 4, 0, 0, 0, 1, 0, 0, 1, 2] `Data.List.isPrefixOf` a014081
 True
 -}
-a014081 :: (Integral i, Bits.Bits i) => [i]
-a014081 = map (\n -> a000120 !! (n Bits..&. div n 2)) [0 ..]
+a014081 :: (Integral i, Data.Bits.Bits i) => [i]
+a014081 = map (\n -> a000120 !! (n Data.Bits..&. div n 2)) [0 ..]
 
 {- | <https://oeis.org/A014577>
 
 The regular paper-folding sequence (or dragon curve sequence).
 
->>> [1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1] `List.isPrefixOf` a014577
+>>> [1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1] `Data.List.isPrefixOf` a014577
 True
 -}
 a014577 :: Integral i => [i]
@@ -1154,7 +1155,7 @@ a014577 =
 
 a(n) = 4*n + 1.
 
->>> [1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101] `List.isPrefixOf` a016813
+>>> [1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61,65,69,73,77,81,85,89,93,97,101] `Data.List.isPrefixOf` a016813
 True
 -}
 a016813 :: Integral n => [n]
@@ -1164,17 +1165,17 @@ a016813 = [1, 5 ..]
 
 a(n) = a(n-3) + a(n-4), with a(0)=1, a(1)=a(2)=0, a(3)=1
 
->>> [1,0,0,1,1,0,1,2,1,1,3,3,2,4,6,5,6,10,11,11,16,21,22,27,37,43,49,64,80,92] `List.isPrefixOf` a017817
+>>> [1,0,0,1,1,0,1,2,1,1,3,3,2,4,6,5,6,10,11,11,16,21,22,27,37,43,49,64,80,92] `Data.List.isPrefixOf` a017817
 True
 -}
 a017817 :: Num n => [n]
-a017817 = 1 : 0 : 0 : 1 : zipWith (+) a017817 (List.tail_err a017817)
+a017817 = 1 : 0 : 0 : 1 : zipWith (+) a017817 (Safe.tailErr a017817)
 
 {- | <http://oeis.org/A020639>
 
 Lpf(n): least prime dividing n (when n > 1); a(1) = 1. Or, smallest prime factor of n, or smallest prime divisor of n.		883
 
->>> [1,2,3,2,5,2,7,2,3,2,11,2,13,2,3,2,17,2,19,2,3,2,23,2,5,2,3,2,29,2,31,2,3,2,5,2,37,2,3,2,41,2,43] `List.isPrefixOf` a020639
+>>> [1,2,3,2,5,2,7,2,3,2,11,2,13,2,3,2,17,2,19,2,3,2,23,2,5,2,3,2,29,2,31,2,3,2,5,2,37,2,3,2,41,2,43] `Data.List.isPrefixOf` a020639
 True
 -}
 a020639 :: [Integer]
@@ -1198,7 +1199,7 @@ a020639_n n =
 
 Pisot sequence E(2,3).
 
->>> [2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711] `List.isPrefixOf` a020695
+>>> [2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711] `Data.List.isPrefixOf` a020695
 True
 -}
 a020695 :: Num n => [n]
@@ -1208,53 +1209,53 @@ a020695 = drop 3 a000045
 
 The Rudin-Shapiro or Golay-Rudin-Shapiro sequence (coefficients of the Shapiro polynomials).		45
 
->>> [1, 1, 1, -1, 1, 1, -1, 1, 1, 1, 1, -1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1] `List.isPrefixOf` a020985
+>>> [1, 1, 1, -1, 1, 1, -1, 1, 1, 1, 1, -1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1] `Data.List.isPrefixOf` a020985
 True
 -}
 a020985 :: [Integer]
 a020985 =
   let f (x : xs) w = x : x * w : f xs (0 - w)
       f [] _ = error "a020985?"
-  in 1 : 1 : f (List.tail_err a020985) (-1)
+  in 1 : 1 : f (Safe.tailErr a020985) (-1)
 
 {- | <http://oeis.org/A022095>
 
 Fibonacci sequence beginning 1, 5.
 
->>> [1,5,6,11,17,28,45,73,118,191,309,500,809,1309,2118,3427,5545,8972,14517,23489] `List.isPrefixOf` a022095
+>>> [1,5,6,11,17,28,45,73,118,191,309,500,809,1309,2118,3427,5545,8972,14517,23489] `Data.List.isPrefixOf` a022095
 True
 -}
 a022095 :: Num n => [n]
-a022095 = 1 : 5 : zipWith (+) a022095 (List.tail_err a022095)
+a022095 = 1 : 5 : zipWith (+) a022095 (Safe.tailErr a022095)
 
 {- | <http://oeis.org/A022096>
 
 Fibonacci sequence beginning 1, 6.
 
->>> [1,6,7,13,20,33,53,86,139,225,364,589,953,1542,2495,4037,6532,10569,17101,27670] `List.isPrefixOf` a022096
+>>> [1,6,7,13,20,33,53,86,139,225,364,589,953,1542,2495,4037,6532,10569,17101,27670] `Data.List.isPrefixOf` a022096
 True
 -}
 a022096 :: Num n => [n]
-a022096 = 1 : 6 : zipWith (+) a022096 (List.tail_err a022096)
+a022096 = 1 : 6 : zipWith (+) a022096 (Safe.tailErr a022096)
 
 {- | A027642
 
 Denominator of Bernoulli number B_n.
 
-> [1, 2, 6, 1, 30, 1, 42, 1, 30, 1, 66, 1, 2730, 1, 6, 1, 510, 1, 798, 1, 330, 1, 138, 1, 2730, 1, 6, 1, 870, 1, 14322, 1, 510, 1, 6, 1, 1919190, 1, 6, 1, 13530, 1, 1806, 1, 690, 1, 282, 1, 46410, 1, 66, 1, 1590, 1, 798, 1, 870, 1, 354, 1, 56786730, 1] `List.isPrefixOf` a027642 -- slow
+> [1, 2, 6, 1, 30, 1, 42, 1, 30, 1, 66, 1, 2730, 1, 6, 1, 510, 1, 798, 1, 330, 1, 138, 1, 2730, 1, 6, 1, 870, 1, 14322, 1, 510, 1, 6, 1, 1919190, 1, 6, 1, 13530, 1, 1806, 1, 690, 1, 282, 1, 46410, 1, 66, 1, 1590, 1, 798, 1, 870, 1, 354, 1, 56786730, 1] `Data.List.isPrefixOf` a027642 -- slow
 True
 
 >>> take 19 a027642 == [1, 2, 6, 1, 30, 1, 42, 1, 30, 1, 66, 1, 2730, 1, 6, 1, 510, 1, 798]
 True
 -}
 a027642 :: Integral t => [t]
-a027642 = 1 : map (denominator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
+a027642 = 1 : map (denominator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (Safe.tailErr a000142) a242179_tbl) a106831_tbl)
 
 {- | <http://oeis.org/A027748>
 
 Irregular triangle in which first row is 1, n-th row (n > 1) lists distinct prime factors of n.
 
->>> [1,2,3,2,5,2,3,7,2,3,2,5,11,2,3,13,2,7,3,5,2,17,2,3,19,2,5,3,7,2,11,23,2,3,5,2,13,3,2,7,29] `List.isPrefixOf` a027748
+>>> [1,2,3,2,5,2,3,7,2,3,2,5,11,2,3,13,2,7,3,5,2,17,2,3,19,2,5,3,7,2,11,23,2,3,5,2,13,3,2,7,29] `Data.List.isPrefixOf` a027748
 True
 -}
 a027748 :: [Integer]
@@ -1275,13 +1276,13 @@ a027748_row n =
           fact x =
             let p = a020639_n x -- smallest prime factor of x
             in Just (p, until ((> 0) . (`mod` p)) (`div` p) x)
-      in List.unfoldr fact n
+      in Data.List.unfoldr fact n
 
 {- | <https://oeis.org/A027750>
 
 Triangle read by rows in which row n lists the divisors of n.
 
->>> [1,1,2,1,3,1,2,4,1,5,1,2,3,6,1,7,1,2,4,8,1,3,9,1,2,5,10,1,11,1,2,3,4,6,12,1,13] `List.isPrefixOf` a027750
+>>> [1,1,2,1,3,1,2,4,1,5,1,2,3,6,1,7,1,2,4,8,1,3,9,1,2,5,10,1,11,1,2,3,4,6,12,1,13] `Data.List.isPrefixOf` a027750
 True
 -}
 a027750 :: Integral n => [n]
@@ -1294,19 +1295,19 @@ a027750_row n = filter ((== 0) . (mod n)) [1 .. n]
 
 a(0)=0, a(1)=1, a(2)=2; for n > 2, a(n) = 3*a(n-1) - a(n-2) - 2*a(n-3).
 
->>> [0,1,2,5,11,24,51,107,222,457,935,1904,3863,7815,15774,31781,63939,128488] `List.isPrefixOf` a027934
+>>> [0,1,2,5,11,24,51,107,222,457,935,1904,3863,7815,15774,31781,63939,128488] `Data.List.isPrefixOf` a027934
 True
 -}
 a027934 :: Num n => [n]
 a027934 =
   let f x y z = 3 * x - y - 2 * z
-  in 0 : 1 : 2 : zipWith3 f (drop 2 a027934) (List.tail_err a027934) a027934
+  in 0 : 1 : 2 : zipWith3 f (drop 2 a027934) (Safe.tailErr a027934) a027934
 
 {- | <http://oeis.org/A029635>
 
 The (1,2)-Pascal triangle (or Lucas triangle) read by rows.
 
->>> [2,1,2,1,3,2,1,4,5,2,1,5,9,7,2,1,6,14,16,9,2,1,7,20,30,25,11,2,1,8,27,50,55,36] `List.isPrefixOf` a029635
+>>> [2,1,2,1,3,2,1,4,5,2,1,5,9,7,2,1,6,14,16,9,2,1,7,20,30,25,11,2,1,8,27,50,55,36] `Data.List.isPrefixOf` a029635
 True
 
 >>> take 7 a029635_tbl == [[2],[1,2],[1,3,2],[1,4,5,2],[1,5,9,7,2],[1,6,14,16,9,2],[1,7,20,30,25,11,2]]
@@ -1324,7 +1325,7 @@ a029635_tbl =
 
 Decimal expansion of Champernowne constant (or Mahler's number), formed by concatenating the positive integers.
 
->>> [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9] `List.isPrefixOf` a033307
+>>> [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9] `Data.List.isPrefixOf` a033307
 True
 -}
 a033307 :: [Int]
@@ -1350,7 +1351,7 @@ a030308 =
 
 Good sequence of increments for Shell sort (best on big values).
 
->>> [1, 5, 19, 41, 109, 209, 505, 929, 2161, 3905, 8929, 16001, 36289, 64769, 146305, 260609, 587521] `List.isPrefixOf` a033622
+>>> [1, 5, 19, 41, 109, 209, 505, 929, 2161, 3905, 8929, 16001, 36289, 64769, 146305, 260609, 587521] `Data.List.isPrefixOf` a033622
 True
 -}
 a033622 :: [Integer]
@@ -1373,7 +1374,7 @@ a033812 = [8, 1, 6, 3, 5, 7, 4, 9, 2]
 
 Minimal number of factorials that add to n.
 
->>> [0,1,1,2,2,3,1,2,2,3,3,4,2,3,3,4,4,5,3,4,4,5,5,6,1,2,2,3,3,4,2,3,3,4,4,5,3,4,4] `List.isPrefixOf` a034968
+>>> [0,1,1,2,2,3,1,2,2,3,3,4,2,3,3,4,4,5,3,4,4,5,5,6,1,2,2,3,3,4,2,3,3,4,4,5,3,4,4] `Data.List.isPrefixOf` a034968
 True
 -}
 a034968 :: Integral n => [n]
@@ -1385,7 +1386,7 @@ a034968 =
 
 a(n) = 4^(n+1) + 3*2^n + 1
 
->>> [1, 8, 23, 77, 281, 1073, 4193, 16577, 65921, 262913, 1050113, 4197377, 16783361, 67121153] `List.isPrefixOf` a036562
+>>> [1, 8, 23, 77, 281, 1073, 4193, 16577, 65921, 262913, 1050113, 4197377, 16783361, 67121153] `Data.List.isPrefixOf` a036562
 True
 -}
 a036562 :: [Integer]
@@ -1398,22 +1399,22 @@ a036562_n n = 4 ^ (n + 1) + 3 * 2 ^ n + 1
 
 The Ehrenfeucht-Mycielski sequence (0,1-version): a maximally unpredictable sequence.
 
->>> [0,1,0,0,1,1,0,1,0,1,1,1,0,0,0,1,0,0,0,0,1,1,1,1,0,1,1,0,0,1,0,1,0,0,1,0,0,1,1] `List.isPrefixOf` a038219
+>>> [0,1,0,0,1,1,0,1,0,1,1,1,0,0,0,1,0,0,0,0,1,1,1,1,0,1,1,0,0,1,0,1,0,0,1,0,0,1,1] `Data.List.isPrefixOf` a038219
 True
 -}
 a038219 :: [Integer]
 a038219 =
   let f us =
-        let vs = Maybe.fromJust (List.find (`List.isInfixOf` (List.init us)) (List.tails us))
+        let vs = Data.Maybe.fromJust (Data.List.find (`Data.List.isInfixOf` (Data.List.init us)) (Data.List.tails us))
             a =
               let b e =
                     case e of
                       [] -> error "impossible"
                       ((xs, ys) : xyss) ->
-                        if vs `List.isSuffixOf` xs
-                          then 1 - List.head ys
+                        if vs `Data.List.isSuffixOf` xs
+                          then 1 - Safe.headErr ys
                           else b xyss
-              in b (List.reverse (List.map (`List.splitAt` us) [0 .. List.length us - 1]))
+              in b (Data.List.reverse (Data.List.map (`Data.List.splitAt` us) [0 .. Data.List.length us - 1]))
         in a : f (us ++ [a])
   in 0 : f [0]
 
@@ -1421,7 +1422,7 @@ a038219 =
 
 Number of partitions of n into fourth powers.
 
->>> [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3] `List.isPrefixOf` a046042
+>>> [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3] `Data.List.isPrefixOf` a046042
 True
 -}
 a046042 :: Num n => [n]
@@ -1429,39 +1430,39 @@ a046042 =
   let p _ 0 = 1
       p ks'@(k : ks) m = if m < k then 0 else p ks' (m - k) + p ks m
       p _ _ = error "A046042"
-  in map (p (List.tail_err a000583)) [1 :: Integer ..]
+  in map (p (Safe.tailErr a000583)) [1 :: Integer ..]
 
 {- | <http://oeis.org/A047999>
 
 Sierpiński's triangle (or gasket): triangle, read by rows, formed by reading Pascal's triangle mod 2.
 
->>> [1,1,1,1,0,1,1,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0] `List.isPrefixOf` a047999
+>>> [1,1,1,1,0,1,1,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,0] `Data.List.isPrefixOf` a047999
 True
 -}
 a047999 :: [Int]
 a047999 = concat a047999_tbl
 
 a047999_tbl :: [[Int]]
-a047999_tbl = iterate (\r -> zipWith Bits.xor (0 : r) (r ++ [0])) [1]
+a047999_tbl = iterate (\r -> zipWith Data.Bits.xor (0 : r) (r ++ [0])) [1]
 
 {- | <https://oeis.org/A048993>
 
 Triangle of Stirling numbers of 2nd kind, S(n,k), n >= 0, 0 <= k <= n.
 
->>> [1,0,1,0,1,1,0,1,3,1,0,1,7,6,1,0,1,15,25,10,1,0,1,31,90,65,15,1] `List.isPrefixOf` a048993
+>>> [1,0,1,0,1,1,0,1,3,1,0,1,7,6,1,0,1,15,25,10,1,0,1,31,90,65,15,1] `Data.List.isPrefixOf` a048993
 True
 -}
 a048993 :: (Enum n, Num n) => [n]
 a048993 = concat a048993_tbl
 
 a048993_tbl :: (Enum n, Num n) => [[n]]
-a048993_tbl = iterate (\row -> 0 : zipWith (+) row (zipWith (*) [1 ..] (List.tail_err row)) ++ [1]) [1]
+a048993_tbl = iterate (\row -> 0 : zipWith (+) row (zipWith (*) [1 ..] (Safe.tailErr row)) ++ [1]) [1]
 
 {- | <http://oeis.org/A049455>
 
 Triangle read by rows, numerator of fractions of a variant of the Farey series.
 
->>> [0,1,0,1,1,0,1,1,2,1,0,1,1,2,1,3,2,3,1,0,1,1,2,1,3,2,3,1,4,3,5,2,5,3,4,1,0] `List.isPrefixOf` a049455
+>>> [0,1,0,1,1,0,1,1,2,1,0,1,1,2,1,3,2,3,1,0,1,1,2,1,3,2,3,1,4,3,5,2,5,3,4,1,0] `Data.List.isPrefixOf` a049455
 True
 
 > plot_p1_imp [take 200 (a049455 :: [Int])]
@@ -1474,7 +1475,7 @@ a049455 = map fst (concat Math.stern_brocot_tree_lhs)
 
 Triangle read by rows, denominator of fractions of a variant of the Farey series.
 
->>> [1,1,1,2,1,1,3,2,3,1,1,4,3,5,2,5,3,4,1,1,5,4,7,3,8,5,7,2,7,5,8,3,7,4,5,1,1,6,5,9] `List.isPrefixOf` a049456
+>>> [1,1,1,2,1,1,3,2,3,1,1,4,3,5,2,5,3,4,1,1,5,4,7,3,8,5,7,2,7,5,8,3,7,4,5,1,1,6,5,9] `Data.List.isPrefixOf` a049456
 True
 
 > plot_p1_imp [take 200 (a049456 :: [Int])]
@@ -1487,7 +1488,7 @@ a049456 = map snd (concat Math.stern_brocot_tree_lhs)
 
 Number of digits in the prime factorization of n (counting terms of the form p^1 as p).
 
->>> [1,1,1,2,1,2,1,2,2,2,2,3,2,2,2,2,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,2,3,3,2,4,2,3,3,3,2,3,2,4,3,3,2,3,2,3,3,4,2] `List.isPrefixOf` a050252
+>>> [1,1,1,2,1,2,1,2,2,2,2,3,2,2,2,2,2,3,2,3,2,3,2,3,2,3,2,3,2,3,2,2,3,3,2,4,2,3,3,3,2,3,2,4,3,3,2,3,2,3,3,4,2] `Data.List.isPrefixOf` a050252
 True
 -}
 a050252 :: [Integer]
@@ -1503,7 +1504,7 @@ a050252_n n =
 
 5-smooth numbers, i.e., numbers whose prime divisors are all <= 5.
 
->>> [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24, 25, 27, 30, 32, 36, 40, 45, 48, 50, 54, 60, 64, 72] `List.isPrefixOf` a051037
+>>> [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24, 25, 27, 30, 32, 36, 40, 45, 48, 50, 54, 60, 64, 72] `Data.List.isPrefixOf` a051037
 True
 -}
 a051037 :: Integral n => [n]
@@ -1513,7 +1514,7 @@ a051037 = map (`div` 30) a143207
 
 Catalan triangle (with 0's) read by rows.
 
->>> [1,0,1,1,0,1,0,2,0,1,2,0,3,0,1,0,5,0,4,0,1,5,0,9,0,5,0,1,0,14,0,14,0,6,0,1,14,0] `List.isPrefixOf` a053121
+>>> [1,0,1,1,0,1,0,2,0,1,2,0,3,0,1,0,5,0,4,0,1,5,0,9,0,5,0,1,0,14,0,14,0,6,0,1,14,0] `Data.List.isPrefixOf` a053121
 True
 
 >>> take 7 a053121_tbl == [[1],[0,1],[1,0,1],[0,2,0,1],[2,0,3,0,1],[0,5,0,4,0,1],[5,0,9,0,5,0,1]]
@@ -1523,13 +1524,13 @@ a053121 :: Num n => [n]
 a053121 = concat a053121_tbl
 
 a053121_tbl :: Num n => [[n]]
-a053121_tbl = iterate (\row -> zipWith (+) (0 : row) (List.tail_err row ++ [0, 0])) [1]
+a053121_tbl = iterate (\row -> zipWith (+) (0 : row) (Safe.tailErr row ++ [0, 0])) [1]
 
 {- | <https://oeis.org/A055642>
 
 Number of digits in the decimal expansion of n.
 
->>> [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] `List.isPrefixOf` a055642
+>>> [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] `Data.List.isPrefixOf` a055642
 True
 
 >>> take 10 a055642 == replicate 10 1
@@ -1545,17 +1546,17 @@ True
 True
 -}
 a055642 :: [Integer]
-a055642 = map (List.genericLength . show) [0 ..]
+a055642 = map (Data.List.genericLength . show) [0 ..]
 
 a055642_n :: Integer -> Integer
-a055642_n = List.genericLength . show
+a055642_n = Data.List.genericLength . show
 
 {- | <https://oeis.org/A055748>
 
 A chaotic cousin of the Hofstadter-Conway sequence A004001.
 a(1) = 1, a(2) = 1, a(n) = a(a(n-1)) + a(n - a(n-2) - 1) for n >= 3
 
->>> [1, 1, 2, 2, 2, 3, 4, 4, 4, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 11, 13, 15, 15, 14, 15, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18, 18, 18, 18, 19, 21, 23, 21, 20, 24, 25, 26, 28, 27, 26, 30, 30, 29, 30, 30, 30, 31, 32, 32, 32, 32, 32, 32, 32, 32, 32, 33] `List.isPrefixOf` a055748
+>>> [1, 1, 2, 2, 2, 3, 4, 4, 4, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 11, 13, 15, 15, 14, 15, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18, 18, 18, 18, 19, 21, 23, 21, 20, 24, 25, 26, 28, 27, 26, 30, 30, 29, 30, 30, 30, 31, 32, 32, 32, 32, 32, 32, 32, 32, 32, 33] `Data.List.isPrefixOf` a055748
 True
 
 > plot_p1_pt [take 5000 a055748]
@@ -1574,13 +1575,13 @@ a055748 =
 
 Decimal expansion of the tribonacci constant t, the real root of x^3 - x^2 - x - 1.
 
->>> [1,8,3,9,2,8,6,7,5,5,2,1,4,1,6,1,1,3,2,5,5,1,8,5,2,5,6,4,6,5,3,2,8,6,6,0,0,4,2] `List.isPrefixOf` a058265
+>>> [1,8,3,9,2,8,6,7,5,5,2,1,4,1,6,1,1,3,2,5,5,1,8,5,2,5,6,4,6,5,3,2,8,6,6,0,0,4,2] `Data.List.isPrefixOf` a058265
 True
 
 > a058265_k :: Data.Number.Fixed.Fixed Data.Number.Fixed.Prec500
 -}
 a058265 :: Num n => [n]
-a058265 = map (fromIntegral . Char.digitToInt) "183928675521416113255185256465328660042417874609759224677875863940420322208196642573843541942830701414197982685924097416417845074650743694383154582049951379624965553964461366612154027797267811894104121160922328215595607181671218236598665227337853781569698925211739579141322872106187898408525495693114534913498534595761750359652213238142472727224173581877000697905510254904496571074252654772281100659893755563630933305282623575385197199429914530082546639774729005870059744813919316728258488396263329709" ++ error "A058265"
+a058265 = map (fromIntegral . Data.Char.digitToInt) "183928675521416113255185256465328660042417874609759224677875863940420322208196642573843541942830701414197982685924097416417845074650743694383154582049951379624965553964461366612154027797267811894104121160922328215595607181671218236598665227337853781569698925211739579141322872106187898408525495693114534913498534595761750359652213238142472727224173581877000697905510254904496571074252654772281100659893755563630933305282623575385197199429914530082546639774729005870059744813919316728258488396263329709" ++ error "A058265"
 
 -- | A058265 as 'Floating' calculation, see "Data.Number.Fixed".
 a058265_k :: Floating n => n
@@ -1590,7 +1591,8 @@ a058265_k = (1 / 3) * (1 + (19 + 3 * sqrt 33) ** (1 / 3) + (19 - 3 * sqrt 33) **
 
 From Renyi's "beta expansion of 1 in base 3/2": sequence gives y(0), y(1), ...
 
->>> [1,1,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0] `isPrefixOf` a058840
+>>> [1,1,0,1,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0] `Data.List.isPrefixOf` a058840
+True
 -}
 a058840 :: [Integer]
 a058840 =
@@ -1604,16 +1606,17 @@ a058840 =
 
 From Renyi's "beta expansion of 1 in base 3/2": sequence gives lengths of runs of 0's in A058840.
 
->>> [0,1,5,2,2,1,9,6,4,6,2,2,1,11,3,2,7,2,5,4,6,3,3,5,2,4,7,7,2,5,3,4,2,3,5,5,2,2,2,2,4,3,10,5,5,2,1,6,1,5,2,3,2,3,3,2,9,6,9,6,8,2,7,5,3,2,2,4,3,1,14,9,3,6,7,3,2,2,3,4,3,2,6,4,2] `isPrefixOf` a058841
+>>> [0,1,5,2,2,1,9,6,4,6,2,2,1,11,3,2,7,2,5,4,6,3,3,5,2,4,7,7,2,5,3,4,2,3,5,5,2,2,2,2,4,3,10,5,5,2,1,6,1,5,2,3,2,3,3,2,9,6,9,6,8,2,7,5,3,2,2,4,3,1,14,9,3,6,7,3,2,2,3,4,3,2,6,4,2] `Data.List.isPrefixOf` a058841
+True
 -}
 a058841 :: [Int]
-a058841 = 0 : (map length (filter ((== 0) . head) (List.group a058840)))
+a058841 = 0 : (map length (filter ((== 0) . Safe.headErr) (Data.List.group a058840)))
 
 {- | <http://oeis.org/A060588>
 
 If the final two digits of n written in base 3 are the same then this digit, otherwise mod 3-sum of these two digits.
 
->>> [0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1] `List.isPrefixOf` a060588a
+>>> [0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1,2,1,0,1,0,2,0,2,1] `Data.List.isPrefixOf` a060588a
 True
 -}
 a060588a :: Integral n => [n]
@@ -1626,7 +1629,7 @@ a060588a_n n = (-n - floor (fromIntegral n / (3 :: Double))) `mod` 3
 
 a(n) = (3*16^n + 2)/5
 
->>> [1,10,154,2458,39322,629146,10066330,161061274,2576980378,41231686042] `List.isPrefixOf` a061654
+>>> [1,10,154,2458,39322,629146,10066330,161061274,2576980378,41231686042] `Data.List.isPrefixOf` a061654
 True
 -}
 a061654 :: Integral n => [n]
@@ -1639,7 +1642,7 @@ a061654_n n = (3 * 16 ^ n + 2) `div` 5
 
 EKG sequence (or ECG sequence): a(1) = 1; a(2) = 2; for n > 2, a(n) = smallest number not already used which shares a factor with a(n-1).
 
->>> [1,2,4,6,3,9,12,8,10,5,15,18,14,7,21,24,16,20,22,11,33,27,30,25,35,28,26,13,39,36,32,34,17] `List.isPrefixOf` a064413
+>>> [1,2,4,6,3,9,12,8,10,5,15,18,14,7,21,24,16,20,22,11,33,27,30,25,35,28,26,13,39,36,32,34,17] `Data.List.isPrefixOf` a064413
 True
 
 > plot_p1_ln [take 200 a064413 :: [Int]]
@@ -1650,7 +1653,7 @@ a064413 =
   let ekg x zs =
         let f (y : ys) =
               if gcd x y > 1
-                then y : ekg y (List.delete y zs)
+                then y : ekg y (Data.List.delete y zs)
                 else f ys
             f [] = error "?"
         in f zs
@@ -1660,7 +1663,7 @@ a064413 =
 
 a(1) = 0, a(2) = 1, a(n) = a(floor(n/3)) + a(n - floor(n/3)).
 
->>> [0,1,1,1,1,2,2,3,3,3,4,4,4,4,4,5,5,6,6,6,6,6,7,8,8,9,9,9,9,9,9,9,10,11,12,12,12] `List.isPrefixOf` a071996
+>>> [0,1,1,1,1,2,2,3,3,3,4,4,4,4,4,5,5,6,6,6,6,6,7,8,8,9,9,9,9,9,9,9,10,11,12,12,12] `Data.List.isPrefixOf` a071996
 True
 
 > plot_p1_ln [take 50 a000201 :: [Int]]
@@ -1694,7 +1697,7 @@ a073334 =
 
 Tribonacci word: limit S(infinity), where S(0) = 0, S(1) = 0,1, S(2) = 0,1,0,2 and for n >= 0, S(n+3) = S(n+2) S(n+1) S(n).
 
->>> [0,1,0,2,0,1,0,0,1,0,2,0,1,0,1,0,2,0,1,0,0,1,0,2,0,1,0,2,0,1,0,0,1,0,2,0,1,0,1] `List.isPrefixOf` a080843
+>>> [0,1,0,2,0,1,0,0,1,0,2,0,1,0,1,0,2,0,1,0,0,1,0,2,0,1,0,2,0,1,0,0,1,0,2,0,1,0,1] `Data.List.isPrefixOf` a080843
 True
 -}
 a080843 :: Integral n => [n]
@@ -1744,7 +1747,7 @@ a083866 = map snd (filter ((== (0 :: Int)) . fst) (zip a004718 [0 ..]))
 
 Pascal (1,3) triangle.
 
->>> [3,1,3,1,4,3,1,5,7,3,1,6,12,10,3,1,7,18,22,13,3,1,8,25,40,35,16,3,1,9,33,65,75] `List.isPrefixOf` a095660
+>>> [3,1,3,1,4,3,1,5,7,3,1,6,12,10,3,1,7,18,22,13,3,1,8,25,40,35,16,3,1,9,33,65,75] `Data.List.isPrefixOf` a095660
 True
 
 >>> take 6 a095660_tbl == [[3],[1,3],[1,4,3],[1,5,7,3],[1,6,12,10,3],[1,7,18,22,13,3]]
@@ -1762,7 +1765,7 @@ a095660_tbl =
 
 Pascal (1,4) triangle.
 
->>> [4,1,4,1,5,4,1,6,9,4,1,7,15,13,4,1,8,22,28,17,4,1,9,30,50,45,21,4,1,10,39,80,95] `List.isPrefixOf` a095666
+>>> [4,1,4,1,5,4,1,6,9,4,1,7,15,13,4,1,8,22,28,17,4,1,9,30,50,45,21,4,1,10,39,80,95] `Data.List.isPrefixOf` a095666
 True
 
 >>> take 6 a095666_tbl == [[4],[1,4],[1,5,4],[1,6,9,4],[1,7,15,13,4],[1,8,22,28,17,4]]
@@ -1780,7 +1783,7 @@ a095666_tbl =
 
 Pascal (1,5) triangle.
 
->>> [5,1,5,1,6,5,1,7,11,5,1,8,18,16,5,1,9,26,34,21,5,1,10,35,60,55,26,5,1,11,45,95] `List.isPrefixOf` a096940
+>>> [5,1,5,1,6,5,1,7,11,5,1,8,18,16,5,1,9,26,34,21,5,1,10,35,60,55,26,5,1,11,45,95] `Data.List.isPrefixOf` a096940
 True
 
 >>> take 6 a096940_tbl == [[5],[1,5],[1,6,5],[1,7,11,5],[1,8,18,16,5],[1,9,26,34,21,5]]
@@ -1798,7 +1801,7 @@ a096940_tbl =
 
 The Yellowstone permutation: a(n) = n if n <= 3, otherwise the smallest number not occurring earlier having at least one common factor with a(n-2), but none with a(n-1).
 
->>> [1,2,3,4,9,8,15,14,5,6,25,12,35,16,7,10,21,20,27,22,39,11,13,33,26,45,28,51,32,17,18,85,24,55] `List.isPrefixOf` a098550
+>>> [1,2,3,4,9,8,15,14,5,6,25,12,35,16,7,10,21,20,27,22,39,11,13,33,26,45,28,51,32,17,18,85,24,55] `Data.List.isPrefixOf` a098550
 True
 
 > plot_p1_ln [take 200 (a098550 :: [Int])]
@@ -1810,7 +1813,7 @@ a098550 =
         let g [] = error "?"
             g (x : xs) =
               if gcd x u > 1 && gcd x v == 1
-                then x : f v x (List.delete x ws)
+                then x : f v x (Data.List.delete x ws)
                 else g xs
         in g ws
   in 1 : 2 : 3 : f 2 3 [4 ..]
@@ -1819,7 +1822,7 @@ a098550 =
 
 A Fibonacci-Pascal matrix.
 
->>> [1,1,1,2,2,1,3,4,3,1,5,7,7,4,1,8,12,14,11,5,1,13,20,26,25,16,6,1,21,33,46,51,41] `List.isPrefixOf` a105809
+>>> [1,1,1,2,2,1,3,4,3,1,5,7,7,4,1,8,12,14,11,5,1,13,20,26,25,16,6,1,21,33,46,51,41] `Data.List.isPrefixOf` a105809
 True
 -}
 a105809 :: Num n => [n]
@@ -1835,7 +1838,7 @@ a105809_tbl =
 
 Define a triangle in which the entries are of the form +-1/(b!c!d!e!...), where the order of the factorials is important; read the triangle by rows and record and expand the denominators.
 
->>> [2, 6, 4, 24, 12, 12, 8, 120, 48, 36, 24, 48, 24, 24, 16, 720, 240, 144, 96, 144, 72, 72, 48, 240, 96, 72, 48, 96, 48, 48, 32, 5040, 1440, 720, 480, 576, 288, 288, 192, 720, 288, 216, 144, 288, 144, 144, 96, 1440, 480, 288, 192, 288, 144, 144, 96, 480, 192, 144, 96, 192] `List.isPrefixOf` a106831
+>>> [2, 6, 4, 24, 12, 12, 8, 120, 48, 36, 24, 48, 24, 24, 16, 720, 240, 144, 96, 144, 72, 72, 48, 240, 96, 72, 48, 96, 48, 48, 32, 5040, 1440, 720, 480, 576, 288, 288, 192, 720, 288, 216, 144, 288, 144, 144, 96, 1440, 480, 288, 192, 288, 144, 144, 96, 480, 192, 144, 96, 192] `Data.List.isPrefixOf` a106831
 True
 -}
 a106831 :: Integral t => [t]
@@ -1859,7 +1862,7 @@ Triangle in which first row is 0, n-th row (n>1) lists the (ordered)
 prime signature of n, that is, the exponents of distinct prime factors
 in factorization of n.
 
->>> [0,1,1,2,1,1,1,1,3,2,1,1,1,2,1,1,1,1,1,1,4,1,1,2,1,2,1,1,1,1,1,1,3,1,2,1,1,3,2,1,1,1,1,1,1,5,1] `List.isPrefixOf` a124010
+>>> [0,1,1,2,1,1,1,1,3,2,1,1,1,2,1,1,1,1,1,1,4,1,1,2,1,2,1,1,1,1,1,1,3,1,2,1,1,3,2,1,1,1,1,1,1,5,1] `Data.List.isPrefixOf` a124010
 True
 -}
 a124010 :: Integral n => [n]
@@ -1887,7 +1890,7 @@ a124010_row n =
 
 Benjamin Franklin's 16 X 16 magic square read by rows.
 
->>> [200,217,232,249,8,25,40,57,72,89,104,121,136,153,168,185,58,39,26,7,250,231] `List.isPrefixOf` a124472
+>>> [200,217,232,249,8,25,40,57,72,89,104,121,136,153,168,185,58,39,26,7,250,231] `Data.List.isPrefixOf` a124472
 True
 -}
 a124472 :: Num n => [n]
@@ -1922,7 +1925,7 @@ a125519 = [831, 326, 267, 574, 584, 257, 316, 841, 158, 683, 742, 415, 425, 732,
 
 Moment of inertia of all magic squares of order n.
 
->>> [5,60,340,1300,3885,9800,21840,44280,83325,147620,248820,402220,627445,949200] `List.isPrefixOf` a126275
+>>> [5,60,340,1300,3885,9800,21840,44280,83325,147620,248820,402220,627445,949200] `Data.List.isPrefixOf` a126275
 True
 -}
 a126275 :: Integral n => [n]
@@ -1935,7 +1938,7 @@ a126275_n n = (n ^ (2 :: Int) * (n ^ (4 :: Int) - 1)) `div` 12
 
 Moment of inertia of all magic cubes of order n.
 
->>> [18,504,5200,31500,136710,471968,1378944,3547800,8258250,17728920,35603568] `List.isPrefixOf` a126276
+>>> [18,504,5200,31500,136710,471968,1378944,3547800,8258250,17728920,35603568] `Data.List.isPrefixOf` a126276
 True
 -}
 a126276 :: Integral n => [n]
@@ -2121,7 +2124,7 @@ a126976 =
 
 Triangle in which row n is a sorted list of all numbers having total stopping time n in the Collatz (or 3x+1) iteration.
 
->>> [1, 2, 4, 8, 16, 5, 32, 10, 64, 3, 20, 21, 128, 6, 40, 42, 256, 12, 13, 80, 84, 85, 512, 24, 26, 160, 168, 170, 1024, 48, 52, 53, 320, 336, 340, 341, 2048, 17, 96, 104, 106, 113, 640, 672, 680, 682, 4096, 34, 35, 192, 208, 212, 213, 226, 227, 1280, 1344, 1360, 1364] `List.isPrefixOf` a127824
+>>> [1, 2, 4, 8, 16, 5, 32, 10, 64, 3, 20, 21, 128, 6, 40, 42, 256, 12, 13, 80, 84, 85, 512, 24, 26, 160, 168, 170, 1024, 48, 52, 53, 320, 336, 340, 341, 2048, 17, 96, 104, 106, 113, 640, 672, 680, 682, 4096, 34, 35, 192, 208, 212, 213, 226, 227, 1280, 1344, 1360, 1364] `Data.List.isPrefixOf` a127824
 True
 -}
 a127824 :: [Integer]
@@ -2136,22 +2139,22 @@ a127824_n n = a127824_tbl !! n
 a127824_tbl :: [[Integer]]
 a127824_tbl =
   let f row =
-        List.sort $
+        Data.List.sort $
           map (* 2) row
-            `List.union` [ x'
-                         | x <- row
-                         , let x' = (x - 1) `div` 3
-                         , x' * 3 == x - 1
-                         , odd x'
-                         , x' > 1
-                         ]
+            `Data.List.union` [ x'
+                              | x <- row
+                              , let x' = (x - 1) `div` 3
+                              , x' * 3 == x - 1
+                              , odd x'
+                              , x' > 1
+                              ]
   in iterate f [1]
 
 {- | <https://oeis.org/A133058>
 
 a(0) = a(1) = 1; for n > 1, a(n) = a(n-1) + n + 1 if a(n-1) and n are coprime, otherwise a(n) = a(n-1)/gcd(a(n-1),n).
 
->>> [1, 1, 4, 8, 2, 8, 4, 12, 3, 1, 12, 24, 2, 16, 8, 24, 3, 21, 7, 27, 48, 16, 8, 32, 4, 30, 15, 5, 34, 64, 32, 64, 2, 36, 18, 54, 3, 41, 80, 120, 3, 45, 15, 59, 104, 150, 75, 123, 41, 91, 142, 194, 97, 151, 206, 262, 131, 189, 248, 308, 77, 139, 202, 266, 133, 199, 266, 334, 167] `List.isPrefixOf` a133058
+>>> [1, 1, 4, 8, 2, 8, 4, 12, 3, 1, 12, 24, 2, 16, 8, 24, 3, 21, 7, 27, 48, 16, 8, 32, 4, 30, 15, 5, 34, 64, 32, 64, 2, 36, 18, 54, 3, 41, 80, 120, 3, 45, 15, 59, 104, 150, 75, 123, 41, 91, 142, 194, 97, 151, 206, 262, 131, 189, 248, 308, 77, 139, 202, 266, 133, 199, 266, 334, 167] `Data.List.isPrefixOf` a133058
 True
 
 > plot_p1_pt [take 1000 a133058 :: [Int]]
@@ -2162,7 +2165,7 @@ a133058 =
         if n <= 1
           then 1
           else
-            let p = a133058 `List.genericIndex` (n - 1)
+            let p = a133058 `Data.List.genericIndex` (n - 1)
                 g = gcd p n
             in if g == 1
                 then p + n + 1
@@ -2173,7 +2176,7 @@ a133058 =
 
 Numbers with distinct prime factors 2, 3, and 5.
 
->>> [30, 60, 90, 120, 150, 180, 240, 270, 300, 360, 450, 480, 540, 600, 720, 750, 810, 900, 960] `List.isPrefixOf` a143207
+>>> [30, 60, 90, 120, 150, 180, 240, 270, 300, 360, 450, 480, 540, 600, 720, 750, 810, 900, 960] `Data.List.isPrefixOf` a143207
 True
 -}
 a143207 :: Integral n => [n]
@@ -2187,34 +2190,34 @@ a143207 =
 
 Numerators of the "original" Bernoulli numbers; also the numerators of the Bernoulli polynomials at x=1.
 
-> [1, 1, 1, 0, -1, 0, 1, 0, -1, 0, 5, 0, -691, 0, 7, 0, -3617, 0, 43867, 0, -174611, 0, 854513, 0, -236364091, 0, 8553103, 0, -23749461029, 0, 8615841276005, 0, -7709321041217, 0, 2577687858367, 0, -26315271553053477373, 0, 2929993913841559, 0, -261082718496449122051] `List.isPrefixOf` a164555 -- slow
+> [1, 1, 1, 0, -1, 0, 1, 0, -1, 0, 5, 0, -691, 0, 7, 0, -3617, 0, 43867, 0, -174611, 0, 854513, 0, -236364091, 0, 8553103, 0, -23749461029, 0, 8615841276005, 0, -7709321041217, 0, 2577687858367, 0, -26315271553053477373, 0, 2929993913841559, 0, -261082718496449122051] `Data.List.isPrefixOf` a164555 -- slow
 True
 
 >>> take 19 a164555 == [1,1,1,0,-1,0,1,0,-1,0,5,0,-691,0,7,0,-3617,0,43867]
 True
 -}
 a164555 :: Integral t => [t]
-a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (List.tail_err a000142) a242179_tbl) a106831_tbl)
+a164555 = 1 : map (numerator . sum) (zipWith (zipWith (%)) (zipWith (map . (*)) (Safe.tailErr a000142) a242179_tbl) a106831_tbl)
 
 {- | <https://oeis.org/A181391>
 
 Van Eck's sequence: For n >= 1, if there exists an m < n such that a(m) = a(n), take the largest such m and set a(n+1) = n-m; otherwise a(n+1) = 0. Start with a(1)=0.
 
->>> [0, 0, 1, 0, 2, 0, 2, 2, 1, 6, 0, 5, 0, 2, 6, 5, 4, 0, 5, 3, 0, 3, 2, 9, 0, 4, 9, 3, 6, 14, 0, 6, 3, 5, 15, 0, 5, 3, 5, 2, 17, 0, 6, 11, 0, 3, 8, 0, 3, 3, 1, 42, 0, 5, 15, 20, 0, 4, 32, 0, 3, 11, 18, 0, 4, 7, 0, 3, 7, 3, 2, 31, 0, 6, 31, 3, 6, 3, 2, 8, 33, 0, 9, 56, 0, 3, 8, 7, 19, 0, 5, 37, 0, 3, 8, 8, 1] `List.isPrefixOf` a181391
+>>> [0, 0, 1, 0, 2, 0, 2, 2, 1, 6, 0, 5, 0, 2, 6, 5, 4, 0, 5, 3, 0, 3, 2, 9, 0, 4, 9, 3, 6, 14, 0, 6, 3, 5, 15, 0, 5, 3, 5, 2, 17, 0, 6, 11, 0, 3, 8, 0, 3, 3, 1, 42, 0, 5, 15, 20, 0, 4, 32, 0, 3, 11, 18, 0, 4, 7, 0, 3, 7, 3, 2, 31, 0, 6, 31, 3, 6, 3, 2, 8, 33, 0, 9, 56, 0, 3, 8, 7, 19, 0, 5, 37, 0, 3, 8, 8, 1] `Data.List.isPrefixOf` a181391
 True
 -}
 a181391 :: [Int]
 a181391 =
   let g xs =
-        let m = 1 + Maybe.fromMaybe (-1) (List.findIndex (== head xs) $ tail xs)
+        let m = 1 + Data.Maybe.fromMaybe (-1) (Data.List.findIndex (== Safe.headErr xs) $ Safe.tailErr xs)
         in Just (m, m : xs)
-  in 0 : (List.unfoldr g [0])
+  in 0 : (Data.List.unfoldr g [0])
 
 {- | <https://oeis.org/A212804>
 
 Expansion of (1 - x)/(1 - x - x^2).
 
->>> [1,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `List.isPrefixOf` a212804
+>>> [1,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946] `Data.List.isPrefixOf` a212804
 True
 -}
 a212804 :: Integral n => [n]
@@ -2224,7 +2227,7 @@ a212804 = 1 : a000045
 
 The "forest fire": sequence of positive integers where each is chosen to be as small as possible subject to the condition that no three terms a(j), a(j+k), a(j+2k) (for any j and k) form an arithmetic progression.
 
->>> [1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 9, 4, 4, 5, 5, 10, 5, 5, 10, 2, 10, 13, 11, 10, 8, 11, 13, 10, 12, 10, 10, 12, 10, 11, 14, 20, 13] `List.isPrefixOf` a229037
+>>> [1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 1, 1, 2, 1, 1, 2, 2, 4, 4, 1, 1, 2, 1, 1, 2, 2, 4, 4, 2, 4, 4, 5, 5, 8, 5, 5, 9, 9, 4, 4, 5, 5, 10, 5, 5, 10, 2, 10, 13, 11, 10, 8, 11, 13, 10, 12, 10, 10, 12, 10, 11, 14, 20, 13] `Data.List.isPrefixOf` a229037
 True
 
 > plot_p1_pt [take 750 a229037 :: [Int]]
@@ -2233,7 +2236,7 @@ a229037 :: Integral i => [i]
 a229037 =
   let f i m =
         let y =
-              head
+              Safe.headErr
                 [ z
                 | z <- [1 ..]
                 , all
@@ -2247,7 +2250,7 @@ a229037 =
 
 T(0,0) = 1, T(n+1,2*k) = - T(n,k), T(n+1,2*k+1) = T(n,k), k=0..n, triangle read by rows.
 
->>> [1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1] `List.isPrefixOf` a242179
+>>> [1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, 1, 1] `Data.List.isPrefixOf` a242179
 True
 -}
 a242179 :: Integral t => [t]
@@ -2260,7 +2263,7 @@ a242179_tbl = iterate (concatMap (\x -> [-x, x])) [1]
 
 A Rauzy fractal sequence: trajectory of 1 under morphism 1 -> 2,3; 2 -> 3; 3 -> 1.
 
->>> [1,2,3,2,3,3,1,2,3,3,1,3,1,1,2,3,2,3,3,1,3,1,1,2,3,3,1,1,2,3,1,2,3,2,3,3,1,2,3] `List.isPrefixOf` a245553
+>>> [1,2,3,2,3,3,1,2,3,3,1,3,1,1,2,3,2,3,3,1,3,1,1,2,3,3,1,1,2,3,1,2,3,2,3,3,1,2,3] `Data.List.isPrefixOf` a245553
 True
 -}
 a245553 :: Integral n => [n]
@@ -2283,11 +2286,11 @@ a255723 :: Num n => [n]
 a255723 =
   0
     : concat
-      ( List.transpose
+      ( Data.List.transpose
           [ map (subtract 2) a255723
           , map (-1 -) a255723
           , map (+ 2) a255723
-          , List.tail_err a255723
+          , Safe.tailErr a255723
           ]
       )
 
@@ -2302,10 +2305,10 @@ a256184 :: Num n => [n]
 a256184 =
   0
     : concat
-      ( List.transpose
+      ( Data.List.transpose
           [ map (subtract 2) a256184
           , map (subtract 1) a256184
-          , map negate (List.tail_err a256184)
+          , map negate (Safe.tailErr a256184)
           ]
       )
 
@@ -2320,10 +2323,10 @@ a256185 :: Num n => [n]
 a256185 =
   0
     : concat
-      ( List.transpose
+      ( Data.List.transpose
           [ map (subtract 3) a256185
           , map (-2 -) a256185
-          , map negate (List.tail_err a256185)
+          , map negate (Safe.tailErr a256185)
           ]
       )
 

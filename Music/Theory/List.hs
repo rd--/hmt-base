@@ -861,7 +861,7 @@ assoc_merge p q =
 If the key requested is less than the initial key, or the list is empty, returns 'Nothing'.
 
 >>> let m = [(1,'a'),(4,'x'),(4,'b'),(5,'c')]
->>> mapMaybe (ord_map_locate m) [1 .. 6]
+>>> Data.Maybe.mapMaybe (ord_map_locate m) [1 .. 6]
 [(1,'a'),(1,'a'),(1,'a'),(4,'b'),(5,'c'),(5,'c')]
 
 >>> ord_map_locate m 0
@@ -1461,7 +1461,7 @@ two_stage_compare_on f g = two_stage_compare (compare `Data.Function.on` f) (com
 >>> compare (1,0) (0,1)
 GT
 
->>> n_stage_compare [compare `on` snd,compare `on` fst] (1,0) (0,1)
+>>> n_stage_compare [compare `Data.Function.on` snd,compare `Data.Function.on` fst] (1,0) (0,1)
 LT
 -}
 n_stage_compare :: [Compare_F a] -> Compare_F a
@@ -1547,13 +1547,13 @@ merge_set = merge_set_by compare
 
 >>> let left p _ = p
 >>> let right _ q = q
->>> let cmp = compare `on` fst
+>>> let cmp = compare `Data.Function.on` fst
 >>> let p = zip [1,3,5] "abc"
 >>> let q = zip [1,2,3] "ABC"
 >>> [merge_by_resolve left cmp p q, merge_by_resolve right cmp p q]
 [[(1,'a'),(2,'B'),(3,'b'),(5,'c')],[(1,'A'),(2,'B'),(3,'C'),(5,'c')]]
 
->>> merge_by_resolve (\x _ -> x) (compare `on` fst) [(0,'A'),(1,'B'),(4,'E')] (zip [1..] "bcd")
+>>> merge_by_resolve (\x _ -> x) (compare `Data.Function.on` fst) [(0,'A'),(1,'B'),(4,'E')] (zip [1..] "bcd")
 [(0,'A'),(1,'B'),(2,'c'),(3,'d'),(4,'E')]
 -}
 merge_by_resolve :: (a -> a -> a) -> Compare_F a -> [a] -> [a] -> [a]
@@ -1571,7 +1571,7 @@ merge_by_resolve jn cmp =
 {- | Merge two sorted (ascending) sequences.
 Where elements compare equal, select element from left input.
 
->>> asc_seq_left_biased_merge_by (compare `on` fst) [(0,'A'),(1,'B'),(4,'E')] (zip [1..] "bcd")
+>>> asc_seq_left_biased_merge_by (compare `Data.Function.on` fst) [(0,'A'),(1,'B'),(4,'E')] (zip [1..] "bcd")
 [(0,'A'),(1,'B'),(2,'c'),(3,'d'),(4,'E')]
 -}
 asc_seq_left_biased_merge_by :: (a -> a -> Ordering) -> [a] -> [a] -> [a]
@@ -1873,7 +1873,7 @@ from list.
 
 >>> let l = "a {b {c d} e f} g h i"
 >>> let t = group_tree ((==) '{',(==) '}') l
->>> catMaybes (Tree.flatten t) == l
+>>> Data.Maybe.catMaybes (Tree.flatten t) == l
 True
 
 > let d = putStrLn . Tree.drawTree . fmap show

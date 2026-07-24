@@ -179,7 +179,7 @@ c_to_rgb8 c =
 {- | Tuple to 'C', inverse of 'c_to_rgb'.
 
 >>> rgb_to_c (1, 0, 0)
-Data.Colour.Srgb.Linear.rgb 1.0 0.0 0.0
+Data.Colour.SRGB.Linear.rgb 1.0 0.0 0.0
 -}
 rgb_to_c :: (Ord t, Floating t) => Rgb t -> Colour.Colour t
 rgb_to_c (r, g, b) = Srgb.sRGB r g b
@@ -257,7 +257,7 @@ hsv_to_rgb = c_to_rgb . hsv_to_c
 {- | Tuple to 'Ca', inverse of 'c_to_rgba'.
 
 >>> rgba_to_ca (1, 1, 0, 0.5)
-Data.Colour.Srgb.Linear.rgb 1.0 1.0 0.0 `withOpacity` 0.5
+Data.Colour.SRGB.Linear.rgb 1.0 1.0 0.0 `withOpacity` 0.5
 -}
 rgba_to_ca :: (Ord t, Floating t) => Rgba t -> Colour.AlphaColour t
 rgba_to_ca (r, g, b, a) = rgb_to_c (r, g, b) `Colour.withOpacity` a
@@ -265,7 +265,7 @@ rgba_to_ca (r, g, b, a) = rgb_to_c (r, g, b) `Colour.withOpacity` a
 {- | Linear space
 
 >>> lrgba_to_ca (0.5, 0, 0, 0.5)
-Data.Colour.Srgb.Linear.rgb 0.5 0.0 0.0 `withOpacity` 0.5
+Data.Colour.SRGB.Linear.rgb 0.5 0.0 0.0 `withOpacity` 0.5
 
 >>> let c = lrgba_to_ca (2 / 3, 1 / 3, 0, 3 / 4)
 >>> lrgba_to_ca (1, 0, 0, 0.5) `Colour.over` lrgba_to_ca (0, 1, 0, 0.5) == c
