@@ -48,13 +48,22 @@ True
 rgb24_pack :: Bits t => Rgb t -> t
 rgb24_pack (r, g, b) = shiftL r 16 .|. shiftL g 8 .|. b
 
-{- | 8-bit Rgb triple to hex string.
+{- | 8-bit Rgb triple to hex string, with hash prefix.
 
 >>> rgb8_to_hex_str (rgb24_unpack 0xC80815)
 "#c80815"
 -}
 rgb8_to_hex_str :: (Integral t, PrintfArg t) => Rgb t -> String
 rgb8_to_hex_str (r, g, b) = printf "#%02x%02x%02x" r g b
+
+{- | `rgb8_to_hex_str` . `rgb_to_rgb8` . `rgba_to_rgb`.
+The above composition won't work because the intermediate type is "ambiguous".
+-}
+rgba_to_hex_str :: RealFrac t => Rgba t -> String
+rgba_to_hex_str c =
+  let c' = rgba_to_rgb c
+      c'' = rgb_to_rgb8 c' :: Rgb Int
+  in rgb8_to_hex_str c''
 
 {- | Rgb (0-255) to Rgb (0-1)
 
@@ -69,7 +78,7 @@ rgb8_to_rgb = clr_normalise 255
 >>> rgb_to_rgb8 (0, 0.5, 1)
 (0,128,255)
 -}
-rgb_to_rgb8 :: (Integral i, RealFrac r) => Rgb r -> Rgb i
+rgb_to_rgb8 :: (RealFrac r, Integral i) => Rgb r -> Rgb i
 rgb_to_rgb8 (r, g, b) = (round (r * 255), round (g * 255), round (b * 255))
 
 rgba_to_rgb :: Rgba t -> Rgb t
@@ -129,10 +138,10 @@ clr_read_csv_rgb24_table fn = do
 
 -- * Colour
 
--- | Opaque colour.
+-- | Opaque colour (type specialised Colour.Colour)
 type C = Colour.Colour Double
 
--- | Colour with /alpha/ channel.
+-- | Colour with /alpha/ channel (type specialised Colour.AlphaColour)
 type Ca = Colour.AlphaColour Double
 
 -- | Grey 'Colour'.

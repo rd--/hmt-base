@@ -30,7 +30,7 @@ no_dash = ([], 0)
 >>> Pen 1 (0,0,0,1) no_dash
 Pen 1 (0.0,0.0,0.0,1.0) ([],0)
 -}
-data Pen r = Pen (Line_Width r) (Colour) (Dash r) deriving (Eq, Show)
+data Pen r = Pen (Line_Width r) Colour (Dash r) deriving (Eq, Show)
 
 -- | (centre,radius)
 type Centre_Radius t = (V2 t, t)
