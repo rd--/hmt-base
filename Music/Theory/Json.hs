@@ -1,8 +1,7 @@
 -- | Json (Javascript Object Notation)
 module Music.Theory.Json where
 
-import Data.Maybe {- base -}
-import Data.Word {- base -}
+import qualified Data.Word {- base -}
 
 import qualified Data.ByteString.Lazy as ByteString {- bytestring -}
 import qualified Data.ByteString.Lazy.Char8 as ByteString.Char8 {- bytestring -}
@@ -11,7 +10,8 @@ import qualified Data.Text as Text {- text -}
 
 import qualified Data.Aeson.Micro as Json {- microaeson -}
 
-import qualified Music.Theory.Math.Predicate as Math {- hmt-base -}
+import qualified Music.Theory.Math.Predicate as Math.Predicate {- hmt-base -}
+import qualified Music.Theory.Maybe as Maybe {- hmt-base -}
 
 -- | Json object.
 type Object = Json.Object
@@ -65,7 +65,7 @@ safeIntegral i =
 
 -- | Encode integer if safe, else error.
 unsafeIntegral :: Integral i => i -> Value
-unsafeIntegral = fromMaybe (error "Json.unsafeIntegral") . safeIntegral
+unsafeIntegral = Maybe.from_just "Json.unsafeIntegral" . safeIntegral
 
 -- | Encode Int if safe, else Nothing.
 safeInt :: Int -> Maybe Value
@@ -107,7 +107,7 @@ writeFile fn json = ByteString.writeFile fn (Json.encode json)
 
 -- | Erroring 'Json.decode'
 decode_value_err :: ByteString.ByteString -> Value
-decode_value_err = fromMaybe (error "decode_value") . Json.decode
+decode_value_err = Maybe.from_just "decode_value" . Json.decode
 
 {- | Decode string or error.
 
@@ -134,8 +134,8 @@ object_lookup k = Map.lookup (Text.pack k)
 
 object_lookup_err :: String -> Object -> Value
 object_lookup_err k o =
-  let err = error ("object_lookup: " ++ k ++ " -- " ++ show o)
-  in fromMaybe err (object_lookup k o)
+  let err = "object_lookup: " ++ k ++ " -- " ++ show o
+  in Maybe.from_just err (object_lookup k o)
 
 -- | Require value to be an object, unpack as a list of associations.
 associations :: Value -> [Association]
@@ -176,14 +176,21 @@ value_to_double_err v =
 value_to_int_err :: Value -> Int
 value_to_int_err v =
   case v of
-    Json.Number x -> let (i, f) = properFraction x in if f == 0 then i else error "value_to_int_err: float?"
+    Json.Number x ->
+      let (i, f) = properFraction x
+      in if f == 0
+         then i
+         else error "value_to_int_err: float?"
     _ -> error "value_to_int?"
 
 -- | Require value be a number and read as Word8.
-value_to_word8_err :: Value -> Word8
+value_to_word8_err :: Value -> Data.Word.Word8
 value_to_word8_err v =
   case v of
-    Json.Number x -> if Math.double_is_word8 x then floor x else error "value_to_word8?"
+    Json.Number x ->
+      if Math.Predicate.double_is_word8 x
+      then floor x
+      else error "value_to_word8?"
     _ -> error "value_to_word8?"
 
 value_to_list_err :: Value -> [Value]
@@ -220,4 +227,4 @@ value_to_bytestring_err v =
     _ -> error "value_to_double?"
 
 readFile :: FilePath -> IO Value
-readFile fn = fmap (fromMaybe (error "decode_value") . Json.decode) (ByteString.readFile fn)
+readFile fn = fmap (Maybe.from_just "decode_value" . Json.decode) (ByteString.readFile fn)
