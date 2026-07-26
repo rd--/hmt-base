@@ -2,8 +2,8 @@
 module Music.Theory.Math where
 
 import qualified Data.Fixed {- base -}
-import Data.List {- base -}
-import Data.Maybe {- base -}
+import qualified Data.List {- base -}
+import qualified Data.Maybe {- base -}
 import Data.Ratio {- base -}
 
 import qualified Music.Theory.List as List {- hmt-base -}
@@ -194,7 +194,7 @@ rational_whole r = if denominator r == 1 then Just (numerator r) else Nothing
 
 -- | Erroring variant.
 rational_whole_err :: Integral a => Ratio a -> a
-rational_whole_err = fromMaybe (error "rational_whole") . rational_whole
+rational_whole_err = Data.Maybe.fromMaybe (error "rational_whole") . rational_whole
 
 -- | Sum of numerator & denominator.
 ratio_nd_sum :: Integral t => Ratio t -> t
@@ -333,7 +333,7 @@ square n = n * n
 > plot_p1_stp [map totient [1::Int .. 100]]
 -}
 totient :: Integral i => i -> i
-totient n = genericLength (filter (== 1) (map (gcd n) [1 .. n]))
+totient n = Data.List.genericLength (filter (== 1) (map (gcd n) [1 .. n]))
 
 {- | The /n/-th order Farey sequence.
 
@@ -352,7 +352,7 @@ farey n =
         if c > n
           then Nothing
           else let k = (n + b) `quot` d in Just (c % d, (c, d, k * c - a, k * d - b))
-  in 0 : unfoldr step (0, 1, 1, n)
+  in 0 : Data.List.unfoldr step (0, 1, 1, n)
 
 {- | The length of the /n/-th order Farey sequence.
 
@@ -371,7 +371,7 @@ farey_length n = if n == 0 then 1 else farey_length (n - 1) + totient n
 stern_brocot_tree_f :: Num n => [(n, n)] -> [[(n, n)]]
 stern_brocot_tree_f =
   let med_f (n1, d1) (n2, d2) = (n1 + n2, d1 + d2)
-      f x = concat (transpose [x, zipWith med_f x (List.tail_err x)])
+      f x = concat (Data.List.transpose [x, zipWith med_f x (List.tail_err x)])
   in iterate f
 
 {- | The Stern-Brocot tree from (0/1,1/0).

@@ -3,7 +3,7 @@ module Music.Theory.List where
 
 import qualified Data.Bifunctor {- base -}
 import qualified Data.Function {- base -}
-import Data.List {- base -}
+import qualified Data.List {- base -}
 import qualified Data.Maybe {- base -}
 import qualified Data.Ord {- base -}
 
@@ -17,7 +17,7 @@ import qualified Data.Tree as Tree {- containers -}
 import qualified Music.Theory.Either as Either {- hmt-base -}
 import qualified Music.Theory.Maybe as Maybe {- hmt-base -}
 
--- * Ghc
+-- * Ghc Madness
 
 -- | Ghc prints spurious warnings for head, which signals an error for empty lists, as it is defined to do.
 head_err :: [t] -> t
@@ -257,7 +257,7 @@ split_into_halves l =
 genericRotate_left :: Integral i => i -> [a] -> [a]
 genericRotate_left n =
   let f (p, q) = q ++ p
-  in f . genericSplitAt n
+  in f . Data.List.genericSplitAt n
 
 {- | Left rotation.
 
@@ -296,7 +296,7 @@ rotate_right = genericRotate_right
 -}
 rotate :: (Integral n) => n -> [a] -> [a]
 rotate n p =
-  let m = n `mod` genericLength p
+  let m = n `mod` Data.List.genericLength p
   in genericRotate_left m p
 
 {- | Rotate right by /n/ places.
@@ -372,7 +372,7 @@ adj_cyclic_trunc n k = adj_trunc n k . close (n - 1)
 genericAdj2 :: (Integral n) => n -> [t] -> [(t, t)]
 genericAdj2 n l =
   case l of
-    p : q : _ -> (p, q) : genericAdj2 n (genericDrop n l)
+    p : q : _ -> (p, q) : genericAdj2 n (Data.List.genericDrop n l)
     _ -> []
 
 {- | Adjacent elements of list, at indicated distance, as pairs.
@@ -464,7 +464,7 @@ interleave p = concat . zipWith (\i j -> [i, j]) p -- concatMap (\(i, j) -> [i, 
 "adhbeicfjgkl"
 -}
 interleave_set :: [[a]] -> [a]
-interleave_set = concat . transpose
+interleave_set = concat . Data.List.transpose
 
 {- | Interleave list of lists.  Allows lists to be of non-equal lenghts.
 
@@ -500,7 +500,7 @@ interleave_set l =
 ["abcd","efgh","ijkl"]
 -}
 deinterleave :: Int -> [a] -> [[a]]
-deinterleave n = transpose . Split.chunksOf n
+deinterleave n = Data.List.transpose . Split.chunksOf n
 
 {- | Special case for two-part deinterleaving.
 
@@ -558,8 +558,8 @@ rezip f1 f2 l = let (p, q) = unzip l in zip (f1 p) (f2 q)
 -- | Generalised histogram, with equality function for grouping and comparison function for sorting.
 generic_histogram_by :: Integral i => (a -> a -> Bool) -> Maybe (a -> a -> Ordering) -> [a] -> [(a, i)]
 generic_histogram_by eq_f cmp_f x =
-  let g = groupBy eq_f (maybe x (`sortBy` x) cmp_f)
-  in zip (map head_err g) (map genericLength g)
+  let g = Data.List.groupBy eq_f (maybe x (`Data.List.sortBy` x) cmp_f)
+  in zip (map head_err g) (map Data.List.genericLength g)
 
 -- | Type specialised 'generic_histogram_by'.
 histogram_by :: (a -> a -> Bool) -> Maybe (a -> a -> Ordering) -> [a] -> [(a, Int)]
@@ -673,15 +673,15 @@ segments i j p =
 [1,2]
 -}
 intersect_l :: Eq a => [[a]] -> [a]
-intersect_l = foldl1 intersect
+intersect_l = foldl1 Data.List.intersect
 
 {- | 'foldl1' 'union'.
 
->>> sort (union_l [[1,3],[2,3],[3]])
+>>> Data.List.sort (union_l [[1,3],[2,3],[3]])
 [1,2,3]
 -}
 union_l :: Eq a => [[a]] -> [a]
-union_l = foldl1 union
+union_l = foldl1 Data.List.union
 
 {- | Intersection of adjacent elements of list at distance /n/.
 
@@ -703,7 +703,7 @@ adj_intersect n = map intersect_l . segments 2 n
 [[1,5],[2,6],[3,7],[4,8]]
 -}
 cycles :: Int -> [a] -> [[a]]
-cycles n = transpose . Split.chunksOf n
+cycles n = Data.List.transpose . Split.chunksOf n
 
 {- | Variant of 'filter' that has a predicate to halt processing, ie. 'filter' of 'takeWhile'.
 
@@ -743,7 +743,7 @@ replace p q s =
   in case s of
       [] -> []
       c : s' ->
-        if p `isPrefixOf` s
+        if p `Data.List.isPrefixOf` s
           then q ++ replace p q (drop n s)
           else c : replace p q s'
 
@@ -777,7 +777,7 @@ strip_prefix_err pfx = Maybe.from_just "strip_prefix" . strip_prefix pfx
 [[(0,'a')],[(1,'b'),(2,'b')],[(3,'c')]]
 -}
 group_by_on :: (x -> x -> Bool) -> (t -> x) -> [t] -> [[t]]
-group_by_on eq f = groupBy (eq `Data.Function.on` f)
+group_by_on eq f = Data.List.groupBy (eq `Data.Function.on` f)
 
 {- | 'group_by_on' of '=='.
 
@@ -809,7 +809,14 @@ collate_adjacent = collate_on_adjacent fst snd
 
 -- | Data.List.sortOn, which however hugs doesn't know of.
 sort_on :: Ord b => (a -> b) -> [a] -> [a]
-sort_on f = map snd . sortBy (Data.Ord.comparing fst) . map (\x -> let y = f x in y `seq` (y, x))
+sort_on f =
+  map snd
+  . Data.List.sortBy (Data.Ord.comparing fst)
+  . map (\x -> let y = f x in y `seq` (y, x))
+
+-- | `nub` of `sort`
+nub_sort :: Ord t => [t] -> [t]
+nub_sort = Data.List.nub . Data.List.sort
 
 {- | 'sortOn' prior to 'collate_on_adjacent'.
 
@@ -944,7 +951,7 @@ difference p q = filter (`notElem` q) p
 [False,True,True]
 -}
 is_subset :: Eq a => [a] -> [a] -> Bool
-is_subset p q = p `intersect` q == p
+is_subset p q = p `Data.List.intersect` q == p
 
 {- | Is /p/ a subset of /q/, ie. are all elements of /p/ elements of /q/.
 
@@ -960,7 +967,7 @@ isSubsetOf p q = all (\e -> e `elem` q) p
 [False,False,True]
 -}
 is_proper_subset :: Eq a => [a] -> [a] -> Bool
-is_proper_subset p q = is_subset p q && p /= p `union` q
+is_proper_subset p q = is_subset p q && p /= p `Data.List.union` q
 
 {- | Is /p/ a superset of /q/, ie. 'flip' 'is_subset'.
 
@@ -976,15 +983,15 @@ is_superset = flip is_subset
 True
 -}
 subsequence :: Eq a => [a] -> [a] -> Bool
-subsequence = isInfixOf
+subsequence = Data.List.isInfixOf
 
 -- | Erroring variant of 'findIndex'.
 findIndex_err :: (a -> Bool) -> [a] -> Int
-findIndex_err f = Maybe.from_just "findIndex" . findIndex f
+findIndex_err f = Maybe.from_just "findIndex" . Data.List.findIndex f
 
 -- | Erroring variant of 'elemIndex'.
 elemIndex_err :: Eq a => a -> [a] -> Int
-elemIndex_err x = Maybe.from_just "elemIndex" . elemIndex x
+elemIndex_err x = Maybe.from_just "elemIndex" . Data.List.elemIndex x
 
 {- | Variant of 'elemIndices' that requires /e/ to be unique in /p/.
 
@@ -992,7 +999,7 @@ elemIndex_err x = Maybe.from_just "elemIndex" . elemIndex x
 -}
 elem_index_unique :: Eq a => a -> [a] -> Int
 elem_index_unique e p =
-  case elemIndices e p of
+  case Data.List.elemIndices e p of
     [i] -> i
     _ -> error "elem_index_unique"
 
@@ -1036,7 +1043,7 @@ Just 2
 Just 'b'
 -}
 reverse_lookup :: Eq v => v -> [(k, v)] -> Maybe k
-reverse_lookup k = fmap fst . find ((== k) . snd)
+reverse_lookup k = fmap fst . Data.List.find ((== k) . snd)
 
 -- | Reverse (value,key) lookup.
 reverse_lookup' :: Eq k => k -> [(v, k)] -> Maybe v
@@ -1060,7 +1067,7 @@ reverse_lookup key ls =
 
 -- | Erroring variant of 'find'.
 find_err :: (t -> Bool) -> [t] -> t
-find_err f = Maybe.from_just "find" . find f
+find_err f = Maybe.from_just "find" . Data.List.find f
 
 {- | Basis of 'find_bounds_scl', indicates if /x/ is to the left or right of the list, and if to the right whether equal or not.
 'Right' values will be correct if the list is not ascending, however 'Left' values only make sense for ascending ranges.
@@ -1299,7 +1306,7 @@ indicate_repetitions =
   let f l = case l of
         [] -> []
         e : l' -> Just e : map (const Nothing) l'
-  in concatMap f . group
+  in concatMap f . Data.List.group
 
 {- | 'zipWith' of list and it's own tail.
 
@@ -1330,7 +1337,7 @@ headTail l = (head_err l, tail_err l)
 
 -- | Second element of list
 second :: [t] -> Maybe t
-second l = l !? 1
+second l = l Data.List.!? 1
 
 {- | First and second elements of list.
 Useful to avoid "incomplete-uni-patterns" warnings.
@@ -1350,7 +1357,7 @@ firstLast l = (first_err l, last_err l)
 it compares each new element to the start of the group.
 This function is the adjacent variant.
 
->>> groupBy (<) [1,2,3,2,4,1,5,9]
+>>> Data.List.groupBy (<) [1,2,3,2,4,1,5,9]
 [[1,2,3,2,4],[1,5,9]]
 
 >>> adjacent_groupBy (<) [1,2,3,2,4,1,5,9]
@@ -1403,7 +1410,7 @@ all_equal l =
 
 -- | Variant using 'nub'.
 all_eq :: Eq n => [n] -> Bool
-all_eq = (== 1) . length . nub
+all_eq = (== 1) . length . Data.List.nub
 
 {- | 'nubBy' '==' 'on' /f/.
 
@@ -1411,7 +1418,7 @@ all_eq = (== 1) . length . nub
 [('A','x'),('C','y')]
 -}
 nub_on :: Eq b => (a -> b) -> [a] -> [a]
-nub_on f = nubBy ((==) `Data.Function.on` f)
+nub_on f = Data.List.nubBy ((==) `Data.Function.on` f)
 
 {- | 'group_on' of 'sortOn'.
 
@@ -1497,19 +1504,19 @@ sort_to_rev = flip sort_to
 
 -- | 'sortBy' of 'two_stage_compare'.
 sort_by_two_stage :: Compare_F a -> Compare_F a -> [a] -> [a]
-sort_by_two_stage f g = sortBy (two_stage_compare f g)
+sort_by_two_stage f g = Data.List.sortBy (two_stage_compare f g)
 
 -- | 'sortBy' of 'n_stage_compare'.
 sort_by_n_stage :: [Compare_F a] -> [a] -> [a]
-sort_by_n_stage f = sortBy (n_stage_compare f)
+sort_by_n_stage f = Data.List.sortBy (n_stage_compare f)
 
 -- | 'sortBy' of 'two_stage_compare_on'.
 sort_by_two_stage_on :: (Ord b, Ord c) => (a -> b) -> (a -> c) -> [a] -> [a]
-sort_by_two_stage_on f g = sortBy (two_stage_compare_on f g)
+sort_by_two_stage_on f g = Data.List.sortBy (two_stage_compare_on f g)
 
 -- | 'sortBy' of 'n_stage_compare_on'.
 sort_by_n_stage_on :: Ord b => [a -> b] -> [a] -> [a]
-sort_by_n_stage_on f = sortBy (n_stage_compare_on f)
+sort_by_n_stage_on f = Data.List.sortBy (n_stage_compare_on f)
 
 {- | Given a comparison function, merge two ascending lists. Alias for 'List.Ordered.mergeBy'
 
@@ -1746,7 +1753,7 @@ fill_gaps_ascending' def (l, r) =
 
 -- | Variant with default value for empty input list case.
 minimumBy_or :: t -> (t -> t -> Ordering) -> [t] -> t
-minimumBy_or p f q = if null q then p else minimumBy f q
+minimumBy_or p f q = if null q then p else Data.List.minimumBy f q
 
 {- | 'minimum' and 'maximum' in one pass.
 

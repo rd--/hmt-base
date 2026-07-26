@@ -2,15 +2,20 @@
 
 Polygon variables:
 
-n = degree, a = side length, r = ir = inradius, R = cr = circumradius, A = ar = area, s = sagitta
+n = degree,
+a = side length,
+r = ir = inradius,
+R = cr = circumradius,
+A = ar = area,
+s = sagitta
 -}
 module Music.Theory.Geometry.Functions where
 
-import Data.Complex {- base -}
+import qualified Data.Complex {- base -}
 
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Math as Math {- hmt-base -}
-import qualified Music.Theory.Tuple {- hmt-base -}
+import qualified Music.Theory.Tuple as Tuple {- hmt-base -}
 
 import Music.Theory.Geometry.Vector {- hmt-base -}
 
@@ -71,7 +76,9 @@ radians_to_degrees = (* 180) . (/ pi)
 [(100,0),(71,71),(0,100),(-71,71),(-100,0)]
 -}
 polar_to_rectangular :: RealFloat t => V2 t -> V2 t
-polar_to_rectangular (mg, ph) = let c = mkPolar mg ph in (realPart c, imagPart c)
+polar_to_rectangular (mg, ph) =
+  let c = Data.Complex.mkPolar mg ph
+  in (Data.Complex.realPart c, Data.Complex.imagPart c)
 
 {- | (magnitude,phase:degrees) -> (x,y)
 
@@ -87,7 +94,7 @@ polar_to_rectangular_dgr (i, j) = polar_to_rectangular (i, degrees_to_radians j)
 
 -- | (x,y) -> (magnitude,phase:radians)
 rectangular_to_polar :: RealFloat t => V2 t -> V2 t
-rectangular_to_polar (x, y) = polar (x :+ y)
+rectangular_to_polar (x, y) = Data.Complex.polar (x Data.Complex.:+ y)
 
 {- | (x,y) -> (magnitude,phase:degrees)
 
@@ -581,8 +588,8 @@ fano_plane_coord :: Floating n => n -> [V2 n]
 fano_plane_coord cr =
   let r = regular_polygon_inradius_cr 3 cr
       p7 = (0, 0)
-      (p6, p3, p5) = Music.Theory.Tuple.t3_from_list (map (\n -> (r, pi / 6 + two_pi * n)) [0, 1 / 3, 2 / 3])
-      (p2, p1, p4) = Music.Theory.Tuple.t3_from_list (map (\n -> (cr, pi / 2 + two_pi * n)) [0, 1 / 3, 2 / 3])
+      (p6, p3, p5) = Tuple.t3_from_list (map (\n -> (r, pi / 6 + two_pi * n)) [0, 1 / 3, 2 / 3])
+      (p2, p1, p4) = Tuple.t3_from_list (map (\n -> (cr, pi / 2 + two_pi * n)) [0, 1 / 3, 2 / 3])
   in [p1, p2, p3, p4, p5, p6, p7]
 
 -- * Intersect
