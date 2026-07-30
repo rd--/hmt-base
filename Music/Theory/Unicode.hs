@@ -51,8 +51,8 @@ superscript_digits = "⁰¹²³⁴⁵⁶⁷⁸⁹"
 
 {- | Map 'show' of 'Int' to 'superscript_digits'.
 
->>> unwords (map int_show_superscript [0,12,345,6789]) == "⁰ ¹² ³⁴⁵ ⁶⁷⁸⁹"
-True
+>>> putStr $ unwords (map int_show_superscript [0,12,345,6789])
+⁰ ¹² ³⁴⁵ ⁶⁷⁸⁹
 -}
 int_show_superscript :: Int -> String
 int_show_superscript = map ((superscript_digits !!) . digitToInt) . show
@@ -60,6 +60,14 @@ int_show_superscript = map ((superscript_digits !!) . digitToInt) . show
 -- | The subscript variants of the digits 0-9
 subscript_digits :: [Char]
 subscript_digits = "₀₁₂₃₄₅₆₇₈₉"
+
+{- | Map 'show' of 'Int' to 'subscript_digits'.
+
+>>> putStr $ unwords (map int_show_subscript [0,12,345,6789])
+₀ ₁₂ ₃₄₅ ₆₇₈₉
+-}
+int_show_subscript :: Int -> String
+int_show_subscript = map ((subscript_digits !!) . digitToInt) . show
 
 {- | The combining over line character.
 
