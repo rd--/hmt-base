@@ -1,8 +1,8 @@
 -- | Set operations on lists.
 module Music.Theory.Set.List where
 
-import Control.Monad {- base -}
-import Data.List {- base -}
+import qualified Control.Monad {- base -}
+import qualified Data.List {- base -}
 
 import qualified Math.Combinatorics.Multiset as Multiset {- multiset-comb -}
 
@@ -14,7 +14,7 @@ import qualified Music.Theory.List as List {- hmt-base -}
 [1,2,3]
 -}
 set :: (Ord a) => [a] -> [a]
-set = nub . sort
+set = List.nub_sort
 
 {- | Size of powerset of set of cardinality /n/, ie. @2@ '^' /n/.
 
@@ -33,7 +33,7 @@ n_powerset = (^) 2
 [64,128,256,512]
 -}
 powerset :: [a] -> [[a]]
-powerset = filterM (const [True, False])
+powerset = Control.Monad.filterM (const [True, False])
 
 {- | Variant where result is sorted and the empty set is not given.
 
@@ -78,7 +78,7 @@ expand_set :: (Ord a) => Int -> [a] -> [[a]]
 expand_set n xs =
   if length xs >= n
     then [xs]
-    else nub (concatMap (expand_set n) [sort (y : xs) | y <- xs])
+    else Data.List.nub (concatMap (expand_set n) [Data.List.sort (y : xs) | y <- xs])
 
 {- | All distinct multiset partitions, see 'Multiset.partitions'.
 
@@ -110,8 +110,14 @@ cartesian_product p q = [(i, j) | i <- p, j <- q]
 >>> length (nfold_cartesian_product [[1..13],[1..4]])
 52
 
->>> length (nfold_cartesian_product ["abc","de","fgh"]) == 3 * 2 * 3
-True
+>>> 13 * 4
+52
+
+>>> length (nfold_cartesian_product ["abc","de","fgh"])
+18
+
+>>> 3 * 2 * 3
+18
 -}
 nfold_cartesian_product :: [[a]] -> [[a]]
 nfold_cartesian_product l =

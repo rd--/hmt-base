@@ -29,7 +29,6 @@ delete_trailing_whitespace = reverse . dropWhile isSpace . reverse
 
 {- | Variant of 'unwords' that does not write spaces for NIL elements.
 
-
 >>> unwords_nil []
 ""
 
