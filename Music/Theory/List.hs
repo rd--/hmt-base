@@ -2113,3 +2113,28 @@ Does not check lists are of equal size.
 -}
 hammingDistance :: Eq t => [t] -> [t] -> Int
 hammingDistance p q = sum (zipWith (\i j -> if i /= j then 1 else 0) p q)
+
+-- | Find the common prefix of u and v.
+commonPrefix :: Eq t => [t] -> [t] -> [t]
+commonPrefix u v =
+  case (u, v) of
+    ([], _) -> []
+    (_, []) -> []
+    (a:as, b:bs) ->
+      if a == b
+      then a : commonPrefix as bs
+      else []
+
+{- | Finds the longest common prefix of a list of lists.
+
+>>> longestCommonPrefix [[1,2,3,4,5],[1,2,3,4],[1,2,3]]
+[1,2,3]
+
+>>> longestCommonPrefix ["abc","abcd","abcde"]
+"abc"
+-}
+longestCommonPrefix :: Eq t => [[t]] -> [t]
+longestCommonPrefix xs =
+  case xs of
+    [] -> []
+    _ -> foldl1 commonPrefix xs
