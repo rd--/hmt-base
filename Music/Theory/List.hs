@@ -1049,10 +1049,6 @@ reverse_lookup k = fmap fst . Data.List.find ((== k) . snd)
 reverse_lookup' :: Eq k => k -> [(v, k)] -> Maybe v
 reverse_lookup' k = lookup k . map (\(p, q) -> (q, p))
 
--- | 'drop' from right.
-drop_right :: Int -> [a] -> [a]
-drop_right n = reverse . drop n . reverse
-
 -- | Erroring variant.
 reverse_lookup_err :: Eq v => v -> [(k, v)] -> k
 reverse_lookup_err k = Maybe.from_just "reverse_lookup" . reverse_lookup k
@@ -1154,13 +1150,21 @@ drop_last l =
     [_] -> []
     e : l' -> e : drop_last l'
 
+{- | 'drop' from right.
+
+>>> drop_right 2 [1,2,3,4,5,6]
+[1,2,3,4]
+-}
+drop_right :: Int -> [a] -> [a]
+drop_right n = reverse . drop n . reverse
+
 {- | Variant of 'drop' from right of list.
 
 >>> dropRight 1 [1..9] == [1..8]
 True
 -}
 dropRight :: Int -> [a] -> [a]
-dropRight n = reverse . drop n . reverse
+dropRight = drop_right
 
 {- | Variant of 'dropWhile' from right of list.
 
@@ -1170,10 +1174,6 @@ dropRight n = reverse . drop n . reverse
 dropWhileRight :: (a -> Bool) -> [a] -> [a]
 dropWhileRight p = reverse . dropWhile p . reverse
 
--- | Data.List.dropWhileEnd, which however hugs doesn't know of.
-drop_while_end :: (a -> Bool) -> [a] -> [a]
-drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
-
 {- | 'foldr' form of 'dropWhileRight'.
 
 >>> drop_while_right Data.Char.isDigit "A440"
@@ -1181,6 +1181,14 @@ drop_while_end p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
 -}
 drop_while_right :: (a -> Bool) -> [a] -> [a]
 drop_while_right p = foldr (\x xs -> if p x && null xs then [] else x : xs) []
+
+{- | Data.List.dropWhileEnd, which however hugs doesn't know of.
+
+>>> drop_while_end Data.Char.isDigit "A440"
+"A"
+-}
+drop_while_end :: (a -> Bool) -> [a] -> [a]
+drop_while_end = drop_while_right
 
 {- | 'dropWhile' from both ends of a list.
 
