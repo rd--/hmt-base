@@ -26,7 +26,7 @@ n_powerset = (^) 2
 
 {- | Powerset, ie. set of all subsets.
 
->>> sort (powerset [1,2])
+>>> Data.List.sort (powerset [1,2])
 [[],[1],[1,2],[2]]
 
 >>> map length (map (\n -> powerset [1..n]) [6..9])
