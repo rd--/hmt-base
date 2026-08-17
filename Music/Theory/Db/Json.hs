@@ -103,7 +103,7 @@ json_to_string_err j =
 {- | Json to Maybe_List_Of_String.
 
 >>> import qualified Data.Text.Encoding as Text
->>> let f = fromJust . Json.decodeStrict . Text.encodeUtf8 . Text.pack
+>>> let f = Data.Maybe.fromJust . Json.decodeStrict . Text.encodeUtf8 . Text.pack
 >>> json_to_maybe_list (f "\"x\"")
 Just (S "x")
 

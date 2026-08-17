@@ -18,7 +18,7 @@ import qualified Music.Theory.Directory as Directory {- hmt-base -}
 {- | File size, in bytes.
 
 >>> file_size "/home/rohan/sw/hmt-base/Music/Theory/Io.hs"
-2758
+3599
 -}
 file_size :: FilePath -> IO Integer
 file_size fn = System.IO.withFile fn System.IO.ReadMode System.IO.hFileSize
