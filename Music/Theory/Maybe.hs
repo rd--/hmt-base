@@ -5,7 +5,9 @@ import qualified Data.Maybe {- base -}
 
 -- | Variant with error text.
 from_just :: String -> Maybe a -> a
-from_just err = Data.Maybe.fromMaybe (error err)
+from_just =
+  Data.Maybe.fromMaybe
+    . error
 
 -- | Apply /f/ to Just x, else return ().
 when_just :: Monad m => (a -> m ()) -> Maybe a -> m ()

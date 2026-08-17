@@ -561,7 +561,11 @@ generic_histogram_by eq_f cmp_f x =
   let g = Data.List.groupBy eq_f (maybe x (`Data.List.sortBy` x) cmp_f)
   in zip (map head_err g) (map Data.List.genericLength g)
 
--- | Type specialised 'generic_histogram_by'.
+{- | Type specialised 'generic_histogram_by'.
+
+>>> histogram_by (==) (Just compare) "abbccc"
+[('a',1),('b',2),('c',3)]
+-}
 histogram_by :: (a -> a -> Bool) -> Maybe (a -> a -> Ordering) -> [a] -> [(a, Int)]
 histogram_by = generic_histogram_by
 
@@ -811,8 +815,8 @@ collate_adjacent = collate_on_adjacent fst snd
 sort_on :: Ord b => (a -> b) -> [a] -> [a]
 sort_on f =
   map snd
-  . Data.List.sortBy (Data.Ord.comparing fst)
-  . map (\x -> let y = f x in y `seq` (y, x))
+    . Data.List.sortBy (Data.Ord.comparing fst)
+    . map (\x -> let y = f x in y `seq` (y, x))
 
 -- | `nub` of `sort`
 nub_sort :: Ord t => [t] -> [t]
@@ -1454,6 +1458,20 @@ mcons e l = maybe l (: l) e
 -}
 snoc :: a -> [a] -> [a]
 snoc e l = l ++ [e]
+
+{- | Maybe 'snoc'.
+
+>>> msnoc [1..3] Nothing
+[1,2,3]
+
+>>> msnoc [1..3] (Just 4)
+[1,2,3,4]
+-}
+msnoc :: [a] -> Maybe a -> [a]
+msnoc l e =
+  case e of
+    Nothing -> l
+    Just e' -> l ++ [e']
 
 -- * Ordering
 
@@ -2140,7 +2158,7 @@ longestCommonPrefix u v =
   case (u, v) of
     ([], _) -> []
     (_, []) -> []
-    (a:as, b:bs) ->
+    (a : as, b : bs) ->
       if a == b
-      then a : longestCommonPrefix as bs
-      else []
+        then a : longestCommonPrefix as bs
+        else []

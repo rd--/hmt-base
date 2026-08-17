@@ -42,29 +42,31 @@ ply_header (n_v, n_f, n_e) v_coloured =
         , "property uchar blue"
         ]
   in concat
-     [
-       [ "ply"
-       , "format ascii 1.0"
-       , "element vertex " ++ show n_v
-       , "property float x"
-       , "property float y"
-       , "property float z"
-       ] ++ if v_coloured then colour_properties else []
-     , if n_f > 0
-       then
-         [ "element face " ++ show n_f
-         , "property list uchar int vertex_index"
-         ] ++ colour_properties
-       else []
-     , if n_e > 0
-       then
-          [ "element edge " ++ show n_e
-          , "property int vertex1"
-          , "property int vertex2"
-          ] ++ colour_properties
-       else []
-     , ["end_header"]
-     ]
+      [ [ "ply"
+        , "format ascii 1.0"
+        , "element vertex " ++ show n_v
+        , "property float x"
+        , "property float y"
+        , "property float z"
+        ]
+          ++ if v_coloured then colour_properties else []
+      , if n_f > 0
+          then
+            [ "element face " ++ show n_f
+            , "property list uchar int vertex_index"
+            ]
+              ++ colour_properties
+          else []
+      , if n_e > 0
+          then
+            [ "element edge " ++ show n_e
+            , "property int vertex1"
+            , "property int vertex2"
+            ]
+              ++ colour_properties
+          else []
+      , ["end_header"]
+      ]
 
 {- | Requires (but does not check) that graph vertices be indexed [0 .. #v - 1]
      Edges are coloured as U8 (red,green,blue) triples.
@@ -87,9 +89,13 @@ v3_pt_set_to_ply k pt_set =
   let n_v = sum (map (length . fst) pt_set)
       h = ply_header (n_v, 0, 0) True
       v_pp (r, g, b) (x, y, z) =
-        unwords (concat [ map (Show.double_pp k) [x, y, z]
-                        , map show [r, g, b]])
-  in h ++ concatMap (\(v,c) -> map (v_pp c) v) pt_set
+        unwords
+          ( concat
+              [ map (Show.double_pp k) [x, y, z]
+              , map show [r, g, b]
+              ]
+          )
+  in h ++ concatMap (\(v, c) -> map (v_pp c) v) pt_set
 
 -- * Faces
 

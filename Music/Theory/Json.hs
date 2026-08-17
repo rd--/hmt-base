@@ -179,8 +179,8 @@ value_to_int_err v =
     Json.Number x ->
       let (i, f) = properFraction x
       in if f == 0
-         then i
-         else error "value_to_int_err: float?"
+          then i
+          else error "value_to_int_err: float?"
     _ -> error "value_to_int?"
 
 -- | Require value be a number and read as Word8.
@@ -189,8 +189,8 @@ value_to_word8_err v =
   case v of
     Json.Number x ->
       if Math.Predicate.double_is_word8 x
-      then floor x
-      else error "value_to_word8?"
+        then floor x
+        else error "value_to_word8?"
     _ -> error "value_to_word8?"
 
 value_to_list_err :: Value -> [Value]

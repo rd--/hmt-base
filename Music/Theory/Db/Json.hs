@@ -3,11 +3,12 @@
 Json objects do no allow multiple keys.
 Here multiple keys are read & written as arrays.
 This is no longer built since it is little used and introduces dependencies.
+This file is, however, referenced directly by some programs, using a symbolic link.
 -}
 module Music.Theory.Db.Json where
 
-import Data.Bifunctor {- base -}
-import Data.Maybe {- base -}
+import qualified Data.Bifunctor {- base -}
+import qualified Data.Maybe {- base -}
 
 import qualified Music.Theory.List as List {- hmt-base -}
 
@@ -24,11 +25,15 @@ db_load_utf8 :: FilePath -> IO Db.TextDb
 db_load_utf8 fn = do
   let decode_assoc a =
         case a of
-          Json.Object o -> List.head_err (map (first Text.unpack) (Map.toList o))
+          Json.Object o ->
+            List.head_err
+              (map (Data.Bifunctor.first Text.unpack) (Map.toList o))
           _ -> error "decode_assoc?"
       decode_record r =
         case r of
-          Json.Array l -> Db.record_uncollate (map (second (maybe_list_to_list . json_to_maybe_list_err) . decode_assoc) l)
+          Json.Array l ->
+            Db.record_uncollate
+              (map (Data.Bifunctor.second (maybe_list_to_list . json_to_maybe_list_err) . decode_assoc) l)
           _ -> error "decode_record?"
   b <- ByteString.readFile fn
   case Json.decodeStrict b of
@@ -37,18 +42,24 @@ db_load_utf8 fn = do
 
 {- | Store 'Db' to 'FilePath'.
 
-> import qualified Music.Theory.Db.Plain as Db
-> let fn = "/home/rohan/ut/www-spr/data/db.text"
-> db <- Db.db_load_utf8 Db.sep_plain fn
-> length db == 1480
+>>> import qualified Music.Theory.Db.Plain as Db
+>>> let fn = "/home/rohan/ut/www-spr/data/db.text"
+>>> db <- Db.db_load_utf8 Db.sep_plain fn
+>>> length db
+1480
+
 > db_store_utf8 "/tmp/sp.js" db
 -}
 db_store_utf8 :: FilePath -> Db.TextDb -> IO ()
 db_store_utf8 fn db = do
-  let encode_assoc = Json.Object . Map.fromList . return . first Text.pack
+  let encode_assoc =
+        Json.Object
+          . Map.fromList
+          . return
+          . Data.Bifunctor.first Text.pack
       f =
         Json.Array
-          . map (encode_assoc . second (maybe_list_to_json . list_to_maybe_list))
+          . map (encode_assoc . Data.Bifunctor.second (maybe_list_to_json . list_to_maybe_list))
           . Db.record_collate
       b = Json.encodeStrict (Json.Array (map f db))
   ByteString.writeFile fn b
@@ -107,4 +118,6 @@ json_to_maybe_list j =
     _ -> Nothing
 
 json_to_maybe_list_err :: Json.Value -> Maybe_List_Of_String
-json_to_maybe_list_err = fromMaybe (error "json_to_maybe_list") . json_to_maybe_list
+json_to_maybe_list_err =
+  Data.Maybe.fromMaybe (error "json_to_maybe_list")
+    . json_to_maybe_list

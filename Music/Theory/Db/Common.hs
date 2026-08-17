@@ -1,9 +1,9 @@
 -- | Database as [[(key,value)]]
 module Music.Theory.Db.Common where
 
-import Data.List {- base -}
-import Data.Maybe {- base -}
-import Safe {- safe -}
+import qualified Data.List {- base -}
+import qualified Data.Maybe {- base -}
+import qualified Safe {- safe -}
 
 import qualified Music.Theory.List as List {- hmt-base -}
 import qualified Music.Theory.Maybe as Maybe {- hmt-base -}
@@ -48,7 +48,7 @@ record_lookup = record_lookup_by (==)
 
 -- | /n/th element of 'record_lookup'.
 record_lookup_at :: Eq k => (k, Int) -> Record k v -> Maybe v
-record_lookup_at (c, n) = flip atMay n . record_lookup c
+record_lookup_at (c, n) = flip Safe.atMay n . record_lookup c
 
 {- | Variant of 'record_lookup' requiring a unique key.  'Nothing' indicates
 there is no entry, it is an 'error' if duplicate keys are present.
@@ -62,7 +62,7 @@ record_lookup_uniq k r =
 
 -- | 'True' if key exists and is unique.
 record_has_key_uniq :: Eq k => k -> Record k v -> Bool
-record_has_key_uniq k = isJust . record_lookup_uniq k
+record_has_key_uniq k = Data.Maybe.isJust . record_lookup_uniq k
 
 -- | Error variant.
 record_lookup_uniq_err :: Eq k => k -> Record k v -> v
@@ -70,7 +70,7 @@ record_lookup_uniq_err k = Maybe.from_just "record_lookup_uniq: none" . record_l
 
 -- | Default value variant.
 record_lookup_uniq_def :: Eq k => v -> k -> Record k v -> v
-record_lookup_uniq_def v k = fromMaybe v . record_lookup_uniq k
+record_lookup_uniq_def v k = Data.Maybe.fromMaybe v . record_lookup_uniq k
 
 -- | Remove all associations for key using given equality function.
 record_delete_by :: (k -> k -> Bool) -> k -> Record k v -> Record k v
@@ -84,7 +84,7 @@ record_delete = record_delete_by (==)
 
 -- | Preserves order of occurence.
 db_key_set :: Ord k => Db k v -> [k]
-db_key_set = nub . map fst . concat
+db_key_set = Data.List.nub . map fst . concat
 
 db_lookup_by :: (k -> k -> Bool) -> (v -> v -> Bool) -> k -> v -> Db k v -> [Record k v]
 db_lookup_by k_cmp v_cmp k v =

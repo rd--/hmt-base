@@ -49,20 +49,20 @@ write_text_file_x fn txt = when_file_does_not_exist fn (writeFile fn txt)
 write_file_utf8 :: FilePath -> String -> IO ()
 write_file_utf8 fn =
   Data.ByteString.writeFile fn
-  . Data.Text.Encoding.encodeUtf8
-  . Data.Text.pack
+    . Data.Text.Encoding.encodeUtf8
+    . Data.Text.pack
 
 -- | 'readFile' variant using 'Data.Text.Text' for @ISO 8859-1@ (Latin 1) encoding.
 read_file_iso_8859_1 :: FilePath -> IO String
 read_file_iso_8859_1 =
   fmap (Data.Text.unpack . Data.Text.Encoding.decodeLatin1)
-  . Data.ByteString.readFile
+    . Data.ByteString.readFile
 
 -- | 'readFile' variant using 'Data.Text.Text' for local encoding.
 read_file_locale :: FilePath -> IO String
 read_file_locale =
   fmap Data.Text.unpack
-  . Data.Text.IO.readFile
+    . Data.Text.IO.readFile
 
 -- | Interact with files.  Like Prelude.interact, but with named files.
 interactWithFiles :: FilePath -> FilePath -> (String -> String) -> IO ()
@@ -86,9 +86,11 @@ getAvailableLinesFromStdin = do
 interactWithStdio :: (String -> String) -> IO ()
 interactWithStdio strFunc =
   Control.Monad.forever
-  (getAvailableLinesFromStdin
-    >>= \ln -> putStrLn (strFunc (unlines ln))
-    >> System.IO.hFlush System.IO.stdout)
+    ( getAvailableLinesFromStdin
+        >>= \ln ->
+          putStrLn (strFunc (unlines ln))
+            >> System.IO.hFlush System.IO.stdout
+    )
 
 -- | Interact with lines
 interactLines :: ([String] -> [String]) -> IO ()
