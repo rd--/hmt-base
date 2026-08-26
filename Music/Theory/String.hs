@@ -12,7 +12,11 @@ import Data.List {- base -}
 str_eq_ci :: String -> String -> Bool
 str_eq_ci x y = map toUpper x == map toUpper y
 
--- | Remove @\r@.
+{- | Remove @\r@.
+
+>>> filter_cr "a\rb\r"
+"ab"
+-}
 filter_cr :: String -> String
 filter_cr = filter (not . (==) '\r')
 

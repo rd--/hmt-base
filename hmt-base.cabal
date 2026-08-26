@@ -49,6 +49,7 @@ Library
                    Music.Theory.Bool
                    Music.Theory.Braille
                    Music.Theory.Byte
+                   Music.Theory.Byte.Cast
                    Music.Theory.ByteString
                    Music.Theory.Char
                    Music.Theory.Combinations
