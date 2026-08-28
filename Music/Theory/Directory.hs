@@ -164,11 +164,16 @@ to_absolute_cwd x =
 if_file_exists :: (FilePath, IO t, IO t) -> IO t
 if_file_exists (i, j, k) = Monad.m_if (System.Directory.doesFileExist i, j, k)
 
+-- | 'createDirectoryIfMissing' (including parents) of `takeDirectory`.
+ensure_dir_exists :: FilePath -> IO ()
+ensure_dir_exists fn = do
+  let dir = System.FilePath.takeDirectory fn
+  System.Directory.createDirectoryIfMissing True dir
+
 -- | 'createDirectoryIfMissing' (including parents) and then 'writeFile'
 writeFile_mkdir :: FilePath -> String -> IO ()
 writeFile_mkdir fn s = do
-  let dir = System.FilePath.takeDirectory fn
-  System.Directory.createDirectoryIfMissing True dir
+  ensure_dir_exists fn
   writeFile fn s
 
 -- | 'writeFile_mkdir' only if file does not exist.

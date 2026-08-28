@@ -74,6 +74,7 @@ Library
                    Music.Theory.Directory.Find
                    Music.Theory.Either
                    Music.Theory.Enum
+                   Music.Theory.FilePath
                    Music.Theory.Function
                    Music.Theory.Geometry
                    Music.Theory.Geometry.Bezier

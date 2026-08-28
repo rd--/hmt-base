@@ -1,7 +1,7 @@
 -- | Bits functions.
 module Music.Theory.Bits where
 
-import Data.Bits {- base -}
+import qualified Data.Bits {- base -}
 
 {- | 'True' = 1, 'False' = 0
 
@@ -24,11 +24,11 @@ bits_pp = map bit_pp
 >>> gen_bitseq 8 (127 :: Int)
 [False,True,True,True,True,True,True,True]
 -}
-gen_bitseq :: FiniteBits b => Int -> b -> [Bool]
+gen_bitseq :: Data.Bits.FiniteBits b => Int -> b -> [Bool]
 gen_bitseq n x =
-  if finiteBitSize x < n
+  if Data.Bits.finiteBitSize x < n
     then error "gen_bitseq"
-    else map (testBit x) (reverse [0 .. n - 1])
+    else map (Data.Bits.testBit x) (reverse [0 .. n - 1])
 
 {- | Given bit sequence (most to least significant) generate 'Bits' value.
 
@@ -42,9 +42,9 @@ True
 >>> 0b1010 == 10 && 0b100100 == 36
 True
 -}
-pack_bitseq :: Bits i => [Bool] -> i
+pack_bitseq :: Data.Bits.Bits i => [Bool] -> i
 pack_bitseq =
-  foldl (\n (k, b) -> if b then setBit n k else n) zeroBits
+  foldl (\n (k, b) -> if b then Data.Bits.setBit n k else n) Data.Bits.zeroBits
     . zip [0 ..]
     . reverse
 
@@ -57,5 +57,5 @@ True
 >>> gen_bitseq_pp 8 (0xF0::Int)
 "11110000"
 -}
-gen_bitseq_pp :: FiniteBits b => Int -> b -> String
+gen_bitseq_pp :: Data.Bits.FiniteBits b => Int -> b -> String
 gen_bitseq_pp n = bits_pp . gen_bitseq n
