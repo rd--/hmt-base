@@ -47,7 +47,13 @@ read_maybe = reads_to_read_precise reads
 read_def :: Read a => a -> String -> a
 read_def x s = fromMaybe x (read_maybe s)
 
--- | Variant of 'read_maybe' that errors on 'Nothing', printing message.
+{- | Variant of 'read_maybe' that errors on 'Nothing', printing message.
+
+>>> read_err_msg "R" "-0.5" :: Double
+-0.5
+
+> read_err_msg "I" "-0.5" :: Int
+-}
 read_err_msg :: Read a => String -> String -> a
 read_err_msg msg s = fromMaybe (error ("read_err: " ++ msg ++ ": " ++ s)) (read_maybe s)
 
@@ -55,6 +61,8 @@ read_err_msg msg s = fromMaybe (error ("read_err: " ++ msg ++ ": " ++ s)) (read_
 
 >>> read_err "-0.5" :: Double
 -0.5
+
+> read_err "-0.5" :: Int
 -}
 read_err :: Read a => String -> a
 read_err = read_err_msg "read_maybe failed"

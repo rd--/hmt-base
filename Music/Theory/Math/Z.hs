@@ -109,6 +109,9 @@ from_Z = fromIntegral
 
 {- | Universe of 'Z'.
 
+>>> z_univ z5
+[0,1,2,3,4]
+
 >>> z_univ z12
 [0,1,2,3,4,5,6,7,8,9,10,11]
 -}

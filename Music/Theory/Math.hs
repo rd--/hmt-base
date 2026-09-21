@@ -165,7 +165,10 @@ True
 [True,False]
 -}
 whole_to_precision :: Real r => Int -> r -> Bool
-whole_to_precision k = zero_to_precision k . fractional_part . Math.Convert.real_to_double
+whole_to_precision k =
+  zero_to_precision k
+  . fractional_part
+  . Math.Convert.real_to_double
 
 {- | <http://reference.wolfram.com/mathematica/ref/SawtoothWave.html>
 
@@ -190,11 +193,16 @@ rational_nd r = (numerator r, denominator r)
 
 -- | Rational as a whole number, or 'Nothing'.
 rational_whole :: Integral a => Ratio a -> Maybe a
-rational_whole r = if denominator r == 1 then Just (numerator r) else Nothing
+rational_whole r =
+  if denominator r == 1
+  then Just (numerator r)
+  else Nothing
 
 -- | Erroring variant.
 rational_whole_err :: Integral a => Ratio a -> a
-rational_whole_err = Data.Maybe.fromMaybe (error "rational_whole") . rational_whole
+rational_whole_err =
+  Data.Maybe.fromMaybe (error "rational_whole")
+  . rational_whole
 
 -- | Sum of numerator & denominator.
 ratio_nd_sum :: Integral t => Ratio t -> t
