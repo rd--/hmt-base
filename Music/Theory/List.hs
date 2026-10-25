@@ -81,6 +81,10 @@ zip9 = zipWith9 (\a b c d e f g h i -> (a, b, c, d, e, f, g, h, i))
 take_err :: Int -> [a] -> [a]
 take_err n e = let r = take n e in if length r /= n then error "take_err?" else r
 
+-- | Error checking 'drop' variant.
+drop_err :: Int -> [a] -> [a]
+drop_err n e = let r = drop n e in if length r /= n then error "drop_err?" else r
+
 {- | 'Data.Vector.slice', ie. starting index (zero-indexed) and number of elements.
 
 >>> slice 4 5 [1..]
